@@ -1,0 +1,14 @@
+<div class="flex h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <app-sidebar [isCollapsed]="isSidebarCollapsed"></app-sidebar>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Header -->
+        <app-header (toggleSidebar)="toggleSidebar()"></app-header>
+
+        <!-- Main content with router outlet -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-gray-900">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</div>

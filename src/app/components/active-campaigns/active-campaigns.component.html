@@ -1,0 +1,48 @@
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+  <!-- Active Campaigns - Now takes first column -->
+  <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-4">
+    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Active Campaigns</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left min-w-[600px]">
+        <thead class="text-xs text-gray-500 dark:text-gray-400 uppercase border-b dark:border-gray-700">
+          <tr>
+            <th class="py-2">Campaign</th>
+            <th class="py-2">Advertiser</th>
+            <th class="py-2">Impressions</th>
+            <th class="py-2">Clicks</th>
+            <th class="py-2">CTR</th>
+            <th class="py-2">Spend</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (campaign of activeCampaigns; track campaign) {
+            <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+              <td class="py-3 text-gray-700 dark:text-gray-300">{{ campaign.campaign }}</td>
+              <td class="py-3 text-gray-700 dark:text-gray-300">{{ campaign.advertiser }}</td>
+              <td class="py-3 text-gray-700 dark:text-gray-300">{{ campaign.impressions }}</td>
+              <td class="py-3 text-gray-700 dark:text-gray-300">{{ campaign.clicks }}</td>
+              <td class="py-3 text-gray-700 dark:text-gray-300">{{ campaign.ctr }}</td>
+              <td class="py-3 text-gray-700 dark:text-gray-300">{{ campaign.spend }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Alerts - Takes second column -->
+  <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-4 mb">
+    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Recent Alerts</h2>
+    <ul class="space-y-3">
+      @for (alert of recentAlerts; track alert) {
+        <li class="flex items-start p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
+          <span class="text-xl mr-3 mt-0.5 dark:text-gray-300">{{ alert.icon }}</span>
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ alert.message }}</p>
+            <span class="text-xs text-gray-500 dark:text-gray-400">{{ alert.time }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

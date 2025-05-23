@@ -1,0 +1,48 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <!-- Campaign Performance Chart -->
+  <div class="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="text-md font-medium text-gray-700 dark:text-gray-200">Campaign Performance</h2>
+      <select class="text-xs border border-gray-200 dark:border-gray-600 rounded px-2 py-1 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-600 text-gray-700 dark:text-gray-200">
+        <option>Last 7 days</option>
+        <option>Last 30 days</option>
+        <option>Last quarter</option>
+      </select>
+    </div>
+    <div class="relative" style="height: 160px">
+      <canvas id="campaignChart"></canvas>
+    </div>
+    <div class="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
+      <span>Jan</span>
+      <span>Feb</span>
+      <span>Mar</span>
+      <span>Apr</span>
+      <span>May</span>
+    </div>
+  </div>
+  
+  <!-- Tablet Status Chart -->
+  <div class="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="text-md font-medium text-gray-700 dark:text-gray-200">Tablet Status</h2>
+      <span class="text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">Updated today</span>
+    </div>
+    <div class="relative" style="height: 160px">
+      <canvas id="tabletChart"></canvas>
+    </div>
+    <div class="flex justify-center space-x-4 mt-3">
+      <div class="flex items-center">
+        <span class="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
+        <span class="text-xs text-gray-500 dark:text-gray-400">Active</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-2 h-2 bg-yellow-500 rounded-full mr-1"></span>
+        <span class="text-xs text-gray-500 dark:text-gray-400">Inactive</span>
+      </div>
+      <div class="flex items-center">
+        <span class="w-2 h-2 bg-red-500 rounded-full mr-1"></span>
+        <span class="text-xs text-gray-500 dark:text-gray-400">Maintenance</span>
+      </div>
+    </div>
+  </div>
+</div>
