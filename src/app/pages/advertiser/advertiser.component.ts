@@ -50,8 +50,8 @@ getAdvertisers() {
   addAdvertiser() {
     this.router.navigate(['/advertisers/add']);
   }
-  editAdvertiser(advertiserId: number) {
-    this.router.navigate(['/advertisers/edit'], { queryParams: { id: advertiserId } });
+  editAdvertiser(userName: string) {
+    this.router.navigate(['/advertisers/edit'], { queryParams: { username: userName } });
   }
 
 

@@ -24,19 +24,45 @@ export class RequestSenderService {
     });
   }
  
-  sendGetRequest<T>(url: string, params?: any): Observable<T> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'http://localhost:4200',
-    });
+//   sendGetRequest<T>(url: string, params?: any): Observable<T> {
+//     const headers = new HttpHeaders({
+//       'Content-Type': 'application/json',
+//       'Access-Control-Allow-Origin': 'http://localhost:4200',
+//     });
 
   
-    const requestParams = params || {};
+//     const requestParams = params || {};
+//     requestParams.metaData = this.meta.getMetaData();
+
+//     return this.http.get<T>(environment.api + url, {
+//       headers,
+//       params: requestParams
+//     });
+// }
+
+sendGetRequest<T>(url: string, params?: any, usePathParam: boolean = false): Observable<T> {
+    const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:4200',
+    });
+
+    let finalUrl = environment.api + url;
+    let requestParams = params || {};
+    
+    // Handle path parameter if needed
+    if (usePathParam && params?.username) {
+        const encodedUsername = encodeURIComponent(params.username);
+        finalUrl = `${finalUrl}/${encodedUsername}`;
+        // Remove username from query params
+        requestParams = {...requestParams};
+        delete requestParams.username;
+    }
+
     requestParams.metaData = this.meta.getMetaData();
 
-    return this.http.get<T>(environment.api + url, {
-      headers,
-      params: requestParams
+    return this.http.get<T>(finalUrl, {
+        headers,
+        params: requestParams
     });
 }
 

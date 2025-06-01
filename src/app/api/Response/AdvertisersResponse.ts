@@ -24,10 +24,11 @@ export interface AdvertisersResponse {
     languages: string[];
     vehicleInformation: any[];
     uploadedDocuments: any[];
+    username: string;
     idno: string | null;
     company: boolean;
     logo: string | null;
     status: string| null;
     revenue: 2000
-    
+
 }
