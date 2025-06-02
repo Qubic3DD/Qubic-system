@@ -120,11 +120,9 @@ export class DriverComponent implements OnInit {
       });
   }
 
-  editDriver(id: number): void {
-    // Implement edit functionality
-    console.log('Edit driver with ID:', id);
-  }
-
+editDriver(driver: any) {
+  this.router.navigate(['/drivers/edit', driver.id]);
+}
   viewDriverDetails(id: number): void {
     // Implement view details functionality
     console.log('View details for driver with ID:', id);
