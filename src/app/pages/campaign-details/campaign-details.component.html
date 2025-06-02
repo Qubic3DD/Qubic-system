@@ -1,0 +1,47 @@
+<div *ngIf="loading" class="loading-container">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<ng-container *ngIf="!loading && campaign">
+  <mat-card class="campaign-card-detail">
+    <mat-card-header>
+      <mat-card-title class="headline">{{ campaign.name }}</mat-card-title>
+      <mat-card-subtitle>
+        <mat-chip color="primary" selected>{{ campaign.active ? 'Active' : 'Inactive' }}</mat-chip>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p class="description">{{ campaign.description }}</p>
+
+      <mat-divider class="divider"></mat-divider>
+
+      <div class="detail-row">
+        <mat-icon color="accent">event</mat-icon>
+        <span>Start: {{ campaign.startDate | date }}</span>
+        <span class="spacer"></span>
+        <mat-icon color="accent">event_available</mat-icon>
+        <span>End: {{ campaign.endDate | date }}</span>
+      </div>
+
+      <div class="detail-row">
+        <mat-icon color="primary">visibility</mat-icon>
+        <span>Impressions: {{ campaign.accumulatedImpressions }} / {{ campaign.requiredImpressions }}</span>
+      </div>
+
+      <mat-progress-bar
+        class="progress-bar"
+        color="accent"
+        mode="determinate"
+        [value]="getProgress()">
+      </mat-progress-bar>
+
+      <mat-divider class="divider"></mat-divider>
+
+      <div class="video-section" *ngIf="campaign.id">
+        <h3 class="section-title">Campaign Video</h3>
+        <video width="100%" controls [src]="getCampaignVideoUrl(campaign.id)"></video>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</ng-container>

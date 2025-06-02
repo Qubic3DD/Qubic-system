@@ -1,0 +1,132 @@
+<div class="form-container">
+  <h1>Add New Campaign</h1>
+
+  <form [formGroup]="campaignForm" (ngSubmit)="oonSubmit()" enctype="multipart/form-data" novalidate>
+    Loading Spinner
+    <div *ngIf="loadingAdvertisers" class="loading-overlay">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading advertisers...</p>
+    </div>
+    
+<!-- Advertiser Selection -->
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label>Select Advertiser</mat-label>
+
+  <!-- Show loading spinner inside select while loading -->
+  <mat-select *ngIf="!loadingAdvertisers" formControlName="advertiserId" required>
+    <mat-option *ngFor="let advertiser of advertisers" [value]="advertiser.id">
+      {{ advertiser.firstName }} {{ advertiser.lastName }} ({{ advertiser.email }})
+    </mat-option>
+  </mat-select>
+
+  <!-- Show loading spinner instead of dropdown -->
+  <div *ngIf="loadingAdvertisers" style="display: flex; align-items: center; padding: 0.5rem;">
+    <mat-spinner diameter="30"></mat-spinner>
+    <span style="margin-left: 1rem; color: #3f51b5;">Loading advertisers...</span>
+  </div>
+
+  <mat-icon matSuffix *ngIf="!loadingAdvertisers">person</mat-icon>
+
+  <mat-error *ngIf="campaignForm.get('advertiserId')?.hasError('required') && formSubmitted">
+    Advertiser is required
+  </mat-error>
+</mat-form-field>
+
+
+    <!-- Campaign Name -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Campaign Name</mat-label>
+      <input matInput formControlName="name" required />
+      <mat-icon matSuffix>campaign</mat-icon>
+      <mat-error *ngIf="campaignForm.get('name')?.hasError('required') && formSubmitted">
+        Campaign name is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campaign Description -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3" required></textarea>
+      <mat-error *ngIf="campaignForm.get('description')?.hasError('required') && formSubmitted">
+        Description is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Date Range Fields -->
+    <div class="date-fields">
+      <mat-form-field appearance="fill" class="date-field">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate" required />
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+        <mat-error *ngIf="campaignForm.get('startDate')?.hasError('required') && formSubmitted">
+          Start date is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="date-field">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate" required />
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+        <mat-error *ngIf="campaignForm.get('endDate')?.hasError('required') && formSubmitted">
+          End date is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Required Impressions -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Required Impressions</mat-label>
+      <input matInput type="number" formControlName="requiredImpressions" min="1" required />
+      <mat-icon matSuffix>numbers</mat-icon>
+      <mat-error *ngIf="campaignForm.get('requiredImpressions')?.hasError('required') && formSubmitted">
+        Required impressions is required
+      </mat-error>
+      <mat-error *ngIf="campaignForm.get('requiredImpressions')?.hasError('min') && formSubmitted">
+        Must be at least 1
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Media File Upload -->
+    <div class="file-upload-section">
+      <h3>Campaign Media</h3>
+      <p class="file-requirements">Accepted formats: MP4, MOV, AVI (Max 50MB)</p>
+      <input
+        type="file"
+        #fileUpload
+        (change)="onFileSelected($event)"
+        accept="video/mp4,video/quicktime,video/x-msvideo"
+        hidden
+        required
+      />
+      <button mat-stroked-button type="button" (click)="fileUpload.click()" class="upload-button">
+        <mat-icon>upload</mat-icon>
+        Choose File
+      </button>
+      <div *ngIf="selectedFile" class="file-info">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ selectedFile.name }} ({{ selectedFile.size | fileSize }})</span>
+        <button mat-icon-button (click)="removeFile()" class="remove-file">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <mat-error *ngIf="!selectedFile && formSubmitted" class="file-error">
+        Media file is required
+      </mat-error>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button mat-stroked-button type="button" routerLink="/campaigns" class="cancel-button">
+        Cancel
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" class="submit-button">
+        <span *ngIf="!isLoading">Create Campaign</span>
+        <span *ngIf="isLoading">
+          <mat-spinner diameter="20"></mat-spinner> Creating...
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

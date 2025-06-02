@@ -3,7 +3,7 @@ import { FormArray, FormControl, FormsModule, ValidatorFn } from '@angular/forms
 import { CommonModule } from '@angular/common';
 import { RequestSenderService } from '../../../core/request-sender.service';
 import { AdvertisersResponse } from '../../../api/Response/AdvertisersResponse';
-import { GetUserRequest } from '../../../api/Request/getUserRequest';
+// import { GetUserRequest } from '../../../api/Request/getUserRequest';
 import { Services } from '../../../core/services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -250,5 +250,14 @@ export class EditAdvertiserComponent implements OnInit {
 
   navigateToAdvertisers() {
     this.router.navigate(['/advertisers']);
+  }
+}
+export class GetUserRequest {
+  username: string | undefined;
+  includeLanguages?: boolean;
+  includeVehicleInfo?: boolean;
+
+  constructor(init?: Partial<GetUserRequest>) {
+    Object.assign(this, init);
   }
 }

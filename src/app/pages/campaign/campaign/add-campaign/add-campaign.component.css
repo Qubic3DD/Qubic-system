@@ -1,0 +1,137 @@
+.form-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #3f51b5;
+  font-weight: 500;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border-radius: 8px;
+}
+
+.loading-overlay p {
+  margin-top: 1rem;
+  color: #3f51b5;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.date-fields {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.date-fields mat-form-field {
+  flex: 1;
+}
+
+.file-upload-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.file-upload-section h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.file-requirements {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.upload-button {
+  margin-bottom: 1rem;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background: #f0f0f0;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+.file-info mat-icon {
+  color: #4caf50;
+  margin-right: 0.5rem;
+}
+
+.file-info span {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.remove-file {
+  margin-left: 0.5rem;
+}
+
+.file-error {
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  color: #f44336;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancel-button {
+  margin-right: auto;
+}
+
+.submit-button {
+  min-width: 150px;
+}
+
+mat-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .date-fields {
+    flex-direction: column;
+    gap: 0;
+  }
+}

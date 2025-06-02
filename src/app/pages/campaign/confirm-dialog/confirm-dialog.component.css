@@ -1,0 +1,14 @@
+h1.mat-dialog-title {
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.mat-dialog-content {
+  margin-bottom: 24px;
+  font-size: 16px;
+  color: #555;
+}
+
+.mat-dialog-actions {
+  padding: 8px 0;
+}
