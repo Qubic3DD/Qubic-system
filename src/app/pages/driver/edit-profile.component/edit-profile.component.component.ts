@@ -5,82 +5,139 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-edit-profile.component',
-
+  selector: 'app-edit-profile',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './edit-profile.component.component.html',
   styleUrl: './edit-profile.component.component.css',
-    imports: [
-    CommonModule,
-    FormsModule,
-
-   
-]
-,
 })
 export class EditProfileComponentComponent implements OnInit {
-  driver: any = {};
+  driver: any = {
+    vehicleInformation: [],
+    languages: [],
+    uploadedDocuments: []
+  };
   isLoading = false;
   selectedFile: File | null = null;
   selectedDocumentType = '';
   selectedDocumentPurpose = '';
-  documents: any[] = [];
   documentTypes: string[] = [];
   documentPurposes: string[] = [];
+  languagesInput = '';
+  currentStep = 1;
+  totalSteps = 5;
+  userDocuments: any[] = [];
 
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
-    public router: Router
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    const driverId = this.route.snapshot.paramMap.get('id');
-    if (driverId) {
-      this.fetchDriver(driverId);
-      this.fetchDriverDocuments(driverId);
+    const email = this.route.snapshot.paramMap.get('email');
+    if (email) {
+      this.fetchDriverProfile(email);
     }
     this.loadDocumentEnums();
   }
 
-  fetchDriver(id: string): void {
+  fetchDriverProfile(email: string): void {
     this.isLoading = true;
-    this.http.get<any>(`http://41.76.110.219:8181/profile/drivers/${id}`)
+    this.http.get<any>(`http://41.76.110.219:8181/profile/retrieve/${email}`)
       .subscribe({
         next: (response) => {
           this.driver = response.data;
+          
+          if (!this.driver.vehicleInformation) {
+            this.driver.vehicleInformation = [];
+          }
+          if (!this.driver.languages) {
+            this.driver.languages = [];
+          }
+          if (!this.driver.uploadedDocuments) {
+            this.driver.uploadedDocuments = [];
+          }
+          
+          this.languagesInput = this.driver.languages.join(', ');
+          
+          if (this.driver.dateOfBirth) {
+            this.driver.dateOfBirth = this.formatDateForInput(this.driver.dateOfBirth);
+          }
+          
+          this.loadUserDocuments();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error fetching driver:', error);
+          console.error('Error fetching driver profile:', error);
           this.isLoading = false;
         }
       });
   }
 
-  fetchDriverDocuments(driverId: string): void {
-    this.http.get<any>(`http://41.76.110.219:8181/api/v1/files?userName=${this.driver.userName}`)
+  loadUserDocuments(): void {
+    if (!this.driver.username) return;
+    
+    this.http.get<any>(`http://41.76.110.219:8181/api/v1/files/list?username=${this.driver.username}`)
       .subscribe({
         next: (response) => {
-          this.documents = response.data;
+          this.userDocuments = response.data || [];
         },
         error: (error) => {
-          console.error('Error fetching documents:', error);
+          console.error('Error loading user documents:', error);
         }
       });
+  }
+
+  private formatDateForInput(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
   }
 
   loadDocumentEnums(): void {
-    // These would ideally come from an API endpoint
     this.documentTypes = [
-      'IDENTITY', 'PASSPORT', 'DRIVER_LICENSE', 
-      'LICENSE_DISC', 'CAR_REGISTRATION', 
-      'INSURANCE', 'CRIMINAL_REPORT'
+      'IDENTITY',
+      'PASSPORT',
+      'DRIVER_LICENSE',
+      'LICENSE_DISC',
+      'CAR_REGISTRATION',
+      'BOLT_REGISTRATION',
+      'UBER_REGISTRATION',
+      'IN_DRIVER_REGISTRATION',
+      'INSURANCE',
+      'CRIMINAL_REPORT',
+      'DRIVING_HISTORY_REPORT',
+      'BUSINESS_REGISTRATION',
+      'TAX_REGISTRATION',
+      'MAINTENANCE_RECORDS',
+      'PROFILE_PICTURE',
+      'PROFILE_VIDEO',
+      'CAMPAIGN_PICTURE',
+      'CAMPAIGN_VIDEO',
+      'OTHER_IMAGE',
+      'OTHER_VIDEO',
+      'OTHER_DOCUMENT'
     ];
-    
+
     this.documentPurposes = [
-      'PROFILE_PICTURE', 'ID_DOCUMENT', 
-      'PROOF_OF_ADDRESS', 'LICENSE',
-      'VEHICLE_REGISTRATION', 'VEHICLE_INSURANCE'
+      'PROFILE_PICTURE',
+      'ID_DOCUMENT',
+      'PROOF_OF_ADDRESS',
+      'LICENSE',
+      'VEHICLE_REGISTRATION',
+      'VEHICLE_INSURANCE',
+      'VEHICLE_INSPECTION_REPORT',
+      'VEHICLE_PHOTO',
+      'ROADWORTHY_CERTIFICATE',
+      'BUSINESS_REGISTRATION_CERTIFICATE',
+      'BUSINESS_LICENSE',
+      'TAX_CLEARANCE_CERTIFICATE',
+      'COMPANY_PROFILE',
+      'COMPANY_LOGO',
+      'BUSINESS_ADDRESS_PROOF',
+      'CAMPAIGN_VIDEO',
+      'CAMPAIGN_PICTURE',
+      'OTHER'
     ];
   }
 
@@ -94,17 +151,18 @@ export class EditProfileComponentComponent implements OnInit {
   }
 
   uploadProfilePicture(file: File): void {
-    if (!file || !this.driver.userName) return;
+    if (!file || !this.driver.username) return;
     
     const formData = new FormData();
     formData.append('file', file);
     
     this.http.post<any>(
-      `http://41.76.110.219:8181/api/v1/files?userName=${this.driver.userName}&fileType=IMAGE&documentPurpose=PROFILE_PICTURE`,
+      `http://41.76.110.219:8181/api/v1/files?userName=${this.driver.username}&fileType=IMAGE&documentPurpose=PROFILE_PICTURE`,
       formData
     ).subscribe({
       next: (response) => {
         this.driver.profilePictureUrl = response.data.downloadUrl;
+        this.loadUserDocuments(); // Refresh documents list
       },
       error: (error) => {
         console.error('Error uploading profile picture:', error);
@@ -113,7 +171,7 @@ export class EditProfileComponentComponent implements OnInit {
   }
 
   uploadDocument(): void {
-    if (!this.selectedFile || !this.selectedDocumentType || !this.selectedDocumentPurpose || !this.driver.userName) {
+    if (!this.selectedFile || !this.selectedDocumentType || !this.selectedDocumentPurpose || !this.driver.username) {
       alert('Please select a file, document type, and purpose');
       return;
     }
@@ -122,12 +180,14 @@ export class EditProfileComponentComponent implements OnInit {
     formData.append('file', this.selectedFile);
     
     this.http.post<any>(
-      `http://41.76.110.219:8181/api/v1/files?userName=${this.driver.userName}&fileType=${this.selectedDocumentType}&documentPurpose=${this.selectedDocumentPurpose}`,
+      `http://41.76.110.219:8181/api/v1/files?userName=${this.driver.username}&fileType=${this.selectedDocumentType}&documentPurpose=${this.selectedDocumentPurpose}`,
       formData
     ).subscribe({
       next: (response) => {
-        this.documents.push(response.data);
+        this.loadUserDocuments(); // Refresh documents list
         this.selectedFile = null;
+        this.selectedDocumentType = '';
+        this.selectedDocumentPurpose = '';
       },
       error: (error) => {
         console.error('Error uploading document:', error);
@@ -139,7 +199,48 @@ export class EditProfileComponentComponent implements OnInit {
     window.open(`http://41.76.110.219:8181/api/v1/files/stream?id=${documentId}`, '_blank');
   }
 
+  checkDocumentExists(purpose: string): boolean {
+    return this.userDocuments.some(doc => doc.documentPurpose === purpose);
+  }
+
+  getDocumentUrl(purpose: string): string {
+    const doc = this.userDocuments.find(d => d.documentPurpose === purpose);
+    return doc ? `http://41.76.110.219:8181/api/v1/files/stream?id=${doc.id}` : '';
+  }
+
+  addVehicle(): void {
+    this.driver.vehicleInformation.push({
+      capacity: '',
+      colour: '',
+      licenseRegistrationNo: '',
+      transportType: '',
+      vehicleType: ''
+    });
+  }
+
+  removeVehicle(index: number): void {
+    this.driver.vehicleInformation.splice(index, 1);
+  }
+
+  nextStep(): void {
+    if (this.currentStep < this.totalSteps) {
+      this.currentStep++;
+    }
+  }
+
+  prevStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
   updateDriver(): void {
+    if (this.languagesInput) {
+      this.driver.languages = this.languagesInput.split(',').map(lang => lang.trim()).filter(lang => lang);
+    } else {
+      this.driver.languages = [];
+    }
+
     this.isLoading = true;
     this.http.put<any>(`http://41.76.110.219:8181/profile/edit`, this.driver)
       .subscribe({
@@ -155,5 +256,6 @@ export class EditProfileComponentComponent implements OnInit {
   }
 
   cancelEdit(): void {
-  this.router.navigate(['/drivers']);
-}}
+    this.router.navigate(['/drivers']);
+  }
+}
