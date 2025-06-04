@@ -1,0 +1,35 @@
+<!-- ride-statistics.component.html -->
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ride Statistics</h2>
+  <div class="grid grid-cols-2 gap-4">
+    <div class="text-center">
+      <div class="text-2xl font-bold">{{ totalRides | number }}</div>
+      <div class="text-sm text-gray-500">Total Rides</div>
+    </div>
+    
+    <div class="text-center">
+      <div class="text-2xl font-bold">{{ averagePointsPerRide | number:'1.1-1' }}</div>
+      <div class="text-sm text-gray-500">Avg Points/Ride</div>
+    </div>
+    
+    <div class="text-center">
+      <div class="text-2xl font-bold">{{ averageAdsPerRide | number:'1.1-1' }}</div>
+      <div class="text-sm text-gray-500">Avg Ads/Ride</div>
+    </div>
+    
+    <div class="text-center">
+      <div class="text-2xl font-bold">{{ totalPointsEarned | number }}</div>
+      <div class="text-sm text-gray-500">Total Points</div>
+    </div>
+    
+    <div class="text-center">
+      <div class="text-2xl font-bold">{{ totalDriverPoints | number }}</div>
+      <div class="text-sm text-gray-500">Driver Points</div>
+    </div>
+    
+    <div class="text-center">
+      <div class="text-2xl font-bold">R{{ totalDriverEarnings | number }}</div>
+      <div class="text-sm text-gray-500">Driver Earnings</div>
+    </div>
+  </div>
+</div>

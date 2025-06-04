@@ -1,3 +1,180 @@
+
+
+<!-- dashboard.component.html -->
+<div class="dashboard-container p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <strong class="font-bold">Error!</strong>
+    <span class="block sm:inline">{{ error }}</span>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="analyticsData && !isLoading" class="space-y-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Analytics Dashboard</h1>
+      <div class="flex items-center space-x-4">
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+          Export Report
+        </button>
+      </div>
+    </div>
+
+    <!-- Key Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <app-metrics-card 
+        title="Total Users" 
+        [value]="formatNumber(analyticsData.totalUsers)" 
+        [change]="5" 
+        icon="👥"
+        color="blue">
+      </app-metrics-card>
+
+      <app-metrics-card 
+        title="Total Vehicles" 
+        [value]="formatNumber(analyticsData.totalVehicles)" 
+        [change]="2" 
+        icon="🚗"
+        color="green">
+      </app-metrics-card>
+
+      <app-metrics-card 
+        title="Active Campaigns" 
+        [value]="formatNumber(analyticsData.activeCampaigns)" 
+        [change]="10" 
+        icon="📢"
+        color="yellow">
+      </app-metrics-card>
+
+      <app-metrics-card 
+        title="Total Impressions" 
+        [value]="formatNumber(analyticsData.totalImpressions)" 
+        [change]="-3" 
+        icon="👀"
+        color="purple">
+      </app-metrics-card>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left Column -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Revenue Chart -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Revenue Overview</h2>
+            <select class="bg-gray-100 dark:bg-gray-700 border-none text-sm rounded-lg px-3 py-1">
+              <option>Last 12 Months</option>
+              <option>Last 6 Months</option>
+              <option>Last 30 Days</option>
+            </select>
+          </div>
+          <div class="h-80">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Users Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Types</h2>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Drivers</span>
+                  <span class="text-sm font-medium text-gray-900 dark:text-white">
+                    {{ analyticsData.drivers }} ({{ calculatePercentage(analyticsData.drivers, analyticsData.totalUsers) }}%)
+                  </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div class="bg-blue-600 h-2.5 rounded-full" 
+                       [style.width]="calculatePercentage(analyticsData.drivers, analyticsData.totalUsers) + '%'"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Passengers</span>
+                  <span class="text-sm font-medium text-gray-900 dark:text-white">
+                    {{ analyticsData.passengers }} ({{ calculatePercentage(analyticsData.passengers, analyticsData.totalUsers) }}%)
+                  </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div class="bg-green-600 h-2.5 rounded-full" 
+                       [style.width]="calculatePercentage(analyticsData.passengers, analyticsData.totalUsers) + '%'"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Campaign Status</h2>
+            <app-campaign-status 
+              [activeCampaigns]="analyticsData.activeCampaigns"
+              [inactiveCampaigns]="analyticsData.inactiveCampaigns"
+              [totalCampaigns]="analyticsData.totalCampaigns">
+            </app-campaign-status>
+            <div class="mt-4 flex justify-between">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600">{{ analyticsData.activeCampaigns }}</div>
+                <div class="text-sm text-gray-500">Active</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-400">{{ analyticsData.inactiveCampaigns }}</div>
+                <div class="text-sm text-gray-500">Inactive</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Vehicle Distribution -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Vehicle Distribution</h2>
+          <div class="h-64">
+            <app-vehicle-distribution [distribution]="analyticsData.vehicleTypeDistribution"></app-vehicle-distribution>
+          </div>
+        </div>
+<!-- Add to dashboard.component.html -->
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Campaign Performance Trend</h2>
+  <div class="h-80">
+    <canvas id="campaignPerformanceChart"></canvas>
+  </div>
+</div>
+        <!-- Recent Activities -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activities</h2>
+          <div *ngIf="analyticsData.recentActivities?.length; else noActivities">
+            <div *ngFor="let activity of analyticsData.recentActivities" class="mb-4 last:mb-0">
+              <div class="flex items-start">
+                <div class="p-2 rounded-full bg-blue-100 dark:bg-blue-900/50 mr-3">
+                  <span class="text-blue-600 dark:text-blue-400">📊</span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-gray-900 dark:text-white">{{ activity.message }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ activity.time }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noActivities>
+            <div class="text-center py-4 text-gray-500 dark:text-gray-400">
+              No recent activities
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <app-cards></app-cards>
 <app-campaigns></app-campaigns>
 <app-active-campaigns [activeCampaigns]="activeCampaigns" [recentAlerts]="recentAlerts">

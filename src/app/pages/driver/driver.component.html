@@ -68,11 +68,21 @@
             <!-- Card Header -->
             <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                  <span class="text-blue-600 dark:text-blue-300 font-medium">
-                    {{ driver.firstName?.charAt(0) || 'D' }}{{ driver.lastName?.charAt(0) || '' }}
-                  </span>
-                </div>
+            <div class="h-10 w-10 rounded-full overflow-hidden bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+  <ng-container *ngIf="getDocumentUrlByUsernameAndPurpose(driver.email, 'PROFILE_PICTURE'); else initials">
+    <img
+      [src]="getDocumentUrlByUsernameAndPurpose(driver.email, 'PROFILE_PICTURE')"
+      alt="Profile Picture"
+      class="h-full w-full object-cover"
+    />
+  </ng-container>
+  <ng-template #initials>
+    <span class="text-blue-600 dark:text-blue-300 font-medium">
+      {{ driver.firstName?.charAt(0) || 'D' }}{{ driver.lastName?.charAt(0) || '' }}
+    </span>
+  </ng-template>
+</div>
+
                 <div>
                   <h2 class="font-semibold">{{ driver.firstName }} {{ driver.lastName }}</h2>
                   <p class="text-xs text-gray-500 dark:text-gray-400">

@@ -22,7 +22,7 @@ import {EditProfileComponentComponent} from '../app/pages/driver/edit-profile.co
       { path: 'campaigns', loadComponent: () => import('./pages/campaign/campaign.component').then(m => m.CampaignComponent) },
       { path: 'drivers', loadComponent: () => import('./pages/driver/driver.component').then(m => m.DriverComponent) },
 
-       { path: 'drivers/edit/:id', component: EditProfileComponentComponent },
+{ path: 'drivers/edit/:email', component: EditProfileComponentComponent },
       {
         path: 'advertisers',
         children: [

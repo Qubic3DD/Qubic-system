@@ -1,25 +1,170 @@
 
 import { Component, AfterViewInit, Input } from '@angular/core';
-import { HeaderComponent } from '../header/header.component';
-import { CardsComponent } from '../cards/cards.component';
-import { CampaignsComponent } from '../campaigns/campaigns.component';
-import { ActiveCampaignsComponent } from '../active-campaigns/active-campaigns.component';
-import { RevenueTrendComponent } from '../revenue-trend/revenue-trend.component';
-
-
 import Chart from 'chart.js/auto';
+import { AnalyticsService } from '../../services/analytics.service';
+import {MetricsCardComponent} from '../../components/dashboard/metrics-card/metrics-card.component'
+import {CampaignStatusComponent} from '../../components/dashboard/campaign-status/campaign-status.component'
+import {VehicleDistributionComponent} from'../../components/dashboard/vehicle-distribution/vehicle-distribution.component'
+import { CommonModule } from '@angular/common';
+import { CardsComponent } from "../cards/cards.component";
+import { CampaignsComponent } from "../campaigns/campaigns.component";
+import { ActiveCampaignsComponent } from "../active-campaigns/active-campaigns.component";
+import { RevenueTrendComponent } from "../revenue-trend/revenue-trend.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CardsComponent, CampaignsComponent, ActiveCampaignsComponent,RevenueTrendComponent],
+  imports: [MetricsCardComponent, CampaignStatusComponent, VehicleDistributionComponent, CommonModule, CardsComponent, CampaignsComponent, ActiveCampaignsComponent, RevenueTrendComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements AfterViewInit {
- 
-  isSidebarCollapsed = false;
+ analyticsData: any;
+  isLoading = true;
+  error: string | null = null;
 
+  isSidebarCollapsed = false;
+ constructor(private analyticsService: AnalyticsService) {}
+ngOnInit() {
+    this.loadAnalyticsData();
+  }
+
+ loadAnalyticsData() {
+    this.analyticsService.getAnalytics().subscribe({
+      next: (data) => {
+        this.analyticsData = data.analytics;
+        this.isLoading = false;
+        setTimeout(() => this.initCharts(), 0); // Wait for view to update
+      },
+      error: (err) => {
+        this.error = 'Failed to load analytics data';
+        this.isLoading = false;
+        console.error(err);
+      }
+    });
+  }
+// Add to dashboard.component.ts
+private initCharts() {
+  this.createRevenueChart();
+  this.createCampaignPerformanceChart();
+}
+
+private createRevenueChart() {
+  const isDarkMode = document.documentElement.classList.contains('dark');
+  const ctx = document.getElementById('revenueChart') as HTMLCanvasElement;
+  
+  if (!ctx) return;
+
+  // Sample data - in a real app you would use actual revenue data from analyticsData
+  const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const data = [65, 59, 80, 81, 56, 55, 40, 72, 68, 85, 90, 95];
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Revenue',
+        data: data,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+          },
+          ticks: {
+            callback: function(value) {
+              return 'R' + value + 'k';
+            },
+            color: isDarkMode ? '#9CA3AF' : '#6B7280'
+          }
+        },
+        x: {
+          grid: {
+            display: false,
+            color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+          },
+          ticks: {
+            color: isDarkMode ? '#9CA3AF' : '#6B7280'
+          }
+        }
+      }
+    }
+  });
+}
+
+private createCampaignPerformanceChart() {
+  const campaignCtx = document.getElementById('campaignPerformanceChart') as HTMLCanvasElement;
+  
+  if (!campaignCtx || !this.analyticsData) return;
+
+  new Chart(campaignCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Active', 'Inactive', 'Saved'],
+      datasets: [{
+        label: 'Campaigns',
+        data: [
+          this.analyticsData.activeCampaigns,
+          this.analyticsData.inactiveCampaigns,
+          this.analyticsData.totalSavedCampaigns
+        ],
+        backgroundColor: [
+          'rgba(59, 130, 246, 0.7)',
+          'rgba(107, 114, 128, 0.7)',
+          'rgba(16, 185, 129, 0.7)'
+        ],
+        borderColor: [
+          'rgb(59, 130, 246)',
+          'rgb(107, 114, 128)',
+          'rgb(16, 185, 129)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
+        }
+      }
+    }
+  });
+}
+formatCurrency(amount: number): string {
+    return 'R' + (amount?.toFixed(2) || '0.00');
+  }
+
+  // Format numbers with commas
+  formatNumber(num: number): string {
+    return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || '0';
+  }
+
+  // Calculate percentage
+  calculatePercentage(part: number, total: number): number {
+    return total > 0 ? Math.round((part / total) * 100) : 0;
+  }
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }

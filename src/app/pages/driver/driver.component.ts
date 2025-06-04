@@ -55,7 +55,12 @@ export class DriverComponent implements OnInit {
         }
       });
   }
-
+getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
+  if (!username || !purpose) return '';
+  const encodedUsername = encodeURIComponent(username);
+  const encodedPurpose = encodeURIComponent(purpose);
+  return `http://41.76.110.219:8181/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+}
   filterDrivers(): void {
     if (!this.searchQuery) {
       this.filteredDrivers = [...this.drivers];
@@ -121,7 +126,7 @@ export class DriverComponent implements OnInit {
   }
 
 editDriver(driver: any) {
-  this.router.navigate(['/drivers/edit', driver.id]);
+  this.router.navigate(['/drivers/edit', driver.email]);
 }
   viewDriverDetails(id: number): void {
     // Implement view details functionality
