@@ -60,7 +60,7 @@ export class EditProfileComponentComponent implements OnInit {
   currentStep = 1;
   totalSteps = 5;
   userDocuments: UserDocument[] = [];
-
+successPopupVisible = false;
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
@@ -75,7 +75,12 @@ export class EditProfileComponentComponent implements OnInit {
     }
     this.loadDocumentEnums();
   }
-
+showSuccessPopup() {
+  this.successPopupVisible = true;
+  setTimeout(() => {
+    this.successPopupVisible = false;
+  }, 3000); // Hide after 3 seconds
+}
   fetchDriverProfile(email: string): void {
     this.isLoading = true;
     this.http.get<ApiResponse<DriverProfile>>(`http://41.76.110.219:8181/profile/retrieve/${email}`)
@@ -195,6 +200,24 @@ downloadDocument(username: string, documentPurpose: string): void {
       'OTHER'
     ];
   }
+// In your component.ts file
+vehicleTypes = [
+  { label: 'Hatchback', value: 'HATCH' },
+  { label: 'Sedan', value: 'SEDAN' },
+  { label: 'SUV', value: 'SUV' },
+  { label: 'Taxi', value: 'TAXI' },
+  { label: 'Bus', value: 'BUS' },
+  { label: 'Mini Bus', value: 'MINI_BUS' },
+];
+
+transportTypes = [
+  { label: 'Taxi', value: 'TAXI' },
+  { label: 'Bus', value: 'BUS' },
+  { label: 'Bolt', value: 'BOLT' },
+  { label: 'Uber', value: 'UBER' },
+  { label: 'InDrive', value: 'InDRIVE' },
+  { label: 'Other', value: 'OTHER' },
+];
 
   onFileSelected(event: any, isProfilePicture: boolean = false): void {
     const file: File = event.target.files[0];
@@ -302,31 +325,42 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
     }
   }
 
-  updateDriver(): void {
-    // Process languages input
-    if (this.languagesInput) {
-      this.driver.languages = this.languagesInput.split(',').map(lang => lang.trim()).filter(lang => lang);
-    } else {
-      this.driver.languages = [];
-    }
-
-    this.isLoading = true;
-    this.http.put<ApiResponse<DriverProfile>>(`http://41.76.110.219:8181/profile/edit`, this.driver)
-      .subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          if (response.message === 'Profile updated successfully') {
-            this.router.navigate(['/drivers']);
-          } else {
-            console.error('Update failed:', response.message);
-          }
-        },
-        error: (error) => {
-          console.error('Error updating driver:', error);
-          this.isLoading = false;
-        }
-      });
+updateDriver(): void {
+  // Process languages input
+  if (this.languagesInput) {
+    this.driver.languages = this.languagesInput
+      .split(',')
+      .map(lang => lang.trim())
+      .filter(lang => lang);
+  } else {
+    this.driver.languages = [];
   }
+
+  // ✅ Convert dateOfBirth (string like '2000-06-04') to proper ISO string
+  if (this.driver.dateOfBirth) {
+    const parsedDate = new Date(this.driver.dateOfBirth);
+    this.driver.dateOfBirth = parsedDate.toISOString(); // Sends '2000-06-04T00:00:00.000Z'
+  }
+
+  this.isLoading = true;
+  this.http.post<ApiResponse<DriverProfile>>('http://localhost:8181/profile/edit', this.driver)
+    .subscribe({
+      next: (response) => {
+        this.isLoading = false;
+     if (response.message === 'Profile updated successfully') {
+          this.showSuccessPopup(); // 👈 Show success bar
+          setTimeout(() => this.router.navigate(['/drivers']), 3000); // navigate after delay
+        } else {
+          console.error('Update failed:', response.message);
+        }
+      },
+      error: (error) => {
+        console.error('Error updating driver:', error);
+        this.isLoading = false;
+      }
+    });
+}
+
 
   cancelEdit(): void {
     this.router.navigate(['/drivers']);
