@@ -1,97 +1,260 @@
-<div class="form-container">
-  <h1>Add New Campaign</h1>
+<div class="mx-auto p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+  <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+    Add New Campaign
+  </h1>
 
-  <form [formGroup]="campaignForm" (ngSubmit)="oonSubmit()" enctype="multipart/form-data" novalidate>
-    Loading Spinner
-    <div *ngIf="loadingAdvertisers" class="loading-overlay">
-      <mat-spinner diameter="50"></mat-spinner>
-      <p>Loading advertisers...</p>
+  <form
+    [formGroup]="campaignForm"
+    (ngSubmit)="onSubmit()"
+    enctype="multipart/form-data"
+    novalidate
+    class="space-y-6"
+  >
+    <!-- Loading Spinner -->
+    <div
+      *ngIf="loadingAdvertisers"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-xl flex flex-col items-center"
+      >
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"
+        ></div>
+        <p class="text-gray-700 dark:text-gray-300">Loading advertisers...</p>
+      </div>
     </div>
-    
-<!-- Advertiser Selection -->
-<mat-form-field appearance="fill" class="full-width">
-  <mat-label>Select Advertiser</mat-label>
 
-  <!-- Show loading spinner inside select while loading -->
-  <mat-select *ngIf="!loadingAdvertisers" formControlName="advertiserId" required>
-    <mat-option *ngFor="let advertiser of advertisers" [value]="advertiser.id">
-      {{ advertiser.firstName }} {{ advertiser.lastName }} ({{ advertiser.email }})
-    </mat-option>
-  </mat-select>
+    <!-- Advertiser Selection -->
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >Select Advertiser</label
+      >
 
-  <!-- Show loading spinner instead of dropdown -->
-  <div *ngIf="loadingAdvertisers" style="display: flex; align-items: center; padding: 0.5rem;">
-    <mat-spinner diameter="30"></mat-spinner>
-    <span style="margin-left: 1rem; color: #3f51b5;">Loading advertisers...</span>
-  </div>
+      <div *ngIf="!loadingAdvertisers" class="relative">
+        <select
+          formControlName="advertiserId"
+          required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
+        >
+          <option value="" disabled selected>Select an advertiser</option>
+          <option
+            *ngFor="let advertiser of advertisers"
+            [value]="advertiser.id"
+          >
+            {{ advertiser.firstName }} {{ advertiser.lastName }} ({{
+              advertiser.email
+            }})
+          </option>
+        </select>
+        <div
+          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+        </div>
+      </div>
 
-  <mat-icon matSuffix *ngIf="!loadingAdvertisers">person</mat-icon>
+      <div
+        *ngIf="loadingAdvertisers"
+        class="flex items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-md"
+      >
+        <div
+          class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500 mr-3"
+        ></div>
+        <span class="text-gray-700 dark:text-gray-300"
+          >Loading advertisers...</span
+        >
+      </div>
 
-  <mat-error *ngIf="campaignForm.get('advertiserId')?.hasError('required') && formSubmitted">
-    Advertiser is required
-  </mat-error>
-</mat-form-field>
-
+      <p
+        *ngIf="
+          campaignForm.get('advertiserId')?.hasError('required') &&
+          formSubmitted
+        "
+        class="mt-1 text-sm text-red-600"
+      >
+        Advertiser is required
+      </p>
+    </div>
 
     <!-- Campaign Name -->
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Campaign Name</mat-label>
-      <input matInput formControlName="name" required />
-      <mat-icon matSuffix>campaign</mat-icon>
-      <mat-error *ngIf="campaignForm.get('name')?.hasError('required') && formSubmitted">
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >Campaign Name</label
+      >
+      <div class="relative">
+        <input
+          formControlName="name"
+          required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
+        />
+        <div
+          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+            />
+          </svg>
+        </div>
+      </div>
+      <p
+        *ngIf="campaignForm.get('name')?.hasError('required') && formSubmitted"
+        class="mt-1 text-sm text-red-600"
+      >
         Campaign name is required
-      </mat-error>
-    </mat-form-field>
+      </p>
+    </div>
 
     <!-- Campaign Description -->
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description" rows="3" required></textarea>
-      <mat-error *ngIf="campaignForm.get('description')?.hasError('required') && formSubmitted">
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >Description</label
+      >
+      <textarea
+        formControlName="description"
+        rows="3"
+        required
+        class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
+      ></textarea>
+      <p
+        *ngIf="
+          campaignForm.get('description')?.hasError('required') && formSubmitted
+        "
+        class="mt-1 text-sm text-red-600"
+      >
         Description is required
-      </mat-error>
-    </mat-form-field>
+      </p>
+    </div>
 
     <!-- Date Range Fields -->
-    <div class="date-fields">
-      <mat-form-field appearance="fill" class="date-field">
-        <mat-label>Start Date</mat-label>
-        <input matInput [matDatepicker]="startPicker" formControlName="startDate" required />
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-        <mat-error *ngIf="campaignForm.get('startDate')?.hasError('required') && formSubmitted">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-2">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >Start Date</label
+        >
+        <input
+          type="date"
+          formControlName="startDate"
+          required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
+        />
+        <p
+          *ngIf="
+            campaignForm.get('startDate')?.hasError('required') && formSubmitted
+          "
+          class="mt-1 text-sm text-red-600"
+        >
           Start date is required
-        </mat-error>
-      </mat-form-field>
+        </p>
+      </div>
 
-      <mat-form-field appearance="fill" class="date-field">
-        <mat-label>End Date</mat-label>
-        <input matInput [matDatepicker]="endPicker" formControlName="endDate" required />
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-        <mat-error *ngIf="campaignForm.get('endDate')?.hasError('required') && formSubmitted">
+      <div class="space-y-2">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >End Date</label
+        >
+        <input
+          type="date"
+          formControlName="endDate"
+          required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
+        />
+        <p
+          *ngIf="
+            campaignForm.get('endDate')?.hasError('required') && formSubmitted
+          "
+          class="mt-1 text-sm text-red-600"
+        >
           End date is required
-        </mat-error>
-      </mat-form-field>
+        </p>
+      </div>
     </div>
 
     <!-- Required Impressions -->
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Required Impressions</mat-label>
-      <input matInput type="number" formControlName="requiredImpressions" min="1" required />
-      <mat-icon matSuffix>numbers</mat-icon>
-      <mat-error *ngIf="campaignForm.get('requiredImpressions')?.hasError('required') && formSubmitted">
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+        >Required Impressions</label
+      >
+      <div class="relative">
+        <input
+          type="number"
+          formControlName="requiredImpressions"
+          min="1"
+          required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
+        />
+        <div
+          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
+          </svg>
+        </div>
+      </div>
+      <p
+        *ngIf="
+          campaignForm.get('requiredImpressions')?.hasError('required') &&
+          formSubmitted
+        "
+        class="mt-1 text-sm text-red-600"
+      >
         Required impressions is required
-      </mat-error>
-      <mat-error *ngIf="campaignForm.get('requiredImpressions')?.hasError('min') && formSubmitted">
+      </p>
+      <p
+        *ngIf="
+          campaignForm.get('requiredImpressions')?.hasError('min') &&
+          formSubmitted
+        "
+        class="mt-1 text-sm text-red-600"
+      >
         Must be at least 1
-      </mat-error>
-    </mat-form-field>
+      </p>
+    </div>
 
     <!-- Media File Upload -->
-    <div class="file-upload-section">
-      <h3>Campaign Media</h3>
-      <p class="file-requirements">Accepted formats: MP4, MOV, AVI (Max 50MB)</p>
+    <div class="space-y-4">
+      <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300">
+        Campaign Media
+      </h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        Accepted formats: MP4, MOV, AVI (Max 50MB)
+      </p>
+
       <input
         type="file"
         #fileUpload
@@ -100,31 +263,119 @@
         hidden
         required
       />
-      <button mat-stroked-button type="button" (click)="fileUpload.click()" class="upload-button">
-        <mat-icon>upload</mat-icon>
+
+      <button
+        type="button"
+        (click)="fileUpload.click()"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 mr-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
+        </svg>
         Choose File
       </button>
-      <div *ngIf="selectedFile" class="file-info">
-        <mat-icon>check_circle</mat-icon>
-        <span>{{ selectedFile.name }} ({{ selectedFile.size | fileSize }})</span>
-        <button mat-icon-button (click)="removeFile()" class="remove-file">
-          <mat-icon>close</mat-icon>
+
+      <div
+        *ngIf="selectedFile"
+        class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-md"
+      >
+        <div class="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-green-500 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span class="text-gray-700 dark:text-gray-300"
+            >{{ selectedFile.name }} ({{ selectedFile.size | fileSize }})</span
+          >
+        </div>
+        <button
+          type="button"
+          (click)="removeFile()"
+          class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
         </button>
       </div>
-      <mat-error *ngIf="!selectedFile && formSubmitted" class="file-error">
+
+      <p
+        *ngIf="!selectedFile && formSubmitted"
+        class="mt-1 text-sm text-red-600"
+      >
         Media file is required
-      </mat-error>
+      </p>
     </div>
 
     <!-- Form Actions -->
-    <div class="form-actions">
-      <button mat-stroked-button type="button" routerLink="/campaigns" class="cancel-button">
+    <div class="flex justify-end space-x-4 pt-4">
+      <button
+        type="button"
+        routerLink="/campaigns"
+        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
         Cancel
       </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" class="submit-button">
+      <button
+        type="submit"
+        [disabled]="isLoading"
+        class="inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
         <span *ngIf="!isLoading">Create Campaign</span>
-        <span *ngIf="isLoading">
-          <mat-spinner diameter="20"></mat-spinner> Creating...
+        <span *ngIf="isLoading" class="flex items-center">
+          <svg
+            class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          Creating...
         </span>
       </button>
     </div>
