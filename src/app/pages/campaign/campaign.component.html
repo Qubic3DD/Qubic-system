@@ -1,9 +1,30 @@
-<div class="campaign-container">
-  <div class="header-actions">
-    <h1 class="page-title">Campaigns</h1>
-    <div class="action-buttons">
-      <button mat-stroked-button (click)="loadCampaigns()">
-        <mat-icon>refresh</mat-icon>
+<div class="p-6 dark:bg-gray-900">
+  <!-- Header with title and action buttons -->
+  <div
+    class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6"
+  >
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-4 md:mb-0">
+      Campaigns
+    </h1>
+    <div class="flex space-x-3">
+      <button
+        (click)="loadCampaigns()"
+        class="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 mr-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          />
+        </svg>
         Refresh
       </button>
       <button
@@ -29,46 +50,184 @@
     </div>
   </div>
 
-  <div class="filter-section">
-    <mat-form-field appearance="outline">
-      <mat-label>Filter by Status</mat-label>
-      <mat-select [(value)]="statusFilter" (selectionChange)="filterCampaigns()">
-        <mat-option value="all">All</mat-option>
-        <mat-option value="active">Active</mat-option>
-        <mat-option value="inactive">Inactive</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <!-- Filter section -->
+  <div class="mb-6">
+    <label
+      for="statusFilter"
+      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+      >Filter by Status</label
+    >
+    <select
+      id="statusFilter"
+      [(ngModel)]="statusFilter"
+      (change)="filterCampaigns()"
+      class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+    >
+      <option value="all">All</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
   </div>
 
-  <div *ngIf="loading" class="loading-spinner">
-    <mat-spinner></mat-spinner>
+  <!-- Loading state -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <div
+      class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 dark:border-blue-400"
+    ></div>
   </div>
 
-  <div *ngIf="!loading && filteredCampaigns.length === 0" class="no-campaigns">
-    <p>No campaigns available</p>
+  <!-- Empty state -->
+  <div
+    *ngIf="!loading && filteredCampaigns.length === 0"
+    class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow text-center"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+      No campaigns available
+    </h3>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+      Get started by creating a new campaign.
+    </p>
+    <div class="mt-6">
+      <button
+        (click)="addCampaign()"
+        type="button"
+        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="-ml-1 mr-2 h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+          />
+        </svg>
+        New Campaign
+      </button>
+    </div>
   </div>
 
-  <div class="campaign-grid" *ngIf="!loading && filteredCampaigns.length > 0">
-    <mat-card class="campaign-card" *ngFor="let campaign of filteredCampaigns">
-      <mat-card-header>
-        <mat-card-title>{{ campaign.name }}</mat-card-title>
-        <mat-card-subtitle>
-          {{ campaign.startDate | date }} - {{ campaign.endDate | date }}
-        </mat-card-subtitle>
-        
-        <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="viewCampaignDetails(campaign.id)">
-            <mat-icon>visibility</mat-icon>
-            <span>View</span>
+  <!-- Campaign grid -->
+  <div
+    *ngIf="!loading && filteredCampaigns.length > 0"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+  >
+    <div
+      *ngFor="let campaign of filteredCampaigns"
+      class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg flex flex-col"
+    >
+      <div class="px-4 py-5 sm:p-6 flex-grow">
+        <div class="flex items-start justify-between">
+          <div>
+            <h3
+              class="text-lg leading-6 font-medium text-gray-900 dark:text-white"
+            >
+              {{ campaign.name }}
+            </h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {{ campaign.startDate | date }} - {{ campaign.endDate | date }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="mt-4">
+          <div
+            class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-1"
+          >
+            <span>Impressions</span>
+            <span
+              >{{ campaign.accumulatedImpressions }} /
+              {{ campaign.requiredImpressions }}</span
+            >
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+            <div
+              class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full"
+              [style.width.%]="
+                (campaign.accumulatedImpressions /
+                  campaign.requiredImpressions) *
+                100
+              "
+            ></div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <p class="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+          {{ campaign.description }}
+        </p>
+
+        <!-- Status badge -->
+        <div class="mt-4">
+          <span
+            [class]="
+              campaign.active
+                ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+            "
+          >
+            {{ campaign.active ? "Active" : "Inactive" }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Footer with action icons -->
+      <div
+        class="border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6"
+      >
+        <div class="flex justify-end space-x-4">
+          <!-- View button -->
+          <button
+            (click)="viewCampaignDetails(campaign.id)"
+            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 cursor-pointer"
+            title="View"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
           </button>
 
           <!-- Edit button -->
           <button
             (click)="editCampaign(campaign.id)"
-            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 cursor-pointer"
             title="Edit"
           >
             <svg
@@ -90,7 +249,7 @@
           <!-- Delete button -->
           <button
             (click)="deleteCampaign(campaign.id)"
-            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 cursor-pointer"
             title="Delete"
           >
             <svg
@@ -108,26 +267,8 @@
               />
             </svg>
           </button>
-        </mat-menu>
-      </mat-card-header>
-
-      <div class="progress-container">
-        <p>Impressions: {{ campaign.accumulatedImpressions }} / {{ campaign.requiredImpressions }}</p>
-        <mat-progress-bar 
-          mode="determinate" 
-          [value]="(campaign.accumulatedImpressions / campaign.requiredImpressions) * 100">
-        </mat-progress-bar>
+        </div>
       </div>
-
-      <mat-card-content>
-        <p class="description">{{ campaign.description }}</p>
-      </mat-card-content>
-
-      <mat-card-actions>
-        <span class="status-badge" [class.active]="campaign.active">
-          {{ campaign.active ? 'Active' : 'Inactive' }}
-        </span>
-      </mat-card-actions>
-    </mat-card>
+    </div>
   </div>
 </div>
