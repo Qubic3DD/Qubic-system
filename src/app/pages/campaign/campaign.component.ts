@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -27,14 +28,16 @@ import { ConfirmDialogComponent } from '../campaign/confirm-dialog/confirm-dialo
     MatIconModule,
     MatMenuModule,
     MatFormFieldModule,
-    MatSelectModule
-  ]
+    MatSelectModule,
+    FormsModule,
+  ],
 })
 export class CampaignComponent implements OnInit {
   campaigns: Campaign[] = [];
   filteredCampaigns: Campaign[] = [];
   loading = true;
   statusFilter: string = 'all';
+  isMenuOpen: boolean = false;
 
   constructor(
     private campaignService: CampaignService,
@@ -57,7 +60,7 @@ export class CampaignComponent implements OnInit {
       error: (err) => {
         console.error('Error fetching campaigns:', err);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -66,12 +69,14 @@ export class CampaignComponent implements OnInit {
       this.filteredCampaigns = [...this.campaigns];
     } else {
       const isActive = this.statusFilter === 'active';
-      this.filteredCampaigns = this.campaigns.filter(campaign => campaign.active === isActive);
+      this.filteredCampaigns = this.campaigns.filter(
+        (campaign) => campaign.active === isActive
+      );
     }
   }
 
   addCampaign(): void {
-  this.router.navigate(['/campaigns/new']);
+    this.router.navigate(['/campaigns/new']);
   }
 
   viewCampaignDetails(campaignId: number): void {
@@ -86,11 +91,11 @@ export class CampaignComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Delete Campaign',
-        message: 'Are you sure you want to delete this campaign?'
-      }
+        message: 'Are you sure you want to delete this campaign?',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.campaignService.deleteCampaign(campaignId).subscribe({
           next: () => {
@@ -98,7 +103,7 @@ export class CampaignComponent implements OnInit {
           },
           error: (err) => {
             console.error('Error deleting campaign:', err);
-          }
+          },
         });
       }
     });
