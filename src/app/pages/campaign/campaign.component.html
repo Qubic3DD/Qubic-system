@@ -1,8 +1,8 @@
-<div class="campaign-container">
+<div class="campaign-container advertiser-theme">
   <div class="header-actions">
     <h1 class="page-title">Campaigns</h1>
     <div class="action-buttons">
-      <button mat-stroked-button (click)="loadCampaigns()">
+      <button mat-stroked-button color="accent" (click)="loadCampaigns()">
         <mat-icon>refresh</mat-icon>
         Refresh
       </button>
@@ -14,7 +14,7 @@
   </div>
 
   <div class="filter-section">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" floatLabel="always">
       <mat-label>Filter by Status</mat-label>
       <mat-select [(value)]="statusFilter" (selectionChange)="filterCampaigns()">
         <mat-option value="all">All</mat-option>
@@ -24,22 +24,21 @@
     </mat-form-field>
   </div>
 
-  <div *ngIf="loading" class="loading-spinner">
-    <mat-spinner></mat-spinner>
+  <div *ngIf="loading" class="loading-spinner centered">
+    <mat-spinner diameter="50"></mat-spinner>
   </div>
 
-  <div *ngIf="!loading && filteredCampaigns.length === 0" class="no-campaigns">
+  <div *ngIf="!loading && filteredCampaigns.length === 0" class="no-campaigns centered">
     <p>No campaigns available</p>
   </div>
 
-  <div class="campaign-grid" *ngIf="!loading && filteredCampaigns.length > 0">
+  <div class="campaign-grid">
     <mat-card class="campaign-card" *ngFor="let campaign of filteredCampaigns">
-      <mat-card-header>
-        <mat-card-title>{{ campaign.name }}</mat-card-title>
-        <mat-card-subtitle>
-          {{ campaign.startDate | date }} - {{ campaign.endDate | date }}
-        </mat-card-subtitle>
-        
+      <div class="card-header">
+        <div class="header-text">
+          <h2>{{ campaign.name }}</h2>
+          <small>{{ campaign.startDate | date }} - {{ campaign.endDate | date }}</small>
+        </div>
         <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
           <mat-icon>more_vert</mat-icon>
         </button>
@@ -57,11 +56,13 @@
             <span>Delete</span>
           </button>
         </mat-menu>
-      </mat-card-header>
+      </div>
 
       <div class="progress-container">
-        <p>Impressions: {{ campaign.accumulatedImpressions }} / {{ campaign.requiredImpressions }}</p>
+        <p class="impression-text">Impressions</p>
+        <p>{{ campaign.accumulatedImpressions }} / {{ campaign.requiredImpressions }}</p>
         <mat-progress-bar 
+          color="primary"
           mode="determinate" 
           [value]="(campaign.accumulatedImpressions / campaign.requiredImpressions) * 100">
         </mat-progress-bar>
@@ -72,7 +73,7 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <span class="status-badge" [class.active]="campaign.active">
+        <span class="status-badge" [class.active]="campaign.active" [class.inactive]="!campaign.active">
           {{ campaign.active ? 'Active' : 'Inactive' }}
         </span>
       </mat-card-actions>

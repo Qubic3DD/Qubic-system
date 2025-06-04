@@ -9,13 +9,16 @@ import { authGuard } from './auth/auth.guard';
 import {AddCampaignComponent} from '../app/pages/campaign/campaign/add-campaign/add-campaign.component'
 import {EditProfileComponentComponent} from '../app/pages/driver/edit-profile.component/edit-profile.component.component'
  export const routes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+  // Login route (now the landing page)
   { path: 'login', component: LoginComponent },
+
   {
     path: '',
     component: HomeComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'campaigns/new', component: AddCampaignComponent },
       { path: 'campaign/:id', loadComponent: () => import('./pages/campaign-details/campaign-details.component').then(m => m.CampaignDetailsComponent) },

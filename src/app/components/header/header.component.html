@@ -9,8 +9,9 @@
       </button>
       <div class="ml-4 flex items-center">
         <div class="flex-shrink-0">
-        <img class="h-8 w-auto drop-shadow-lg" src="https://i.ibb.co/d07sYYvs/logo.png" alt="logo">
-        </div>        <span class="ml-2 text-xl font-semibold text-gray-800 dark:text-gray-200 hidden md:block">Quibic 3D System</span>
+          <img class="h-8 w-auto drop-shadow-lg" src="https://i.ibb.co/d07sYYvs/logo.png" alt="logo">
+        </div>
+        <span class="ml-2 text-xl font-semibold text-gray-800 dark:text-gray-200 hidden md:block">Quibic 3D System</span>
       </div>
     </div>
 
@@ -22,19 +23,22 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       </button>
-      
+
       <app-dark-mode-toggle></app-dark-mode-toggle>
+
       <button class="p-1 rounded-full text-gray-400 dark:text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none relative">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
         <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
       </button>
-      
+
       <div class="relative">
         <button class="flex items-center focus:outline-none">
-          <img class="h-8 w-8 rounded-full" src="https://avatar-placeholder.iran.liara.run/logo.png" alt="User avatar">
-          <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:inline">John Doe</span>
+          <img class="h-8 w-8 rounded-full" [src]="profilePictureUrl || 'https://avatar-placeholder.iran.liara.run/logo.png'" alt="User avatar">
+          <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:inline">
+            {{ firstName || 'User' }} {{ lastName || '' }}
+          </span>
           <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 text-gray-500 dark:text-gray-400 hidden md:block" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
