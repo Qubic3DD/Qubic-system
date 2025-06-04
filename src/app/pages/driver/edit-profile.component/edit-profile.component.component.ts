@@ -343,7 +343,7 @@ updateDriver(): void {
   }
 
   this.isLoading = true;
-  this.http.post<ApiResponse<DriverProfile>>('http://41.76.110.219:8181/profile/edit', this.driver)
+  this.http.post<ApiResponse<DriverProfile>>('http://localhost:8181/profile/edit', this.driver)
     .subscribe({
       next: (response) => {
         this.isLoading = false;
