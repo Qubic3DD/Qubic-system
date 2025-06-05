@@ -49,7 +49,7 @@ export class AdminComponent implements OnInit {
 
   getAdmins(): void {
     this.isLoading = true;
-    this.http.get<any>('http://41.76.110.219:8181/profile/get-users-by-role/admin')
+    this.http.get<any>('https://41.76.110.219:8443/profile/get-users-by-role/admin')
       .subscribe({
         next: (response) => {
           this.admins = response.data || [];
@@ -96,7 +96,7 @@ export class AdminComponent implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://41.76.110.219:8181/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
   toggleFilter(filterId: string): void {
     this.filters = this.filters.map(filter => ({

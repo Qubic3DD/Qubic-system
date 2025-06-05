@@ -44,7 +44,7 @@ export class DriverComponent implements OnInit {
 
   fetchDrivers(): void {
     this.isLoading = true;
-    this.http.get<any>('http://41.76.110.219:8181/profile/drivers')
+    this.http.get<any>('https://41.76.110.219:8443/profile/drivers')
       .subscribe({
         next: (response) => {
           this.drivers = response.data;
@@ -61,7 +61,7 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
   if (!username || !purpose) return '';
   const encodedUsername = encodeURIComponent(username);
   const encodedPurpose = encodeURIComponent(purpose);
-  return `http://41.76.110.219:8181/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+  return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
 }
   filterDrivers(): void {
     if (!this.searchQuery) {
@@ -113,7 +113,7 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
 
   addDriver(): void {
     this.isLoading = true;
-    this.http.post<any>('http://41.76.110.219:8181/profile/drivers', this.newDriver)
+    this.http.post<any>('https://41.76.110.219:8443/profile/drivers', this.newDriver)
       .subscribe({
         next: () => {
           this.fetchDrivers();
@@ -138,7 +138,7 @@ editDriver(driver: any) {
   deleteDriver(id: number): void {
     if (confirm('Are you sure you want to delete this driver?')) {
       this.isLoading = true;
-      this.http.delete(`http://41.76.110.219:8181/profile/drivers/${id}`)
+      this.http.delete(`https://41.76.110.219:8443/profile/drivers/${id}`)
         .subscribe({
           next: () => {
             this.fetchDrivers();

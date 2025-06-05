@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AdvertiserService {
-  private baseUrl = 'http://41.76.110.219:8181/profile/advertisers';
+  private baseUrl = 'https://41.76.110.219:8443/profile/advertisers';
 
   constructor(private http: HttpClient) { }
 

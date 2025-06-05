@@ -7,7 +7,7 @@ import { Campaign } from '../model/campaign.model';
   providedIn: 'root'
 })
 export class CampaignService {
-  private baseUrl = 'http://41.76.110.219:8181/api/campaigns';
+  private baseUrl = 'https://41.76.110.219:8443/api/campaigns';
 
   constructor(private http: HttpClient) {}
 

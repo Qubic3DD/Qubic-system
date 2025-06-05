@@ -83,7 +83,7 @@ showSuccessPopup() {
 }
   fetchDriverProfile(email: string): void {
     this.isLoading = true;
-    this.http.get<ApiResponse<DriverProfile>>(`http://41.76.110.219:8181/profile/retrieve/${email}`)
+    this.http.get<ApiResponse<DriverProfile>>(`https://41.76.110.219:8443/profile/retrieve/${email}`)
       .subscribe({
         next: (response) => {
           if (response.data) {
@@ -119,12 +119,12 @@ getDocumentPurposeLabel(purpose: string): string {
 
 
 viewDocument(username: string, documentPurpose: string): void {
-  const url = `http://41.76.110.219:8181/api/v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  const url = `https://41.76.110.219:8443/api/v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
   window.open(url, '_blank');
 }
 
 downloadDocument(username: string, documentPurpose: string): void {
-  const url = `http://41.76.110.219:8181/api/v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  const url = `https://41.76.110.219:8443/api/v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
   console.log('Downloading document from:', url);
   window.open(url, '_blank');
 }
@@ -132,7 +132,7 @@ downloadDocument(username: string, documentPurpose: string): void {
   loadUserDocuments(): void {
     if (!this.driver.username) return;
     
-    this.http.get<{data: UserDocument[]}>(`http://41.76.110.219:8181/api/v1/files/list?username=${this.driver.username}`)
+    this.http.get<{data: UserDocument[]}>(`https://41.76.110.219:8443/api/v1/files/list?username=${this.driver.username}`)
       .subscribe({
         next: (response) => {
           this.userDocuments = response.data || [];
@@ -235,7 +235,7 @@ transportTypes = [
     formData.append('file', file);
     
     this.http.post<{data: {downloadUrl: string}}>(
-      `http://41.76.110.219:8181/api/v1/files?userName=${this.driver.username}&fileType=IMAGE&documentPurpose=PROFILE_PICTURE`,
+      `https://41.76.110.219:8443/api/v1/files?userName=${this.driver.username}&fileType=IMAGE&documentPurpose=PROFILE_PICTURE`,
       formData
     ).subscribe({
       next: (response) => {
@@ -264,7 +264,7 @@ transportTypes = [
     formData.append('file', this.selectedFile);
     
     this.http.post<any>(
-      `http://41.76.110.219:8181/api/v1/files?userName=${this.driver.username}&fileType=${this.selectedDocumentType}&documentPurpose=${this.selectedDocumentPurpose}`,
+      `https://41.76.110.219:8443/api/v1/files?userName=${this.driver.username}&fileType=${this.selectedDocumentType}&documentPurpose=${this.selectedDocumentPurpose}`,
       formData
     ).subscribe({
       next: () => {
@@ -287,12 +287,12 @@ transportTypes = [
 getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
   const encodedUsername = encodeURIComponent(username);
   const encodedPurpose = encodeURIComponent(purpose);
-  return `http://41.76.110.219:8181/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+  return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
 }
 
   getDocumentUrl(purpose: string): string {
     const doc = this.userDocuments.find(d => d.documentPurpose === purpose);
-    return doc ? `http://41.76.110.219:8181/api/v1/files/stream?id=${doc.id}` : '';
+    return doc ? `https://41.76.110.219:8443/api/v1/files/stream?id=${doc.id}` : '';
   }
 
   addVehicle(): void {
@@ -343,7 +343,7 @@ updateDriver(): void {
   }
 
   this.isLoading = true;
-  this.http.post<ApiResponse<DriverProfile>>('http://41.76.110.219:8181/profile/edit', this.driver)
+  this.http.post<ApiResponse<DriverProfile>>('https://41.76.110.219:8443/profile/edit', this.driver)
     .subscribe({
       next: (response) => {
         this.isLoading = false;

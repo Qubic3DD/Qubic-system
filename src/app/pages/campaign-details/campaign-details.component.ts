@@ -53,5 +53,5 @@ export class CampaignDetailsComponent implements OnInit {
     return (this.campaign.accumulatedImpressions / this.campaign.requiredImpressions) * 100;
   }
  getCampaignVideoUrl(id: number): string {
-    return `http://41.76.110.219:8181/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
+    return `https://41.76.110.219:8443/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
   }}
