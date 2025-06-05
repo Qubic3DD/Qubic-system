@@ -18,7 +18,7 @@ export class RequestSenderService {
   sendPostRequest<T>(url: string, body: any): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'http://localhost:4200',
+      'Access-Control-Allow-Origin': 'http://41.76.110.219:8181',
     });
 
     return this.http.post<T>(environment.api + url, JSON.stringify(body), {
@@ -49,7 +49,7 @@ export class RequestSenderService {
   ): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'http://localhost:4200',
+      'Access-Control-Allow-Origin': 'http://41.76.110.219:8181',
     });
 
     let finalUrl = environment.api + url;
@@ -75,7 +75,7 @@ export class RequestSenderService {
   sendRequest<T>(url: string, body: any): Observable<T[]> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'http://localhost:4200',
+      'Access-Control-Allow-Origin': 'http://41.76.110.219:8181',
     });
     body.metaData = this.meta.getMetaData();
     return this.http

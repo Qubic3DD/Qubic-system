@@ -1,0 +1,143 @@
+<div class="approvals-container">
+  <!-- Header -->
+  <div class="header-section">
+    <h1>Application Approvals Dashboard</h1>
+    <div class="search-filter">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Filter by type</mat-label>
+        <mat-select [(ngModel)]="filterType" (selectionChange)="filterApplications()">
+          <mat-option value="">All Types</mat-option>
+          <mat-option value="driver">Driver</mat-option>
+          <mat-option value="advertiser">Advertiser</mat-option>
+          <mat-option value="agency">Agency</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="refresh-btn" (click)="refreshApplications()">
+        <mat-icon>refresh</mat-icon> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <mat-card class="stat-card">
+      <h3>Total Applications</h3>
+      <p>{{ applications.length }}</p>
+    </mat-card>
+    <mat-card class="stat-card">
+      <h3>Pending Review</h3>
+<p>{{ pendingReviewApplications }}</p>
+    </mat-card>
+    <mat-card class="stat-card">
+      <h3>Approved Today</h3>
+    <p>{{ approvedTodayApplications }}</p>
+    </mat-card>
+  </div>
+
+  <!-- Application Grid -->
+  <div class="application-grid">
+    <mat-card class="application-card"
+              *ngFor="let app of filteredApplications"
+              [ngClass]="{'approved': app.approved, 'rejected': app.rejected}">
+      <div class="card-header">
+        <h2>{{ app.title }}</h2>
+        <span class="status-badge" [ngClass]="{
+          'pending': !app.reviewed,
+          'approved': app.approved,
+          'rejected': app.rejected
+        }">{{ getStatusText(app) }}</span>
+      </div>
+
+      <p><mat-icon>person</mat-icon> {{ app.applicantName }}</p>
+      <p><mat-icon>calendar_today</mat-icon> Submitted: {{ app.submissionDate | date }}</p>
+
+      <div class="card-actions">
+        <button mat-button color="accent" (click)="viewApplication(app)">
+          <mat-icon>visibility</mat-icon> View
+        </button>
+        <button mat-button color="primary" (click)="approveApplication(app)" [disabled]="app.reviewed">
+          <mat-icon>check</mat-icon> Approve
+        </button>
+        <button mat-button color="warn" (click)="rejectApplication(app)" [disabled]="app.reviewed">
+          <mat-icon>close</mat-icon> Reject
+        </button>
+        <button mat-button color="warn" (click)="deleteApplication(app)">
+          <mat-icon>delete</mat-icon> Delete
+        </button>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- No Results Message -->
+  <div *ngIf="filteredApplications.length === 0" class="no-results">
+    <mat-icon>folder_open</mat-icon>
+    <h3>No applications found</h3>
+    <p>Try adjusting your search or filter criteria</p>
+  </div>
+
+  <!-- Modal Viewer -->
+  <div class="modal-overlay" *ngIf="selectedApplication">
+    <div class="modal">
+      <button mat-icon-button class="close-modal" (click)="closeModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <div class="modal-header">
+        <h2>{{ selectedApplication.title }}</h2>
+        <span class="status-badge" [ngClass]="{
+          'pending': !selectedApplication.reviewed,
+          'approved': selectedApplication.approved,
+          'rejected': selectedApplication.rejected
+        }">{{ getStatusText(selectedApplication) }}</span>
+      </div>
+
+      <div class="modal-body">
+        <!-- Basic Info -->
+        <div class="info-section">
+          <h3><mat-icon>info</mat-icon> Basic Information</h3>
+          <div class="info-grid">
+            <div><strong>Applicant:</strong> {{ selectedApplication.applicantName }}</div>
+            <div><strong>Submitted:</strong> {{ selectedApplication.submissionDate | date }}</div>
+            <div><strong>Type:</strong> {{ selectedApplication.type | titlecase }}</div>
+            <div><strong>Email:</strong> {{ selectedApplication.contactEmail }}</div>
+          </div>
+        </div>
+
+        <!-- Details -->
+        <div class="info-section">
+          <h3><mat-icon>description</mat-icon> Application Details</h3>
+          <p>{{ selectedApplication.description }}</p>
+          <div *ngIf="selectedApplication.documents?.length" class="documents-section">
+            <h4>Documents:</h4>
+            <ul>
+              <li *ngFor="let doc of selectedApplication.documents">
+                <mat-icon>insert_drive_file</mat-icon> {{ doc.name }}
+                <button mat-button (click)="downloadDocument(doc)">Download</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="notes-section">
+          <h3><mat-icon>edit</mat-icon> Review Notes</h3>
+          <textarea [(ngModel)]="selectedApplication.notes" placeholder="Add review notes..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button mat-raised-button color="primary" (click)="approveApplication(selectedApplication)" [disabled]="selectedApplication.reviewed">
+          <mat-icon>check</mat-icon> Approve
+        </button>
+        <button mat-raised-button color="warn" (click)="rejectApplication(selectedApplication)" [disabled]="selectedApplication.reviewed">
+          <mat-icon>close</mat-icon> Reject
+        </button>
+        <button mat-raised-button (click)="saveNotes(selectedApplication)">
+          <mat-icon>save</mat-icon> Save Notes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

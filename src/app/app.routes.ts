@@ -10,6 +10,13 @@ import { AddCampaignComponent } from '../app/pages/campaign/campaign/add-campaig
 import { EditProfileComponentComponent } from '../app/pages/driver/edit-profile.component/edit-profile.component.component';
 import { AddDriverComponent } from '../app/pages/driver/add-driver/add-driver.component';
 import { DriverComponent } from './pages/driver/driver.component';
+import { AgenciesComponent } from './pages/agencies/agencies.component';
+import { FleetOwnersComponent } from './pages/fleet-owners/fleet-owners.component';
+import {  PassengerComponent } from './pages/passanger/passanger.component';
+import { MessagesComponent } from './pages/messages/messages.component';
+import { AdminComponent } from './pages/admin/admin.component';
+import { ApprovalsComponent } from './pages/approvals/approvals.component';
+import { TabletComponent } from './pages/tablet/tablet.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
@@ -47,6 +54,52 @@ export const routes: Routes = [
           { path: 'edit', component: EditAdvertiserComponent },
         ],
       },
+
+         {
+        path: 'admins',
+        children: [
+          { path: '', component: AdminComponent },
+          // { path: 'add', component: AddAdvertiserComponent },
+          // { path: 'edit', component: EditAdvertiserComponent },
+        ],
+      },
+        { path: 'messages', component: MessagesComponent },
+         { path: 'approvals', component: ApprovalsComponent },
+        
+    {
+        path: 'agencies',
+        children: [
+          { path: '', component: AgenciesComponent },
+          // { path: 'add', component: AddAgenciesComponent },
+          // { path: 'edit', component: EditAgenciesComponent },
+        ],
+      },
+          {
+        path: 'fleet-owners',
+        children: [
+          { path: '', component: FleetOwnersComponent },
+          // { path: 'add', component: AddAgenciesComponent },
+          // { path: 'edit', component: EditAgenciesComponent },
+        ],
+      },
+            {
+        path: 'tablets',
+        children: [
+          { path: '', component: TabletComponent },
+          // { path: 'add', component: AddAgenciesComponent },
+          // { path: 'edit', component: EditAgenciesComponent },
+        ],
+      },
+      
+             {
+        path: 'passenger',
+        children: [
+          { path: '', component: PassengerComponent },
+          // { path: 'add', component: AddAgenciesComponent },
+          // { path: 'edit', component: EditAgenciesComponent },
+        ],
+      },
+   
       {
         path: 'drivers',
         children: [

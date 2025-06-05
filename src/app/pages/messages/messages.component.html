@@ -1,0 +1,37 @@
+<div class="messages-container">
+  <h2>User Reports</h2>
+
+  <div class="controls">
+    <input
+      type="text"
+      placeholder="Search messages..."
+      [(ngModel)]="searchQuery"
+      (input)="searchMessages()" />
+
+    <div class="filters">
+      <button
+        *ngFor="let filter of filters"
+        [class.active]="filter.active"
+        (click)="applyFilter(filter.id)">
+        {{ filter.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="message-list">
+    <div *ngFor="let msg of filteredMessages" class="message-card" [class.unread]="msg.status === 'unread'">
+      <div class="message-header">
+        <h3>{{ msg.subject }}</h3>
+        <span class="sender">{{ msg.sender }}</span>
+        <span class="timestamp">{{ msg.timestamp }}</span>
+      </div>
+      <p class="message-content">{{ msg.content }}</p>
+
+      <div class="actions">
+        <button (click)="markAsRead(msg.id)">Mark as Read</button>
+        <button (click)="flagMessage(msg.id)">Flag</button>
+        <button (click)="deleteMessage(msg.id)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

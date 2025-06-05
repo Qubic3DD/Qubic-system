@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-driver',
@@ -17,6 +18,7 @@ export class DriverComponent implements OnInit {
   searchQuery = '';
   showAddDriverModal = false;
   isLoading = false;
+  
   
   filters = [
     { id: 'all', label: 'All Drivers', active: true },
@@ -42,7 +44,7 @@ export class DriverComponent implements OnInit {
 
   fetchDrivers(): void {
     this.isLoading = true;
-    this.http.get<any>('http://localhost:8181/profile/drivers')
+    this.http.get<any>('http://41.76.110.219:8181/profile/drivers')
       .subscribe({
         next: (response) => {
           this.drivers = response.data;
@@ -111,7 +113,7 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
 
   addDriver(): void {
     this.isLoading = true;
-    this.http.post<any>('http://localhost:8181/profile/drivers', this.newDriver)
+    this.http.post<any>('http://41.76.110.219:8181/profile/drivers', this.newDriver)
       .subscribe({
         next: () => {
           this.fetchDrivers();
@@ -136,7 +138,7 @@ editDriver(driver: any) {
   deleteDriver(id: number): void {
     if (confirm('Are you sure you want to delete this driver?')) {
       this.isLoading = true;
-      this.http.delete(`http://localhost:8181/profile/drivers/${id}`)
+      this.http.delete(`http://41.76.110.219:8181/profile/drivers/${id}`)
         .subscribe({
           next: () => {
             this.fetchDrivers();

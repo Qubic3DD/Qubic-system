@@ -1,0 +1,286 @@
+<div class="tablet-dashboard container-fluid py-4">
+  <!-- Header Section -->
+  <div class="header d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-tablet fs-1 me-3 text-primary"></i>
+      <div>
+        <h1 class="mb-0">Tablet Management</h1>
+        <p class="text-muted mb-0">Manage all company tablets in one place</p>
+      </div>
+    </div>
+    
+    <div class="controls d-flex align-items-center gap-3">
+      <div class="input-group" style="width: 300px;">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control form-control-lg" 
+               placeholder="Search tablets..." [(ngModel)]="searchQuery">
+      </div>
+      <button class="btn btn-primary btn-lg d-flex align-items-center gap-2" (click)="addTablet()">
+        <i class="bi bi-plus-lg"></i> Add Tablet
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card stat-card bg-primary text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-uppercase">Total Tablets</h6>
+              <h2 class="mb-0">{{ tablets.length }}</h2>
+            </div>
+            <i class="bi bi-tablet fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card bg-success text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-uppercase">Available</h6>
+              <h2 class="mb-0">{{ availableCount }}</h2>
+            </div>
+            <i class="bi bi-check-circle fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card bg-warning text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-uppercase">Assigned</h6>
+              <h2 class="mb-0">{{ assignedCount }}</h2>
+            </div>
+            <i class="bi bi-person-check fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card stat-card bg-danger text-white">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="text-uppercase">Maintenance</h6>
+              <h2 class="mb-0">{{ maintenanceCount }}</h2>
+            </div>
+            <i class="bi bi-tools fs-1 opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tablet Grid -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    <div class="col" *ngFor="let tab of filteredTablets">
+      <div class="card tablet-card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="badge" [ngClass]="{
+            'bg-success': tab.status === 'Available',
+            'bg-primary': tab.status === 'Assigned',
+            'bg-warning': tab.status === 'Maintenance'
+          }">
+            {{ tab.status }}
+          </span>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" 
+                    data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" (click)="viewTabletInfo(tab)"><i class="bi bi-info-circle me-2"></i>Details</a></li>
+              <li><a class="dropdown-item" (click)="viewUserInfo(tab.user)"><i class="bi bi-person me-2"></i>User Info</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" (click)="removeTablet(tab.id)"><i class="bi bi-trash me-2"></i>Remove</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-tablet fs-1 me-3 text-muted"></i>
+            <div>
+              <h4 class="card-title mb-0">{{ tab.model }}</h4>
+              <small class="text-muted">Serial: {{ tab.serial || 'N/A' }}</small>
+            </div>
+          </div>
+          
+          <div class="tablet-details">
+            <div class="d-flex justify-content-between py-2 border-bottom">
+              <span class="text-muted">Owner:</span>
+              <span class="fw-bold">{{ tab.owner || 'Unassigned' }}</span>
+            </div>
+            <div class="d-flex justify-content-between py-2 border-bottom">
+              <span class="text-muted">Assigned:</span>
+           <span>{{ tab.assignedDate ? (tab.assignedDate | date:'mediumDate') : 'Not assigned' }}</span>
+
+            </div>
+            <div class="d-flex justify-content-between py-2 border-bottom">
+              <span class="text-muted">OS Version:</span>
+              <span>{{ tab.specs.os || 'Unknown' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent">
+          <button class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                  (click)="viewTabletInfo(tab)">
+            <i class="bi bi-eye"></i> Quick View
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="text-center py-5" *ngIf="filteredTablets.length === 0">
+    <i class="bi bi-tablet fs-1 text-muted mb-3"></i>
+    <h3>No tablets found</h3>
+    <p class="text-muted">Try adjusting your search or add a new tablet</p>
+    <button class="btn btn-primary" (click)="addTablet()">
+      <i class="bi bi-plus-lg me-2"></i>Add First Tablet
+    </button>
+  </div>
+
+  <!-- Tablet Info Modal -->
+  <div class="modal fade" id="tabletModal" tabindex="-1" aria-hidden="true" *ngIf="selectedTablet">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5">
+            <i class="bi bi-tablet me-2"></i> {{ selectedTablet.model }}
+          </h2>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <h5 class="fw-bold mb-3">Basic Information</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Status</span>
+                  <span class="badge" [ngClass]="{
+                    'bg-success': selectedTablet.status === 'Available',
+                    'bg-primary': selectedTablet.status === 'Assigned',
+                    'bg-warning': selectedTablet.status === 'Maintenance'
+                  }">
+                    {{ selectedTablet.status }}
+                  </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Owner</span>
+                  <span>{{ selectedTablet.owner || 'Unassigned' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Assigned Date</span>
+                <span>{{ selectedTablet.assignedDate ? (selectedTablet.assignedDate | date:'mediumDate') : 'Not assigned' }}</span>
+
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Serial Number</span>
+                  <span>{{ selectedTablet.serial || 'N/A' }}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h5 class="fw-bold mb-3">Technical Specifications</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Operating System</span>
+                  <span>{{ selectedTablet.specs?.os || 'Unknown' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Storage</span>
+                  <span>{{ selectedTablet.specs?.storage || 'Unknown' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Screen Size</span>
+                  <span>{{ selectedTablet.specs?.screen || 'Unknown' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Last Updated</span>
+                  <span>{{ selectedTablet.lastUpdated | date:'medium' }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+          <button type="button" class="btn btn-primary">Edit Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Info Modal -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true" *ngIf="selectedUser">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5">
+            <i class="bi bi-person me-2"></i> User Information
+          </h2>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center mb-4">
+            <div class="avatar me-3">
+              <i class="bi bi-person-circle fs-1"></i>
+            </div>
+            <div>
+              <h4 class="mb-0">{{ selectedUser.name }}</h4>
+              <p class="text-muted mb-0">{{ selectedUser.role }}</p>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <h5 class="fw-bold mb-3">Contact Info</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><i class="bi bi-envelope me-2"></i>Email</span>
+                  <span>{{ selectedUser.email }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><i class="bi bi-telephone me-2"></i>Phone</span>
+                  <span>{{ selectedUser.phone || 'N/A' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><i class="bi bi-building me-2"></i>Department</span>
+                  <span>{{ selectedUser.department || 'N/A' }}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h5 class="fw-bold mb-3">Device Info</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><i class="bi bi-tablet me-2"></i>Assigned Tablet</span>
+                  <span>{{ selectedTablet?.model || 'None' }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><i class="bi bi-calendar me-2"></i>Assigned Date</span>
+         <span>{{ selectedTablet?.assignedDate ? (selectedTablet.assignedDate | date:'mediumDate') : 'N/A' }}</span>
+
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                  <span><i class="bi bi-shield me-2"></i>Access Level</span>
+                  <span>{{ selectedUser.accessLevel || 'Standard' }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
