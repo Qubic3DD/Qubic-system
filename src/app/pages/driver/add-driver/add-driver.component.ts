@@ -74,7 +74,7 @@ export class AddDriverComponent implements OnInit {
             console.error('Error adding Driver', err);
             Swal.fire({
               icon: 'error',
-              title: 'Error Adding Advertiser',
+              title: 'Error Adding Driver',
               text: err.error.message,
             });
           },
