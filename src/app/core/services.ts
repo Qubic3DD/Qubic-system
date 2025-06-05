@@ -3,7 +3,7 @@ export enum Services {
   REGISTER_ADVERTISER = 'api/register',
   GET_ADVERTISER_BY_USERNAME = 'profile/retrieve',
   UPDATE_ADVERTISER = 'profile/edit',
-  REGISTER_DRIVER = 'profile/drivers',
+  REGISTER_DRIVER = 'api/register',
   GET_AGENCIES = 'profile/get-users-by-role/Agency',
  GET_ADMIN= 'profile/get-users-by-role/admin',
 GET_PASSENGER='profile/get-users-by-role/passenger',

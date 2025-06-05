@@ -27,21 +27,6 @@ export class RequestSenderService {
     });
   }
 
-  //   sendGetRequest<T>(url: string, params?: any): Observable<T> {
-  //     const headers = new HttpHeaders({
-  //       'Content-Type': 'application/json',
-  //       'Access-Control-Allow-Origin': 'http://localhost:4200',
-  //     });
-
-  //     const requestParams = params || {};
-  //     requestParams.metaData = this.meta.getMetaData();
-
-  //     return this.http.get<T>(environment.api + url, {
-  //       headers,
-  //       params: requestParams
-  //     });
-  // }
-
   sendGetRequest<T>(
     url: string,
     params?: any,
@@ -70,34 +55,5 @@ export class RequestSenderService {
       headers,
       params: requestParams,
     });
-  }
-
-  sendRequest<T>(url: string, body: any): Observable<T[]> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://41.76.110.219:8443',
-    });
-    body.metaData = this.meta.getMetaData();
-    return this.http
-      .post<Response<T>>(environment.api + url, JSON.stringify(body), {
-        headers,
-      })
-      .pipe(
-        map((response: Response<T>) => {
-          return response.passed; // Assuming `passed` is the property you want to extract
-        }),
-        catchError((error: HttpErrorResponse) => {
-          let errorMsg: string;
-          if (error.status === 500) {
-            errorMsg = 'Internal server error occurred psl Try again later';
-          } else if (error.status === 400) {
-            errorMsg = error.error.errors[0];
-          } else {
-            errorMsg = 'An unexpected error occurred pls Try again later';
-          }
-          console.log('Error:', error);
-          return throwError(errorMsg);
-        })
-      );
   }
 }
