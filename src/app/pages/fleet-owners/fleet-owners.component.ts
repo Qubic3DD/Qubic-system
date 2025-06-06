@@ -45,7 +45,7 @@ export class FleetOwnersComponent implements OnInit {
     this.isLoading = true;
     this.http
       .get<any>(
-        'http://196.168.8.29:8080/profile/get-users-by-role/fleet_owner'
+        'http://41.76.110.219:8443/profile/get-users-by-role/fleet_owner'
       )
       .subscribe({
         next: (response) => {
@@ -108,7 +108,7 @@ export class FleetOwnersComponent implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   toggleFilter(filterId: string): void {
