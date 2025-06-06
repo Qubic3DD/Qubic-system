@@ -6,13 +6,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import * as bootstrap from 'bootstrap';
 
-
 @Component({
   selector: 'app-tablet',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatCardModule,],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCardModule,
+  ],
   templateUrl: './tablet.component.html',
-  styleUrls: ['./tablet.component.css']
+  styleUrls: ['./tablet.component.css'],
 })
 export class TabletComponent {
   searchQuery = '';
@@ -34,13 +39,13 @@ export class TabletComponent {
         phone: '+123456789',
         role: 'Driver',
         department: 'Logistics',
-        accessLevel: 'Standard'
+        accessLevel: 'Standard',
       },
       specs: {
         storage: '128GB',
         screen: '11 inch',
-        os: 'Android 13'
-      }
+        os: 'Android 13',
+      },
     },
     {
       id: 2,
@@ -56,13 +61,13 @@ export class TabletComponent {
         phone: '+987654321',
         role: 'Supervisor',
         department: 'Operations',
-        accessLevel: 'Admin'
+        accessLevel: 'Admin',
       },
       specs: {
         storage: '256GB',
         screen: '12.9 inch',
-        os: 'iPadOS 17'
-      }
+        os: 'iPadOS 17',
+      },
     },
     {
       id: 3,
@@ -76,28 +81,30 @@ export class TabletComponent {
       specs: {
         storage: '64GB',
         screen: '10.1 inch',
-        os: 'Android 11'
-      }
-    }
+        os: 'Android 11',
+      },
+    },
   ];
 
   get filteredTablets() {
-    return this.tablets.filter(tab =>
-      tab.model.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      (tab.owner && tab.owner.toLowerCase().includes(this.searchQuery.toLowerCase()))
+    return this.tablets.filter(
+      (tab) =>
+        tab.model.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        (tab.owner &&
+          tab.owner.toLowerCase().includes(this.searchQuery.toLowerCase()))
     );
   }
 
   get availableCount() {
-    return this.tablets.filter(t => t.status === 'Available').length;
+    return this.tablets.filter((t) => t.status === 'Available').length;
   }
 
   get assignedCount() {
-    return this.tablets.filter(t => t.status === 'Assigned').length;
+    return this.tablets.filter((t) => t.status === 'Assigned').length;
   }
 
   get maintenanceCount() {
-    return this.tablets.filter(t => t.status === 'Maintenance').length;
+    return this.tablets.filter((t) => t.status === 'Maintenance').length;
   }
 
   viewTabletInfo(tablet: any) {
@@ -129,7 +136,7 @@ export class TabletComponent {
 
   removeTablet(id: number) {
     if (confirm('Are you sure you want to remove this tablet?')) {
-      this.tablets = this.tablets.filter(t => t.id !== id);
+      this.tablets = this.tablets.filter((t) => t.id !== id);
     }
   }
 
@@ -138,7 +145,7 @@ export class TabletComponent {
     this.selectedUser = null;
     // Optionally hide the modals manually if needed
     const openModals = document.querySelectorAll('.modal.show');
-    openModals.forEach(modal => {
+    openModals.forEach((modal) => {
       const bsModal = bootstrap.Modal.getInstance(modal as HTMLElement);
       bsModal?.hide();
     });

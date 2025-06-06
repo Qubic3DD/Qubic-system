@@ -8,12 +8,13 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule],
 })
 export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  loginSuccess: boolean = false;
 
   // Hardcoded user credentials with more details
   private readonly hardcodedUser = {
@@ -21,25 +22,35 @@ export class LoginComponent {
     password: 'admin123',
     firstName: 'Qubic',
     lastName: '3d',
-    profilePictureUrl: 'https://avatar-placeholder.iran.liara.run/logo.png' // example URL
+    profilePictureUrl: 'https://avatar-placeholder.iran.liara.run/logo.png', // example URL
   };
 
   constructor(private router: Router) {}
 
   onLogin() {
+    // Trim inputs to remove accidental whitespace
+    const trimmedEmail = this.email.trim();
+    const trimmedPassword = this.password.trim();
+
     if (
-      this.email === this.hardcodedUser.email &&
-      this.password === this.hardcodedUser.password
+      trimmedEmail === this.hardcodedUser.email &&
+      trimmedPassword === this.hardcodedUser.password
     ) {
       // Store user session and user info in localStorage
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('adminEmail', this.email);
+      localStorage.setItem('adminEmail', trimmedEmail);
       localStorage.setItem('firstName', this.hardcodedUser.firstName);
       localStorage.setItem('lastName', this.hardcodedUser.lastName);
-      localStorage.setItem('profilePictureUrl', this.hardcodedUser.profilePictureUrl);
+      localStorage.setItem(
+        'profilePictureUrl',
+        this.hardcodedUser.profilePictureUrl
+      );
 
-      // Navigate to admin dashboard or home page
-      this.router.navigate(['/dashboard']);
+      this.loginSuccess = true;
+      setTimeout(() => {
+        this.router.navigate(['/dashboard']);
+      }, 2000);
+      this.errorMessage = ''; // Clear any previous error message
     } else {
       this.errorMessage = 'Invalid email or password.';
     }

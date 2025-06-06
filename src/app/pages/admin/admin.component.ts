@@ -20,7 +20,7 @@ type Filter = {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+  styleUrls: ['./admin.component.css'],
 })
 export class AdminComponent implements OnInit {
   _baseRequest: BaseRequest = new BaseRequest();
@@ -33,7 +33,7 @@ export class AdminComponent implements OnInit {
     { id: 'all', label: 'All', active: true },
     { id: 'active', label: 'Active', active: false },
     { id: 'inactive', label: 'Inactive', active: false },
-    { id: 'verified', label: 'Verified', active: false }
+    { id: 'verified', label: 'Verified', active: false },
   ];
 
   constructor(
@@ -49,7 +49,8 @@ export class AdminComponent implements OnInit {
 
   getAdmins(): void {
     this.isLoading = true;
-    this.http.get<any>('https://41.76.110.219:8443/profile/get-users-by-role/admin')
+    this.http
+      .get<any>('https://41.76.110.219:8443/profile/get-users-by-role/admin')
       .subscribe({
         next: (response) => {
           this.admins = response.data || [];
@@ -59,7 +60,7 @@ export class AdminComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching admins:', error);
           this.isLoading = false;
-        }
+        },
       });
   }
 
@@ -68,48 +69,62 @@ export class AdminComponent implements OnInit {
   }
 
   editAdmin(userName: string): void {
-    this.router.navigate(['/admins/edit'], { queryParams: { username: userName } });
+    this.router.navigate(['/admins/edit'], {
+      queryParams: { username: userName },
+    });
   }
 
   viewAdminDetails(userName: string): void {
-    this.router.navigate(['/admins/details'], { queryParams: { username: userName } });
+    this.router.navigate(['/admins/details'], {
+      queryParams: { username: userName },
+    });
   }
 
   deleteAdmin(userName: string): void {
-    this.confirmDialog.confirm('Confirm Delete', `Are you sure you want to delete ${userName}?`)
+    this.confirmDialog
+      .confirm('Confirm Delete', `Are you sure you want to delete ${userName}?`)
       .then((confirmed) => {
         if (confirmed) {
-          this._http.sendGetRequest<any>(`${Services.DELETE_ADMIN}/${userName}`).subscribe({
-            next: () => {
-              console.log(`${userName} deleted`);
-              this.admins = this.admins.filter(admin => admin.userName !== userName);
-              this.filteredAdmins = this.filteredAdmins.filter(admin => admin.userName !== userName);
-            },
-            error: (err: any) => {
-              console.error(`Failed to delete ${userName}`, err);
-            }
-          });
+          this._http
+            .sendGetRequest<any>(`${Services.DELETE_ADMIN}/${userName}`)
+            .subscribe({
+              next: () => {
+                console.log(`${userName} deleted`);
+                this.admins = this.admins.filter(
+                  (admin) => admin.userName !== userName
+                );
+                this.filteredAdmins = this.filteredAdmins.filter(
+                  (admin) => admin.userName !== userName
+                );
+              },
+              error: (err: any) => {
+                console.error(`Failed to delete ${userName}`, err);
+              },
+            });
         }
       });
   }
-  getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
+  getDocumentUrlByUsernameAndPurpose(
+    username: string,
+    purpose: string
+  ): string {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
     return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
   toggleFilter(filterId: string): void {
-    this.filters = this.filters.map(filter => ({
+    this.filters = this.filters.map((filter) => ({
       ...filter,
-      active: filter.id === filterId
+      active: filter.id === filterId,
     }));
     this.activeFilter = filterId;
 
     if (filterId === 'all') {
       this.filteredAdmins = [...this.admins];
     } else {
-      this.filteredAdmins = this.admins.filter(admin =>
-        admin.status?.toLowerCase() === filterId.toLowerCase()
+      this.filteredAdmins = this.admins.filter(
+        (admin) => admin.status?.toLowerCase() === filterId.toLowerCase()
       );
     }
   }
