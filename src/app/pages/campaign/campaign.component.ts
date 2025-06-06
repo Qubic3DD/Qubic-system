@@ -108,4 +108,9 @@ export class CampaignComponent implements OnInit {
       }
     });
   }
+
+  clearFilters() {
+    this.statusFilter = 'all';
+    this.filterCampaigns();
+  }
 }

@@ -1,150 +1,80 @@
 <div class="mx-auto p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
-  <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+  <h1 class="text-2xl text-center font-bold text-pink-600 dark:pink-600 mb-6">
     Add New Campaign
   </h1>
 
-  <form
-    [formGroup]="campaignForm"
-    (ngSubmit)="onSubmit()"
-    enctype="multipart/form-data"
-    novalidate
-    class="space-y-6"
-  >
+  <form [formGroup]="campaignForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate class="space-y-6">
     <!-- Loading Spinner -->
-    <div
-      *ngIf="loadingAdvertisers"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    >
-      <div
-        class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-xl flex flex-col items-center"
-      >
-        <div
-          class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"
-        ></div>
+    <div *ngIf="loadingAdvertisers" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-xl flex flex-col items-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500 mb-4"></div>
         <p class="text-gray-700 dark:text-gray-300">Loading advertisers...</p>
       </div>
     </div>
 
     <!-- Advertiser Selection -->
     <div class="space-y-2">
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >Select Advertiser</label
-      >
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Advertiser</label>
 
       <div *ngIf="!loadingAdvertisers" class="relative">
-        <select
-          formControlName="advertiserId"
-          required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-        >
+        <select formControlName="advertiserId" required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300">
           <option value="" disabled selected>Select an advertiser</option>
-          <option
-            *ngFor="let advertiser of advertisers"
-            [value]="advertiser.id"
-          >
+          <option *ngFor="let advertiser of advertisers" [value]="advertiser.id">
             {{ advertiser.firstName }} {{ advertiser.lastName }} ({{
-              advertiser.email
+            advertiser.email
             }})
           </option>
         </select>
-        <div
-          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </div>
       </div>
 
-      <div
-        *ngIf="loadingAdvertisers"
-        class="flex items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-md"
-      >
-        <div
-          class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500 mr-3"
-        ></div>
-        <span class="text-gray-700 dark:text-gray-300"
-          >Loading advertisers...</span
-        >
+      <div *ngIf="loadingAdvertisers" class="flex items-center p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+        <div class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-pink-500 mr-3"></div>
+        <span class="text-gray-700 dark:text-gray-300">Loading advertisers...</span>
       </div>
 
-      <p
-        *ngIf="
+      <p *ngIf="
           campaignForm.get('advertiserId')?.hasError('required') &&
           formSubmitted
-        "
-        class="mt-1 text-sm text-red-600"
-      >
+        " class="mt-1 text-sm text-red-600">
         Advertiser is required
       </p>
     </div>
 
     <!-- Campaign Name -->
     <div class="space-y-2">
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >Campaign Name</label
-      >
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Campaign Name</label>
       <div class="relative">
-        <input
-          formControlName="name"
-          required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-        />
-        <div
-          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-            />
+        <input formControlName="name" required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
           </svg>
         </div>
       </div>
-      <p
-        *ngIf="campaignForm.get('name')?.hasError('required') && formSubmitted"
-        class="mt-1 text-sm text-red-600"
-      >
+      <p *ngIf="campaignForm.get('name')?.hasError('required') && formSubmitted" class="mt-1 text-sm text-red-600">
         Campaign name is required
       </p>
     </div>
 
     <!-- Campaign Description -->
     <div class="space-y-2">
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >Description</label
-      >
-      <textarea
-        formControlName="description"
-        rows="3"
-        required
-        class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-      ></textarea>
-      <p
-        *ngIf="
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+      <textarea formControlName="description" rows="3" required
+        class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300"></textarea>
+      <p *ngIf="
           campaignForm.get('description')?.hasError('required') && formSubmitted
-        "
-        class="mt-1 text-sm text-red-600"
-      >
+        " class="mt-1 text-sm text-red-600">
         Description is required
       </p>
     </div>
@@ -152,43 +82,23 @@
     <!-- Date Range Fields -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-2">
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >Start Date</label
-        >
-        <input
-          type="date"
-          formControlName="startDate"
-          required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-        />
-        <p
-          *ngIf="
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
+        <input type="date" formControlName="startDate" required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+        <p *ngIf="
             campaignForm.get('startDate')?.hasError('required') && formSubmitted
-          "
-          class="mt-1 text-sm text-red-600"
-        >
+          " class="mt-1 text-sm text-red-600">
           Start date is required
         </p>
       </div>
 
       <div class="space-y-2">
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >End Date</label
-        >
-        <input
-          type="date"
-          formControlName="endDate"
-          required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-        />
-        <p
-          *ngIf="
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
+        <input type="date" formControlName="endDate" required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+        <p *ngIf="
             campaignForm.get('endDate')?.hasError('required') && formSubmitted
-          "
-          class="mt-1 text-sm text-red-600"
-        >
+          " class="mt-1 text-sm text-red-600">
           End date is required
         </p>
       </div>
@@ -196,52 +106,28 @@
 
     <!-- Required Impressions -->
     <div class="space-y-2">
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >Required Impressions</label
-      >
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Required Impressions</label>
       <div class="relative">
-        <input
-          type="number"
-          formControlName="requiredImpressions"
-          min="1"
-          required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300"
-        />
-        <div
-          class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
+        <input type="number" formControlName="requiredImpressions" min="1" required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
         </div>
       </div>
-      <p
-        *ngIf="
+      <p *ngIf="
           campaignForm.get('requiredImpressions')?.hasError('required') &&
           formSubmitted
-        "
-        class="mt-1 text-sm text-red-600"
-      >
+        " class="mt-1 text-sm text-red-600">
         Required impressions is required
       </p>
-      <p
-        *ngIf="
+      <p *ngIf="
           campaignForm.get('requiredImpressions')?.hasError('min') &&
           formSubmitted
-        "
-        class="mt-1 text-sm text-red-600"
-      >
+        " class="mt-1 text-sm text-red-600">
         Must be at least 1
       </p>
     </div>
@@ -255,125 +141,57 @@
         Accepted formats: MP4, MOV, AVI (Max 50MB)
       </p>
 
-      <input
-        type="file"
-        #fileUpload
-        (change)="onFileSelected($event)"
-        accept="video/mp4,video/quicktime,video/x-msvideo"
-        hidden
-        required
-      />
+      <input type="file" #fileUpload (change)="onFileSelected($event)"
+        accept="video/mp4,video/quicktime,video/x-msvideo" hidden required />
 
-      <button
-        type="button"
-        (click)="fileUpload.click()"
-        class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 mr-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-          />
+      <button type="button" (click)="fileUpload.click()"
+        class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
         </svg>
         Choose File
       </button>
 
-      <div
-        *ngIf="selectedFile"
-        class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-md"
-      >
+      <div *ngIf="selectedFile" class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
         <div class="flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 text-green-500 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span class="text-gray-700 dark:text-gray-300"
-            >{{ selectedFile.name }} ({{ selectedFile.size | fileSize }})</span
-          >
+          <span class="text-gray-700 dark:text-gray-300">{{ selectedFile.name }} ({{ selectedFile.size | fileSize
+            }})</span>
         </div>
-        <button
-          type="button"
-          (click)="removeFile()"
-          class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
+        <button type="button" (click)="removeFile()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <p
-        *ngIf="!selectedFile && formSubmitted"
-        class="mt-1 text-sm text-red-600"
-      >
+      <p *ngIf="!selectedFile && formSubmitted" class="mt-1 text-sm text-red-600">
         Media file is required
       </p>
     </div>
 
     <!-- Form Actions -->
     <div class="flex justify-end space-x-4 pt-4">
-      <button
-        type="button"
-        routerLink="/campaigns"
-        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
+      <button type="button" routerLink="/campaigns"
+        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
         Cancel
       </button>
-      <button
-        type="submit"
-        [disabled]="isLoading"
-        class="inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <button type="submit" [disabled]="isLoading"
+        class="inline-flex  cursor-pointer justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed">
         <span *ngIf="!isLoading">Create Campaign</span>
         <span *ngIf="isLoading" class="flex items-center">
-          <svg
-            class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
           </svg>
           Creating...
         </span>

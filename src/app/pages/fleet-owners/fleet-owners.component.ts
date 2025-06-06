@@ -14,7 +14,7 @@ import { ConfirmDialogService } from '../../services/confirm-dialog.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './fleet-owners.component.html',
-  styleUrls: ['./fleet-owners.component.css']
+  styleUrls: ['./fleet-owners.component.css'],
 })
 export class FleetOwnersComponent implements OnInit {
   _baseRequest: BaseRequest = new BaseRequest();
@@ -27,7 +27,7 @@ export class FleetOwnersComponent implements OnInit {
     { id: 'all', label: 'All', active: true },
     { id: 'active', label: 'Active', active: false },
     { id: 'inactive', label: 'Inactive', active: false },
-    { id: 'verified', label: 'Verified', active: false }
+    { id: 'verified', label: 'Verified', active: false },
   ];
 
   constructor(
@@ -43,7 +43,10 @@ export class FleetOwnersComponent implements OnInit {
 
   getFleetOwners(): void {
     this.isLoading = true;
-    this.http.get<any>('https://41.76.110.219:8443/profile/get-users-by-role/fleet_owner')
+    this.http
+      .get<any>(
+        'http://196.168.8.29:8080/profile/get-users-by-role/fleet_owner'
+      )
       .subscribe({
         next: (response) => {
           this.fleetOwners = response.data || [];
@@ -53,7 +56,7 @@ export class FleetOwnersComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching fleet owners:', error);
           this.isLoading = false;
-        }
+        },
       });
   }
 
@@ -62,32 +65,46 @@ export class FleetOwnersComponent implements OnInit {
   }
 
   editFleetOwner(userName: string): void {
-    this.router.navigate(['/fleet-owners/edit'], { queryParams: { username: userName } });
+    this.router.navigate(['/fleet-owners/edit'], {
+      queryParams: { username: userName },
+    });
   }
 
   viewFleetOwnerDetails(userName: string): void {
-    this.router.navigate(['/fleet-owners/details'], { queryParams: { username: userName } });
+    this.router.navigate(['/fleet-owners/details'], {
+      queryParams: { username: userName },
+    });
   }
 
   deleteFleetOwner(userName: string): void {
-    this.confirmDialog.confirm('Confirm Delete', `Are you sure you want to delete ${userName}?`)
+    this.confirmDialog
+      .confirm('Confirm Delete', `Are you sure you want to delete ${userName}?`)
       .then((confirmed) => {
         if (confirmed) {
-          this._http.sendGetRequest<any>(`${Services.DELETE_FLEET_OWNER}/${userName}`).subscribe({
-            next: () => {
-              console.log(`${userName} deleted`);
-              this.fleetOwners = this.fleetOwners.filter(f => f.userName !== userName);
-              this.filteredFleetOwners = this.filteredFleetOwners.filter(f => f.userName !== userName);
-            },
-            error: (err) => {
-              console.error(`Failed to delete ${userName}`, err);
-            }
-          });
+          this._http
+            .sendGetRequest<any>(`${Services.DELETE_FLEET_OWNER}/${userName}`)
+            .subscribe({
+              next: () => {
+                console.log(`${userName} deleted`);
+                this.fleetOwners = this.fleetOwners.filter(
+                  (f) => f.userName !== userName
+                );
+                this.filteredFleetOwners = this.filteredFleetOwners.filter(
+                  (f) => f.userName !== userName
+                );
+              },
+              error: (err) => {
+                console.error(`Failed to delete ${userName}`, err);
+              },
+            });
         }
       });
   }
 
-  getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
+  getDocumentUrlByUsernameAndPurpose(
+    username: string,
+    purpose: string
+  ): string {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
@@ -95,17 +112,17 @@ export class FleetOwnersComponent implements OnInit {
   }
 
   toggleFilter(filterId: string): void {
-    this.filters = this.filters.map(filter => ({
+    this.filters = this.filters.map((filter) => ({
       ...filter,
-      active: filter.id === filterId
+      active: filter.id === filterId,
     }));
     this.activeFilter = filterId;
 
     if (filterId === 'all') {
       this.filteredFleetOwners = [...this.fleetOwners];
     } else {
-      this.filteredFleetOwners = this.fleetOwners.filter(owner =>
-        owner.status?.toLowerCase() === filterId.toLowerCase()
+      this.filteredFleetOwners = this.fleetOwners.filter(
+        (owner) => owner.status?.toLowerCase() === filterId.toLowerCase()
       );
     }
   }

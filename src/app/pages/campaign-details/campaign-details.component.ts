@@ -20,8 +20,8 @@ import { Campaign } from '../../model/campaign.model';
     MatIconModule,
     MatProgressBarModule,
     MatChipsModule,
-    MatDividerModule
-  ]
+    MatDividerModule,
+  ],
 })
 export class CampaignDetailsComponent implements OnInit {
   campaign?: Campaign;
@@ -43,15 +43,20 @@ export class CampaignDetailsComponent implements OnInit {
         error: (err) => {
           console.error('Error loading campaign:', err);
           this.loading = false;
-        }
+        },
       });
     }
   }
 
   getProgress(): number {
     if (!this.campaign) return 0;
-    return (this.campaign.accumulatedImpressions / this.campaign.requiredImpressions) * 100;
+    return (
+      (this.campaign.accumulatedImpressions /
+        this.campaign.requiredImpressions) *
+      100
+    );
   }
- getCampaignVideoUrl(id: number): string {
-    return `https://41.76.110.219:8443/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
-  }}
+  getCampaignVideoUrl(id: number): string {
+    return `http://196.168.8.29:8080/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
+  }
+}

@@ -50,7 +50,7 @@ export class AdminComponent implements OnInit {
   getAdmins(): void {
     this.isLoading = true;
     this.http
-      .get<any>('https://41.76.110.219:8443/profile/get-users-by-role/admin')
+      .get<any>('http://196.168.8.29:8080/profile/get-users-by-role/admin')
       .subscribe({
         next: (response) => {
           this.admins = response.data || [];

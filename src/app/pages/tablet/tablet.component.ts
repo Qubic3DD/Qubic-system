@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-tablet',
@@ -23,7 +22,7 @@ export class TabletComponent {
   searchQuery = '';
   selectedTablet: any = null;
   selectedUser: any = null;
-
+  activeDropdown: number | null = null;
   tablets = [
     {
       id: 1,
@@ -110,24 +109,10 @@ export class TabletComponent {
   viewTabletInfo(tablet: any) {
     this.selectedTablet = tablet;
     this.selectedUser = tablet.user || null;
-    setTimeout(() => {
-      const modal = document.getElementById('tabletModal');
-      if (modal) {
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
-      }
-    });
   }
 
   viewUserInfo(user: any) {
     this.selectedUser = user;
-    setTimeout(() => {
-      const modal = document.getElementById('userModal');
-      if (modal) {
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
-      }
-    });
   }
 
   addTablet() {
@@ -140,14 +125,12 @@ export class TabletComponent {
     }
   }
 
+  toggleDropdown(id: number): void {
+    this.activeDropdown = this.activeDropdown === id ? null : id;
+  }
+
   closeModal() {
     this.selectedTablet = null;
     this.selectedUser = null;
-    // Optionally hide the modals manually if needed
-    const openModals = document.querySelectorAll('.modal.show');
-    openModals.forEach((modal) => {
-      const bsModal = bootstrap.Modal.getInstance(modal as HTMLElement);
-      bsModal?.hide();
-    });
   }
 }

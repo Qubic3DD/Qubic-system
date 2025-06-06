@@ -1,142 +1,305 @@
-<div class="approvals-container">
-  <!-- Header -->
-  <div class="header-section">
-    <h1>Application Approvals Dashboard</h1>
-    <div class="search-filter">
+<div class=" mx-auto p-6 dark:bg-gray-900">
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-600 dark:text-white">Approve Applicant</h1>
+    </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Filter by type</mat-label>
-        <mat-select [(ngModel)]="filterType" (selectionChange)="filterApplications()">
-          <mat-option value="">All Types</mat-option>
-          <mat-option value="driver">Driver</mat-option>
-          <mat-option value="advertiser">Advertiser</mat-option>
-          <mat-option value="agency">Agency</mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
+      <!-- Filter Dropdown -->
+      <div class="relative w-full sm:w-48">
+        <select [(ngModel)]="filterType" (change)="filterApplications()"
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 appearance-none pr-10">
+          <option value="">All Types</option>
+          <option value="driver">Driver</option>
+          <option value="advertiser">Advertiser</option>
+          <option value="agency">Agency</option>
+        </select>
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
 
-      <button mat-raised-button color="primary" class="refresh-btn" (click)="refreshApplications()">
-        <mat-icon>refresh</mat-icon> Refresh
+      <!-- Refresh Button -->
+      <button (click)="refreshApplications()"
+        class="flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200">
+        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Refresh
       </button>
     </div>
   </div>
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <mat-card class="stat-card">
-      <h3>Total Applications</h3>
-      <p>{{ applications.length }}</p>
-    </mat-card>
-    <mat-card class="stat-card">
-      <h3>Pending Review</h3>
-<p>{{ pendingReviewApplications }}</p>
-    </mat-card>
-    <mat-card class="stat-card">
-      <h3>Approved Today</h3>
-    <p>{{ approvedTodayApplications }}</p>
-    </mat-card>
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    <!-- Total Applications -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-pink-200 dark:border-gray-700">
+      <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Applications</h3>
+      <p class="mt-1 text-3xl font-semibold text-gray-600 dark:text-white">{{ applications.length }}</p>
+    </div>
+
+    <!-- Pending Review -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-pink-200 dark:border-gray-700">
+      <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pending Review</h3>
+      <p class="mt-1 text-3xl font-semibold text-yellow-600 dark:text-yellow-400">{{ pendingReviewApplications }}</p>
+    </div>
+
+    <!-- Approved Today -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border border-pink-200 dark:border-gray-700">
+      <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Approved Today</h3>
+      <p class="mt-1 text-3xl font-semibold text-pink-600 dark:text-pink-400">{{ approvedTodayApplications }}</p>
+    </div>
   </div>
 
   <!-- Application Grid -->
-  <div class="application-grid">
-    <mat-card class="application-card"
-              *ngFor="let app of filteredApplications"
-              [ngClass]="{'approved': app.approved, 'rejected': app.rejected}">
-      <div class="card-header">
-        <h2>{{ app.title }}</h2>
-        <span class="status-badge" [ngClass]="{
-          'pending': !app.reviewed,
-          'approved': app.approved,
-          'rejected': app.rejected
-        }">{{ getStatusText(app) }}</span>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let app of filteredApplications"
+      class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden  transition-colors duration-200" [class]="{
+        'border-pink-200 dark:border-pink-800': app.approved,
+        'border-red-200 dark:border-red-800': app.rejected,
+        'border-gray-200 dark:border-gray-700': !app.reviewed
+      }">
+
+      <!-- Card Header -->
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <h2 class="text-lg font-semibold text-gray-600 dark:text-white truncate">{{ app.title }}</h2>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" [class]="{
+            'bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-200': !app.reviewed,
+            'bg-pink-100 text-pink-800 dark:bg-pink-600 dark:text-pink-200': app.approved,
+            'bg-red-100 text-red-800 dark:bg-red-600 dark:text-red-200': app.rejected
+          }">
+          {{ getStatusText(app) }}
+        </span>
       </div>
 
-      <p><mat-icon>person</mat-icon> {{ app.applicantName }}</p>
-      <p><mat-icon>calendar_today</mat-icon> Submitted: {{ app.submissionDate | date }}</p>
+      <!-- Card Body -->
+      <div class="px-6 py-4">
+        <div class="flex items-center mb-3">
+          <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span class="text-gray-700 dark:text-gray-300">{{ app.applicantName }}</span>
+        </div>
 
-      <div class="card-actions">
-        <button mat-button color="accent" (click)="viewApplication(app)">
-          <mat-icon>visibility</mat-icon> View
+        <div class="flex items-center">
+          <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span class="text-gray-700 dark:text-gray-300">Submitted: {{ app.submissionDate | date }}</span>
+        </div>
+      </div>
+
+      <!-- Card Actions -->
+      <div
+        class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-2">
+        <button (click)="viewApplication(app)"
+          class="inline-flex items-center px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200">
+          <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          View
         </button>
-        <button mat-button color="primary" (click)="approveApplication(app)" [disabled]="app.reviewed">
-          <mat-icon>check</mat-icon> Approve
+
+        <button (click)="approveApplication(app)" [disabled]="app.reviewed"
+          class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 transition-colors duration-200">
+          <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Approve
         </button>
-        <button mat-button color="warn" (click)="rejectApplication(app)" [disabled]="app.reviewed">
-          <mat-icon>close</mat-icon> Reject
+
+        <button (click)="rejectApplication(app)" [disabled]="app.reviewed"
+          class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 transition-colors duration-200">
+          <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Reject
         </button>
-        <button mat-button color="warn" (click)="deleteApplication(app)">
-          <mat-icon>delete</mat-icon> Delete
+
+        <button (click)="deleteApplication(app)"
+          class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
+          <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Delete
         </button>
       </div>
-    </mat-card>
+    </div>
   </div>
 
-  <!-- No Results Message -->
-  <div *ngIf="filteredApplications.length === 0" class="no-results">
-    <mat-icon>folder_open</mat-icon>
-    <h3>No applications found</h3>
-    <p>Try adjusting your search or filter criteria</p>
+  <!-- Empty State -->
+  <div *ngIf="filteredApplications.length === 0" class="text-center py-12">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h3 class="mt-2 text-lg font-medium text-gray-600 dark:text-white">No applications found</h3>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your filter criteria</p>
   </div>
 
   <!-- Modal Viewer -->
-  <div class="modal-overlay" *ngIf="selectedApplication">
-    <div class="modal">
-      <button mat-icon-button class="close-modal" (click)="closeModal()">
-        <mat-icon>close</mat-icon>
-      </button>
+  <div *ngIf="selectedApplication" class="fixed inset-0 overflow-y-auto z-50">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Background overlay -->
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-600 dark:bg-opacity-75 transition-opacity"
+        aria-hidden="true" (click)="closeModal()"></div>
 
-      <div class="modal-header">
-        <h2>{{ selectedApplication.title }}</h2>
-        <span class="status-badge" [ngClass]="{
-          'pending': !selectedApplication.reviewed,
-          'approved': selectedApplication.approved,
-          'rejected': selectedApplication.rejected
-        }">{{ getStatusText(selectedApplication) }}</span>
-      </div>
+      <!-- Modal panel -->
+      <div
+        class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+        <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <!-- Modal Header -->
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-lg leading-6 font-medium text-gray-600 dark:text-white">
+                {{ selectedApplication.title }}
+              </h3>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium mt-2" [class]="{
+                  'bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-200': !selectedApplication.reviewed,
+                  'bg-pink-100 text-pink-800 dark:bg-pink-600 dark:text-pink-200': selectedApplication.approved,
+                  'bg-red-100 text-red-800 dark:bg-red-600 dark:text-red-200': selectedApplication.rejected
+                }">
+                {{ getStatusText(selectedApplication) }}
+              </span>
+            </div>
+            <button type="button"
+              class="bg-white dark:bg-gray-700 rounded-md text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
+              (click)="closeModal()">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
 
-      <div class="modal-body">
-        <!-- Basic Info -->
-        <div class="info-section">
-          <h3><mat-icon>info</mat-icon> Basic Information</h3>
-          <div class="info-grid">
-            <div><strong>Applicant:</strong> {{ selectedApplication.applicantName }}</div>
-            <div><strong>Submitted:</strong> {{ selectedApplication.submissionDate | date }}</div>
-            <div><strong>Type:</strong> {{ selectedApplication.type | titlecase }}</div>
-            <div><strong>Email:</strong> {{ selectedApplication.contactEmail }}</div>
+          <!-- Modal Body -->
+          <div class="mt-6">
+            <!-- Basic Info -->
+            <div class="mb-6">
+              <h4 class="text-md font-medium text-gray-600 dark:text-white mb-3 flex items-center">
+                <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Basic Information
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <div>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Applicant</p>
+                  <p class="text-sm font-medium text-gray-600 dark:text-white">{{ selectedApplication.applicantName }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Submitted</p>
+                  <p class="text-sm font-medium text-gray-600 dark:text-white">{{ selectedApplication.submissionDate |
+                    date }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Type</p>
+                  <p class="text-sm font-medium text-gray-600 dark:text-white">{{ selectedApplication.type | titlecase
+                    }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Email</p>
+                  <p class="text-sm font-medium text-gray-600 dark:text-white">{{ selectedApplication.contactEmail }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Application Details -->
+            <div class="mb-6">
+              <h4 class="text-md font-medium text-gray-600 dark:text-white mb-3 flex items-center">
+                <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Application Details
+              </h4>
+              <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <p class="text-gray-700 dark:text-gray-300">{{ selectedApplication.description }}</p>
+
+                <div *ngIf="selectedApplication.documents?.length" class="mt-4">
+                  <h5 class="text-sm font-medium text-gray-600 dark:text-white mb-2">Documents</h5>
+                  <ul class="space-y-2">
+                    <li *ngFor="let doc of selectedApplication.documents" class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
+                          stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">{{ doc.name }}</span>
+                      </div>
+                      <button (click)="downloadDocument(doc)"
+                        class="text-sm text-pink-600 dark:text-pink-400 hover:text-pink-500 dark:hover:text-pink-300">
+                        Download
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Review Notes -->
+            <div>
+              <h4 class="text-md font-medium text-gray-600 dark:text-white mb-3 flex items-center">
+                <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Review Notes
+              </h4>
+              <textarea [(ngModel)]="selectedApplication.notes"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white"
+                rows="4" placeholder="Add review notes..."></textarea>
+            </div>
           </div>
         </div>
 
-        <!-- Details -->
-        <div class="info-section">
-          <h3><mat-icon>description</mat-icon> Application Details</h3>
-          <p>{{ selectedApplication.description }}</p>
-          <div *ngIf="selectedApplication.documents?.length" class="documents-section">
-            <h4>Documents:</h4>
-            <ul>
-              <li *ngFor="let doc of selectedApplication.documents">
-                <mat-icon>insert_drive_file</mat-icon> {{ doc.name }}
-                <button mat-button (click)="downloadDocument(doc)">Download</button>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <!-- Modal Footer -->
+        <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse bg-gray-50 dark:bg-gray-700/30">
+          <button type="button" (click)="approveApplication(selectedApplication)"
+            [disabled]="selectedApplication.reviewed"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-pink-600 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-600 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Approve
+          </button>
 
-        <!-- Notes -->
-        <div class="notes-section">
-          <h3><mat-icon>edit</mat-icon> Review Notes</h3>
-          <textarea [(ngModel)]="selectedApplication.notes" placeholder="Add review notes..."></textarea>
-        </div>
-      </div>
+          <button type="button" (click)="rejectApplication(selectedApplication)"
+            [disabled]="selectedApplication.reviewed"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Reject
+          </button>
 
-      <div class="modal-actions">
-        <button mat-raised-button color="primary" (click)="approveApplication(selectedApplication)" [disabled]="selectedApplication.reviewed">
-          <mat-icon>check</mat-icon> Approve
-        </button>
-        <button mat-raised-button color="warn" (click)="rejectApplication(selectedApplication)" [disabled]="selectedApplication.reviewed">
-          <mat-icon>close</mat-icon> Reject
-        </button>
-        <button mat-raised-button (click)="saveNotes(selectedApplication)">
-          <mat-icon>save</mat-icon> Save Notes
-        </button>
+          <button type="button" (click)="saveNotes(selectedApplication)"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+            <svg class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            Save Notes
+          </button>
+        </div>
       </div>
     </div>
   </div>

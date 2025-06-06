@@ -41,7 +41,10 @@ export class AddDriverComponent implements OnInit {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      phoneNo: ['', [Validators.required]],
+      phoneNo: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)],
+      ],
       userHandle: ['', [Validators.required]],
     });
   }

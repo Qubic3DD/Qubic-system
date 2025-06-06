@@ -30,7 +30,6 @@
                 
             ],
             "styles": [
-  "node_modules/bootstrap/dist/css/bootstrap.min.css",
   "@angular/material/prebuilt-themes/azure-blue.css",
   "src/styles.css"
 ]
@@ -72,7 +71,10 @@
               "buildTarget": "qubic-admin-dashboard:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          } 
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

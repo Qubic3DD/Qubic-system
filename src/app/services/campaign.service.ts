@@ -4,10 +4,10 @@ import { Observable } from 'rxjs';
 import { Campaign } from '../model/campaign.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CampaignService {
-  private baseUrl = 'https://41.76.110.219:8443/api/campaigns';
+  private baseUrl = '/api/campaigns';
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +27,6 @@ export class CampaignService {
     return this.http.delete(`${this.baseUrl}/delete/${id}`);
   }
   createCampaign(formData: FormData): Observable<any> {
-  return this.http.post(`${this.baseUrl}/create`, formData);
-}
+    return this.http.post(`${this.baseUrl}/create`, formData);
+  }
 }
