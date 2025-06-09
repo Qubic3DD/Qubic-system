@@ -71,29 +71,44 @@
       <div
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden transition-transform hover:scale-[1.02]">
         <!-- Card Header -->
-        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <ng-container *ngIf="getDocumentUrlByUsernameAndPurpose(passenger.email, 'PROFILE_PICTURE'); else initials">
-            <img [src]="getDocumentUrlByUsernameAndPurpose(passenger.email, 'PROFILE_PICTURE')" alt="Profile Picture"
-              class="h-full w-full object-cover" />
-          </ng-container>
-          <ng-template #initials>
-            <span class="text-pink-600 dark:text-pink-300 font-medium">
-              {{ passenger.firstName.charAt(0) || 'D' }}{{ passenger.lastName.charAt(0) || '' }}
-            </span>
-          </ng-template>
-          <span [class.bg-green-100]="passenger.status === 'Active'"
-            [class.text-green-800]="passenger.status === 'Active'"
+          <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <div class="flex items-center gap-3">
+            <div
+              class="h-10 w-10 rounded-full overflow-hidden bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
+<ng-container *ngIf="!imageLoadFailed[passenger.email]; else initials">
+  <img 
+    [src]="getDocumentUrlByUsernameAndPurpose(passenger.email, 'PROFILE_PICTURE')" 
+    alt="Profile Picture" 
+    class="h-full w-full object-cover"
+    (error)="onImageError(passenger.email)" />
+</ng-container>
+
+<ng-template #initials>
+  <div class="h-full w-full flex items-center justify-center bg-gray-300 text-white text-xl font-bold">
+    {{ getInitials(passenger.firstName || passenger.email) }}
+  </div>
+</ng-template>
+
+              <ng-template #initials>
+                <span class="text-pink-600 dark:text-pink-300 font-medium">
+                  {{ passenger.firstName.charAt(0) || 'D' }}{{ passenger.lastName.charAt(0) || '' }}
+                </span>
+              </ng-template>
+            </div>
+
+            <div>
+              <h2 class="font-semibold">{{ passenger.firstName }} {{ passenger.lastName }}</h2>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ passenger.roles.join(', ') || 'passenger' }}
+              </p>
+            </div>
+          </div>
+          <span [class.bg-green-100]="passenger.status === 'Active'" [class.text-green-800]="passenger.status === 'Active'"
             [class.dark:bg-green-900]="passenger.status === 'Active'"
-            [class.dark:text-green-200]="passenger.status === 'Active'"
-            [class.bg-red-100]="passenger.status === 'Inactive'" [class.text-red-800]="passenger.status === 'Inactive'"
-            [class.dark:bg-red-900]="passenger.status === 'Inactive'"
-            [class.dark:text-red-200]="passenger.status === 'Inactive'"
-            [class.bg-yellow-100]="passenger.status === 'Pending'"
-            [class.text-yellow-800]="passenger.status === 'Pending'"
-            [class.dark:bg-yellow-900]="passenger.status === 'Pending'"
-            [class.dark:text-yellow-200]="passenger.status === 'Pending'"
-            class="text-xs px-2 py-1 rounded-full font-medium">
-            {{ passenger.status || 'Unknown' }}
+            [class.dark:text-green-200]="passenger.status === 'Active'" [class.bg-red-100]="passenger.status === 'Inactive'"
+            [class.text-red-800]="passenger.status === 'Inactive'" [class.dark:bg-red-900]="passenger.status === 'Inactive'"
+            [class.dark:text-red-200]="passenger.status === 'Inactive'" class="text-xs px-2 py-1 rounded-full font-medium">
+            {{ passenger.status || 'Active' }}
           </span>
         </div>
 

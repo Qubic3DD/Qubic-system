@@ -58,34 +58,46 @@
     </div>
 
     <!-- Fleet Owners Cards -->
-    @if (fleetOwners.length > 0) {
+    @if (fleetOwners2.length > 0) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (owner of fleetOwners; track owner.id) {
+      @for (owner of fleetOwners2; track owner.id) {
       <div
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden transition-transform hover:scale-[1.02]">
         <!-- Card Header -->
-        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <div
-            class="h-10 w-10 rounded-full overflow-hidden bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
-            <ng-container *ngIf="getDocumentUrlByUsernameAndPurpose(owner.email, 'PROFILE_PICTURE'); else initials">
-              <img [src]="getDocumentUrlByUsernameAndPurpose(owner.email, 'PROFILE_PICTURE')" alt="Profile Picture"
-                class="h-full w-full object-cover" />
-            </ng-container>
-            <ng-template #initials>
-              <span class="text-pink-600 dark:text-pink-300 font-medium">
-                {{ owner.firstName.charAt(0) || 'D' }}{{ owner.lastName.charAt(0) || '' }}
-              </span>
-            </ng-template>
+         <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <div class="flex items-center gap-3">
+            <div
+              class="h-10 w-10 rounded-full overflow-hidden bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
+<ng-container *ngIf="!imageLoadFailed[owner.email]; else initials">
+  <img 
+    [src]="getDocumentUrlByUsernameAndPurpose(owner.email, 'PROFILE_PICTURE')" 
+    alt="Profile Picture" 
+    class="h-full w-full object-cover"
+    (error)="onImageError(owner.email)" />
+</ng-container>
+
+<ng-template #initials>
+  <div class="h-full w-full flex items-center justify-center bg-gray-300 text-white text-xl font-bold">
+    {{ getInitials(owner.firstName || owner.email) }}
+  </div>
+</ng-template>
+
+             
+            </div>
+
+            <div>
+              <h2 class="font-semibold">{{ owner.firstName }} {{ owner.lastName }}</h2>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ owner.roles.join(', ') || 'owner' }}
+              </p>
+            </div>
           </div>
           <span [class.bg-green-100]="owner.status === 'Active'" [class.text-green-800]="owner.status === 'Active'"
             [class.dark:bg-green-900]="owner.status === 'Active'"
             [class.dark:text-green-200]="owner.status === 'Active'" [class.bg-red-100]="owner.status === 'Inactive'"
             [class.text-red-800]="owner.status === 'Inactive'" [class.dark:bg-red-900]="owner.status === 'Inactive'"
-            [class.dark:text-red-200]="owner.status === 'Inactive'" [class.bg-yellow-100]="owner.status === 'Pending'"
-            [class.text-yellow-800]="owner.status === 'Pending'" [class.dark:bg-yellow-900]="owner.status === 'Pending'"
-            [class.dark:text-yellow-200]="owner.status === 'Pending'"
-            class="text-xs px-2 py-1 rounded-full font-medium">
-            {{ owner.status }}
+            [class.dark:text-red-200]="owner.status === 'Inactive'" class="text-xs px-2 py-1 rounded-full font-medium">
+            {{ owner.status || 'Active' }}
           </span>
         </div>
 
@@ -156,16 +168,16 @@
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h10" />
             </svg>
           </button>
-          <button (click)="viewFleetOwnerDetails(owner.id.toString())"
-            class="text-gray-700 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </button>
+       <button
+  (click)="viewFleetOwnerDetails(owner.email)"
+  class="text-gray-700 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  </svg>
+</button>
+
         </div>
       </div>
       }

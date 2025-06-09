@@ -92,11 +92,25 @@
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <ng-container
-                    *ngIf="getDocumentUrlByUsernameAndPurpose(admin.email, 'PROFILE_PICTURE'); else initials">
-                    <img [src]="getDocumentUrlByUsernameAndPurpose(admin.email, 'PROFILE_PICTURE')"
-                      alt="Profile Picture" class="h-full w-full object-cover" />
-                  </ng-container>
+       <div
+              class="h-10 w-10 rounded-full overflow-hidden bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
+<ng-container *ngIf="!imageLoadFailed[admin.email]; else initials">
+  <img 
+    [src]="getDocumentUrlByUsernameAndPurpose(admin.email, 'PROFILE_PICTURE')" 
+    alt="Profile Picture" 
+    class="h-full w-full object-cover"
+    (error)="onImageError(admin.email)" />
+</ng-container>
+
+<ng-template #initials>
+  <div class="h-full w-full flex items-center justify-center bg-gray-300 text-white text-xl font-bold">
+    {{ getInitials(admin.firstName || admin.email) }}
+  </div>
+</ng-template>
+
+             
+            </div>
+
                   <ng-template #initials>
                     <span class="text-pink-600 dark:text-pink-300 font-medium">
                       {{ admin.firstName.charAt(0) || 'D' }}{{ admin.lastName.charAt(0) || '' }}

@@ -1,0 +1,615 @@
+.fleet-owner-container {
+
+  margin: 0 auto;
+  padding: 20px;
+}
+.avatar-container {
+  position: relative;
+  width: 80px;   /* square size */
+  height: 80px;  /* square size */
+}
+
+.company-logo,
+.initials-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;  /* rounded corners */
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: #ccc;
+  color: #fff;
+}
+
+.online-status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%; /* keep status indicator circle */
+  border: 2px solid white;
+}
+
+.online {
+  background-color: #4caf50;
+}
+
+.offline {
+  background-color: #f44336;
+}
+
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.error-container .error-card {
+  text-align: center;
+  padding: 40px;
+  max-width: 500px;
+}
+
+.error-container .error-card .error-icon {
+  font-size: 60px;
+  width: 60px;
+  height: 60px;
+  color: #f44336;
+  margin-bottom: 20px;
+}
+
+.error-container .error-card .error-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #c62828;
+}
+
+.error-container .error-card .error-message {
+  margin-bottom: 20px;
+  color: #972467;
+}
+
+.header-section {
+  background: linear-gradient(135deg, #ce2ab2 0%, #9e0b72 100%);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-section .header-content {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  color: white;
+}
+
+.header-section .header-content .avatar-container {
+  position: relative;
+  margin-right: 24px;
+}
+
+.header-section .header-content .avatar-container .company-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-section .header-content .avatar-container .online-status {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.header-section .header-content .avatar-container .online-status.online {
+  background-color: #4caf50;
+}
+
+.header-section .header-content .avatar-container .online-status.offline {
+  background-color: #9e9e9e;
+}
+
+.header-section .header-content .header-details {
+  flex: 1;
+}
+
+.header-section .header-content .header-details .company-name {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.header-section .header-content .header-details .fleet-owner-name {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+.header-section .header-content .header-details .status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.header-section .header-content .header-details .status-badge.bg-green-100 {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.header-section .header-content .header-details .contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.header-section .header-content .header-details .contact-info .contact-item {
+  display: flex;
+  align-items: center;
+  color: white;
+  opacity: 0.9;
+  text-decoration: none;
+}
+
+.header-section .header-content .header-details .contact-info .contact-item mat-icon {
+  margin-right: 6px;
+  font-size: 20px;
+}
+
+.header-section .header-content .header-details .contact-info .contact-item:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.header-section .header-content .header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.header-section .header-content .header-actions .more-actions {
+  color: white;
+}
+
+.tab-content {
+  padding: 16px 0;
+}
+
+.info-card {
+  height: 100%;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+.info-card mat-card-header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-card mat-card-header mat-card-title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+mat-card-content {
+  padding: 16px;
+}
+
+mat-card-content .info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+mat-card-content .info-item:last-child {
+  border-bottom: none;
+}
+
+mat-card-content .info-item .info-label {
+  font-weight: 500;
+  color: #455a64;
+}
+
+mat-card-content .info-item .info-value {
+  color: #263238;
+  text-align: right;
+}
+
+mat-card-content .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+mat-card-content .stats-grid .stat-item {
+  text-align: center;
+  padding: 12px;
+  background-color: #fafafa;
+  border-radius: 8px;
+}
+
+mat-card-content .stats-grid .stat-item .stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #3949ab;
+}
+
+mat-card-content .stats-grid .stat-item .stat-label {
+  font-size: 14px;
+  color: #757575;
+}
+
+mat-card-content .section-subtitle {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #455a64;
+}
+
+mat-card-content .vehicle-type-badge,
+mat-card-content .area-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+mat-card-content .bio-text {
+  line-height: 1.6;
+  color: #37474f;
+}
+
+mat-card-content .rating-stars {
+  display: inline-flex;
+  align-items: center;
+}
+
+mat-card-content .rating-stars mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.drivers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.drivers-header .drivers-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: #37474f;
+}
+
+.drivers-header .drivers-search {
+  display: flex;
+  align-items: center;
+}
+
+.drivers-header .drivers-search .search-field {
+  width: 300px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #757575;
+}
+
+.empty-state .empty-icon {
+  font-size: 60px;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
+  color: #bdbdbd;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #455a64;
+}
+
+.drivers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.drivers-grid .driver-card {
+  padding: 16px; /* adds space inside the card */
+  box-sizing: border-box; /* ensures padding doesn't affect overall size */
+}
+.drivers-grid .driver-card .driver-header,
+.drivers-grid .driver-card .driver-details,
+.drivers-grid .driver-card .driver-actions {
+  margin-bottom: 12px; /* adds vertical spacing between sections inside the card */
+}
+.drivers-grid .driver-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.drivers-grid .driver-card .driver-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.drivers-grid .driver-card .driver-header .driver-avatar {
+  position: relative;
+  margin-right: 16px;
+}
+
+.drivers-grid .driver-card .driver-header .driver-avatar .avatar-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.drivers-grid .driver-card .driver-header .driver-avatar .driver-status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.drivers-grid .driver-card .driver-header .driver-info .driver-name {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #37474f;
+}
+
+.drivers-grid .driver-card .driver-header .driver-info .driver-email {
+  font-size: 14px;
+  color: #757575;
+  margin-bottom: 4px;
+}
+
+.drivers-grid .driver-card .driver-header .driver-info .driver-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.drivers-grid .driver-card .driver-header .driver-info .driver-meta .driver-rating {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #ff8f00;
+}
+
+.drivers-grid .driver-card .driver-header .driver-info .driver-meta .driver-rating mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 2px;
+}
+
+.drivers-grid .driver-card .driver-header .driver-info .driver-meta .driver-license {
+  font-size: 14px;
+  color: #1565c0;
+  font-weight: 500;
+}
+
+.drivers-grid .driver-card .driver-details {
+  margin-bottom: 16px;
+}
+
+.drivers-grid .driver-card .driver-details .detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.drivers-grid .driver-card .driver-details .detail-item mat-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #9e9e9e;
+}
+
+.drivers-grid .driver-card .driver-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.drivers-grid .driver-card .driver-actions .action-button {
+  flex: 1;
+  margin: 0 4px;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px;
+}
+
+.analytics-grid .analytics-card {
+  border-radius: 8px !important;
+}
+
+.analytics-grid .analytics-card mat-card-content {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.analytics-grid .analytics-card mat-card-content .placeholder-chart {
+  text-align: center;
+  color: #9e9e9e;
+}
+
+.analytics-grid .analytics-card mat-card-content .placeholder-chart mat-icon {
+  font-size: 60px;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
+}
+
+.analytics-grid .analytics-card mat-card-content .placeholder-chart p {
+  font-size: 16px;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.documents-grid .document-card {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px !important;
+}
+
+.documents-grid .document-card .document-icon {
+  margin-right: 16px;
+}
+
+.documents-grid .document-card .document-icon mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #2196f3;
+}
+
+.documents-grid .document-card .document-info {
+  flex: 1;
+}
+
+.documents-grid .document-card .document-info .document-name {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #37474f;
+}
+
+.documents-grid .document-card .document-info .document-type {
+  font-size: 14px;
+  color: #757575;
+  margin-bottom: 4px;
+}
+
+.documents-grid .document-card .document-info .document-date {
+  font-size: 12px;
+  color: #9e9e9e;
+}
+
+.documents-grid .document-card .document-actions {
+  display: flex;
+}
+
+.documents-grid .document-card .document-actions button {
+  margin-left: 8px;
+}
+
+/* Status color classes */
+.bg-green-100 {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+}
+
+.bg-red-100 {
+  background-color: #ffcdd2;
+  color: #c62828;
+}
+
+.bg-yellow-100 {
+  background-color: #fff9c4;
+  color: #f9a825;
+}
+
+.bg-blue-100 {
+  background-color: #bbdefb;
+  color: #1565c0;
+}
+
+.bg-gray-100 {
+  background-color: #f5f5f5;
+  color: #424242;
+}
+
+/* Vehicle type color classes */
+.bg-purple-100 {
+  background-color: #e1bee7;
+  color: #6a1b9a;
+}
+
+.bg-indigo-100 {
+  background-color: #c5cae9;
+  color: #283593;
+}
+
+.bg-orange-100 {
+  background-color: #ffe0b2;
+  color: #ef6c00;
+}
+
+.bg-teal-100 {
+  background-color: #b2dfdb;
+  color: #00695c;
+}
+
+.bg-amber-100 {
+  background-color: #ffecb3;
+  color: #ff8f00;
+}
+
+/* Utility classes */
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+.ml-2 { margin-left: 8px; }
+.ml-4 { margin-left: 16px; }
+.text-gray-500 { color: #9e9e9e; }
+.text-gray-600 { color: #757575; }
+
+
+.avatar-image,
+.avatar-initials {
+  width: 48px;       /* or whatever size you want */
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover; /* ensures the image covers the container without distortion */
+  display: inline-block;
+  text-align: center;
+  line-height: 48px; /* vertically center initials */
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+  background-color: #666; /* fallback background color for initials */
+  user-select: none;
+}

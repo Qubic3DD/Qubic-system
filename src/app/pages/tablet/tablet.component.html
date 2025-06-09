@@ -28,7 +28,7 @@
           placeholder="Search tablets..." [(ngModel)]="searchQuery">
       </div>
       <button
-        class=" cursor-pointer flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200"
+        class="cursor-pointer flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200"
         (click)="addTablet()">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
@@ -102,7 +102,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-100" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37a1.724 1.724 0 002.572-1.065c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37.996.608 2.296.07 2.572-1.065z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
@@ -113,44 +113,45 @@
 
   <!-- Tablet Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <div *ngFor="let tab of filteredTablets"
+    <div *ngFor="let tablet of filteredTablets"
       class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
       <!-- Card Header -->
       <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [class]="{
-                'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200': tab.status === 'Available',
-                'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200': tab.status === 'Assigned',
-                'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200': tab.status === 'Maintenance'
+                'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200': tablet.status === 'AVAILABLE',
+                'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200': tablet.status === 'ASSIGNED',
+                'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200': tablet.status === 'MAINTENANCE',
+                'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200': tablet.status === 'LOST' || tablet.status === 'DECOMMISSIONED'
               }">
-          {{ tab.status }}
+          {{ tablet.status }}
         </span>
 
         <div class="relative">
           <button type="button" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
-            (click)="toggleDropdown(tab.id)">
+            (click)="toggleDropdown(tablet.id!)">
             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
             </svg>
           </button>
 
           <!-- Dropdown Menu -->
-          <div *ngIf="activeDropdown === tab.id"
+          <div *ngIf="activeDropdown === tablet.id"
             class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
             <div class="py-1">
               <a href="#"
                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                (click)="viewTabletInfo(tab.id)">
+                (click)="viewTabletInfo(tablet)">
                 Details
               </a>
-              <a href="#"
+              <a *ngIf="tablet.user" href="#"
                 class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                (click)="viewUserInfo(tab.user)">
+                (click)="viewUserInfo(tablet.user)">
                 User Info
               </a>
               <div class="border-t border-gray-200 dark:border-gray-700"></div>
               <a href="#"
                 class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                (click)="removeTablet(tab.id)">
+                (click)="removeTablet(tablet.id!)">
                 Remove
               </a>
             </div>
@@ -169,24 +170,26 @@
             </svg>
           </div>
           <div>
-            <h4 class=" w-60 not-odd:text-lg font-medium text-gray-900 dark:text-white truncate">{{ tab.model }}</h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Serial: {{ tab.serial || 'N/A' }}</p>
+            <h4 class="w-60 not-odd:text-lg font-medium text-gray-900 dark:text-white truncate">{{ tablet.model }}</h4>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Serial: {{ tablet.serialNumber || 'N/A' }}</p>
           </div>
         </div>
 
         <div class="space-y-3">
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-500 dark:text-gray-400">Owner:</span>
-            <span class="text-sm font-medium text-gray-900 dark:text-white">{{ tab.owner || 'Unassigned' }}</span>
+            <span class="text-sm font-medium text-gray-900 dark:text-white">
+              {{ tablet.user ? tablet.user.firstName + ' ' + tablet.user.lastName : 'Unassigned' }}
+            </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-500 dark:text-gray-400">Assigned:</span>
-            <span class="text-sm text-gray-900 dark:text-white">{{ tab.assignedDate ? (tab.assignedDate |
+            <span class="text-sm text-gray-900 dark:text-white">{{ tablet.assignedDate ? (tablet.assignedDate |
               date:'mediumDate') : 'Not assigned' }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-500 dark:text-gray-400">OS Version:</span>
-            <span class="text-sm text-gray-900 dark:text-white">{{ tab.specs.os || 'Unknown' }}</span>
+            <span class="text-sm text-gray-900 dark:text-white">{{ tablet.os || 'Unknown' }}</span>
           </div>
         </div>
       </div>
@@ -194,8 +197,8 @@
       <!-- Card Footer -->
       <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700">
         <button
-          class=" cursor-pointer w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/30 hover:bg-pink-100 dark:hover:bg-pink-900/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200"
-          (click)="viewTabletInfo(tab.id)">
+          class="cursor-pointer w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/30 hover:bg-pink-100 dark:hover:bg-pink-900/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200"
+          (click)="viewTabletInfo(tablet)">
           Quick View
         </button>
       </div>
@@ -255,17 +258,19 @@
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Status</span>
                       <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [class]="{
-                              'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200': selectedTablet.status === 'Available',
-                              'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200': selectedTablet.status === 'Assigned',
-                              'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200': selectedTablet.status === 'Maintenance'
+                              'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200': selectedTablet.status === 'AVAILABLE',
+                              'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200': selectedTablet.status === 'ASSIGNED',
+                              'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200': selectedTablet.status === 'MAINTENANCE',
+                              'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200': selectedTablet.status === 'LOST' || selectedTablet.status === 'DECOMMISSIONED'
                             }">
                         {{ selectedTablet.status }}
                       </span>
                     </div>
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Owner</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.owner || 'Unassigned'
-                        }}</span>
+                      <span class="text-sm text-gray-900 dark:text-white">
+                        {{ selectedTablet.user ? selectedTablet.user.firstName + ' ' + selectedTablet.user.lastName : 'Unassigned' }}
+                      </span>
                     </div>
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Assigned Date</span>
@@ -274,7 +279,7 @@
                     </div>
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Serial Number</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.serial || 'N/A' }}</span>
+                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.serialNumber || 'N/A' }}</span>
                     </div>
                   </div>
                 </div>
@@ -285,18 +290,15 @@
                   <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-3">
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Operating System</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.specs?.os || 'Unknown'
-                        }}</span>
+                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.os || 'Unknown' }}</span>
                     </div>
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Storage</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.specs?.storage || 'Unknown'
-                        }}</span>
+                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.storage || 'Unknown' }}</span>
                     </div>
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Screen Size</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.specs?.screen || 'Unknown'
-                        }}</span>
+                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet.screen || 'Unknown' }}</span>
                     </div>
                     <div class="flex justify-between">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Last Updated</span>
@@ -355,8 +357,8 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ selectedUser.name }}</h3>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{{ selectedUser.role }}</p>
+                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">User ID: {{ selectedUser.id }}</p>
                 </div>
               </div>
 
@@ -371,11 +373,13 @@
                     </div>
                     <div class="flex justify-between items-center">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Phone</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedUser.phone || 'N/A' }}</span>
+                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedUser.phoneNo || 'N/A' }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-500 dark:text-gray-400">Department</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedUser.department || 'N/A' }}</span>
+                      <span class="text-sm text-gray-500 dark:text-gray-400">Location</span>
+                      <span class="text-sm text-gray-900 dark:text-white">
+                        {{ selectedUser.city }}{{ selectedUser.city && selectedUser.country ? ', ' : '' }}{{ selectedUser.country || 'N/A' }}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -391,12 +395,11 @@
                     <div class="flex justify-between items-center">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Assigned Date</span>
                       <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet?.assignedDate ?
-                        (selectedTablet.assignedDate | date:'mediumDate') : 'N/A' }}</span>
+                        (selectedTablet?.assignedDate | date:'mediumDate') : 'N/A' }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-500 dark:text-gray-400">Access Level</span>
-                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedUser.accessLevel || 'Standard'
-                        }}</span>
+                      <span class="text-sm text-gray-500 dark:text-gray-400">Status</span>
+                      <span class="text-sm text-gray-900 dark:text-white">{{ selectedTablet?.status || 'N/A' }}</span>
                     </div>
                   </div>
                 </div>
@@ -405,6 +408,8 @@
           </div>
         </div>
         <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse bg-gray-50 dark:bg-gray-700/30 rounded-b-lg">
+
+
           <button type="button"
             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
             (click)="closeModal()">

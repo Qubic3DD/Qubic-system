@@ -5,9 +5,11 @@ import { HttpClient } from '@angular/common/http';
 
 import { BaseRequest } from '../../api/Request/base-request';
 import { RequestSenderService } from '../../core/request-sender.service';
-import { FleetOwnersResponse } from '../../api/Response/FleetOwnersResponse';
+import { FleetOwnersResponse, FleetOwnersResponse2 } from '../../api/Response/FleetOwnersResponse';
 import { Services } from '../../core/services';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
+import { MatDialog } from '@angular/material/dialog';
+import { AddDriverDialogComponent } from './add-driver-dialog/add-driver-dialog.component';
 
 @Component({
   selector: 'app-fleet-owners',
@@ -19,7 +21,9 @@ import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 export class FleetOwnersComponent implements OnInit {
   _baseRequest: BaseRequest = new BaseRequest();
   fleetOwners: FleetOwnersResponse[] = [];
-  filteredFleetOwners: FleetOwnersResponse[] = [];
+    fleetOwners2: FleetOwnersResponse2[] = [];
+  filteredFleetOwners: FleetOwnersResponse2[] = [];
+    filteredFleetOwners2: FleetOwnersResponse[] = [];
   activeFilter: string = 'all';
   isLoading: boolean = false;
 
@@ -31,6 +35,7 @@ export class FleetOwnersComponent implements OnInit {
   ];
 
   constructor(
+    private dialog: MatDialog,
     private router: Router,
     private _http: RequestSenderService,
     private http: HttpClient,
@@ -40,17 +45,24 @@ export class FleetOwnersComponent implements OnInit {
   ngOnInit(): void {
     this.getFleetOwners();
   }
-
+openAddDriverDialog(): void {
+  this.dialog.open(AddDriverDialogComponent, {
+    width: '600px',
+    data: {
+      fleetOwnerEmail: 'fleetowner@example.com' // replace with dynamic email
+    }
+  });
+}
   getFleetOwners(): void {
     this.isLoading = true;
     this.http
       .get<any>(
-        'http://41.76.110.219:8443/profile/get-users-by-role/fleet_owner'
+        'http://196.168.8.29:8443/profile/get-users-by-role/fleet_owner'
       )
       .subscribe({
         next: (response) => {
-          this.fleetOwners = response.data || [];
-          this.filteredFleetOwners = [...this.fleetOwners];
+          this.fleetOwners2 = response.data || [];
+          this.filteredFleetOwners2 = [...this.fleetOwners];
           this.isLoading = false;
         },
         error: (error) => {
@@ -70,11 +82,12 @@ export class FleetOwnersComponent implements OnInit {
     });
   }
 
-  viewFleetOwnerDetails(userName: string): void {
-    this.router.navigate(['/fleet-owners/details'], {
-      queryParams: { username: userName },
-    });
-  }
+viewFleetOwnerDetails(userName: string): void {
+  this.router.navigate(['/fleet-owners/details'], {
+    queryParams: { username: userName },
+  });
+}
+
 
   deleteFleetOwner(userName: string): void {
     this.confirmDialog
@@ -87,10 +100,10 @@ export class FleetOwnersComponent implements OnInit {
               next: () => {
                 console.log(`${userName} deleted`);
                 this.fleetOwners = this.fleetOwners.filter(
-                  (f) => f.userName !== userName
+                  (f) => f.data.username !== userName
                 );
                 this.filteredFleetOwners = this.filteredFleetOwners.filter(
-                  (f) => f.userName !== userName
+                  (f) => f.username !== userName
                 );
               },
               error: (err) => {
@@ -108,9 +121,17 @@ export class FleetOwnersComponent implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://196.168.8.29:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
+    getInitials(name: string): string {
+  if (!name) return '';
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
+imageLoadFailed: { [email: string]: boolean } = {};
 
+onImageError(email: string) {
+  this.imageLoadFailed[email] = true;
+}
   toggleFilter(filterId: string): void {
     this.filters = this.filters.map((filter) => ({
       ...filter,
@@ -119,10 +140,10 @@ export class FleetOwnersComponent implements OnInit {
     this.activeFilter = filterId;
 
     if (filterId === 'all') {
-      this.filteredFleetOwners = [...this.fleetOwners];
+      this.filteredFleetOwners2 = [...this.fleetOwners];
     } else {
-      this.filteredFleetOwners = this.fleetOwners.filter(
-        (owner) => owner.status?.toLowerCase() === filterId.toLowerCase()
+      this.filteredFleetOwners2 = this.fleetOwners.filter(
+        (owner) => owner.data.lastName.toLowerCase() === filterId.toLowerCase()
       );
     }
   }

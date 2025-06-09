@@ -17,6 +17,8 @@ import { MessagesComponent } from './pages/messages/messages.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { ApprovalsComponent } from './pages/approvals/approvals.component';
 import { TabletComponent } from './pages/tablet/tablet.component';
+import { AddFleetOwnerComponent } from './pages/fleet-owners/add-fleet-owner/add-fleet-owner.component';
+import { ViewFleetOwnerComponent } from './pages/fleet-owners/view-fleet-owner/view-fleet-owner.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
@@ -74,14 +76,21 @@ export const routes: Routes = [
           // { path: 'edit', component: EditAgenciesComponent },
         ],
       },
-          {
-        path: 'fleet-owners',
-        children: [
-          { path: '', component: FleetOwnersComponent },
-          // { path: 'add', component: AddAgenciesComponent },
-          // { path: 'edit', component: EditAgenciesComponent },
-        ],
-      },
+ {
+  path: 'fleet-owners',
+  children: [
+    { path: '', component: FleetOwnersComponent },
+    { path: 'add', component: AddFleetOwnerComponent },
+    {
+      path: 'details',
+      loadComponent: () =>
+        import('./pages/fleet-owners/view-fleet-owner/view-fleet-owner.component').then(
+          m => m.ViewFleetOwnerComponent
+        )
+    }
+  ],
+}
+,
             {
         path: 'tablets',
         children: [
@@ -99,7 +108,8 @@ export const routes: Routes = [
           // { path: 'edit', component: EditAgenciesComponent },
         ],
       },
-   
+  
+
       {
         path: 'drivers',
         children: [

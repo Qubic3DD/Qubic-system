@@ -1,0 +1,293 @@
+<!-- add-fleet-owner.component.html -->
+<div
+  class="bg-gray-50 w-full min-h-screen dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200 p-6"
+>
+  <div class="w-full bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden p-6">
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold">Add Fleet Owner</h2>
+      <p class="text-gray-500 dark:text-gray-400 mt-2">
+        Fill in the details to register a new Fleet Owner
+      </p>
+    </div>
+
+    <form class="space-y-4" [formGroup]="addFleetOwnerForm">
+      <!-- Username -->
+      <div>
+        <input
+          type="text"
+          id="userName"
+          name="userName"
+          formControlName="userName"
+          required
+          placeholder="Username"
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+          [class.border-red-500]="
+            addFleetOwnerForm.get('userName')?.invalid &&
+            (addFleetOwnerForm.get('userName')?.dirty || addFleetOwnerForm.get('userName')?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            addFleetOwnerForm.get('userName')?.invalid &&
+            (addFleetOwnerForm.get('userName')?.dirty || addFleetOwnerForm.get('userName')?.touched)
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          <span *ngIf="addFleetOwnerForm.get('userName')?.errors?.['required']"
+            >Username is required</span
+          >
+          <span *ngIf="addFleetOwnerForm.get('userName')?.errors?.['minlength']"
+            >Username must be at least 3 characters</span
+          >
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          formControlName="password"
+          required
+          placeholder="Password"
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+          [class.border-red-500]="
+            addFleetOwnerForm.get('password')?.invalid &&
+            (addFleetOwnerForm.get('password')?.dirty || addFleetOwnerForm.get('password')?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            addFleetOwnerForm.get('password')?.invalid &&
+            (addFleetOwnerForm.get('password')?.dirty || addFleetOwnerForm.get('password')?.touched)
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          <span *ngIf="addFleetOwnerForm.get('password')?.errors?.['required']"
+            >Password is required</span
+          >
+          <span *ngIf="addFleetOwnerForm.get('password')?.errors?.['minlength']"
+            >Password must be at least 6 characters</span
+          >
+        </div>
+      </div>
+
+      <!-- First Name & Last Name -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            formControlName="firstName"
+            required
+            placeholder="First Name"
+            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+            [class.border-red-500]="
+              addFleetOwnerForm.get('firstName')?.invalid &&
+              (addFleetOwnerForm.get('firstName')?.dirty || addFleetOwnerForm.get('firstName')?.touched)
+            "
+          />
+          <div
+            *ngIf="
+              addFleetOwnerForm.get('firstName')?.invalid &&
+              (addFleetOwnerForm.get('firstName')?.dirty || addFleetOwnerForm.get('firstName')?.touched)
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            First name is required
+          </div>
+        </div>
+        <div>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            formControlName="lastName"
+            required
+            placeholder="Last Name"
+            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+            [class.border-red-500]="
+              addFleetOwnerForm.get('lastName')?.invalid &&
+              (addFleetOwnerForm.get('lastName')?.dirty || addFleetOwnerForm.get('lastName')?.touched)
+            "
+          />
+          <div
+            *ngIf="
+              addFleetOwnerForm.get('lastName')?.invalid &&
+              (addFleetOwnerForm.get('lastName')?.dirty || addFleetOwnerForm.get('lastName')?.touched)
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            Last name is required
+          </div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          formControlName="email"
+          required
+          placeholder="Email"
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+          [class.border-red-500]="
+            addFleetOwnerForm.get('email')?.invalid &&
+            (addFleetOwnerForm.get('email')?.dirty || addFleetOwnerForm.get('email')?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            addFleetOwnerForm.get('email')?.invalid &&
+            (addFleetOwnerForm.get('email')?.dirty || addFleetOwnerForm.get('email')?.touched)
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          <span *ngIf="addFleetOwnerForm.get('email')?.errors?.['required']"
+            >Email is required</span
+          >
+          <span *ngIf="addFleetOwnerForm.get('email')?.errors?.['email']"
+            >Please enter a valid email</span
+          >
+        </div>
+      </div>
+
+      <!-- Phone Number -->
+      <div>
+        <input
+          type="tel"
+          id="phoneNo"
+          name="phoneNo"
+          formControlName="phoneNo"
+          required
+          placeholder="Phone Number"
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+          [class.border-red-500]="
+            addFleetOwnerForm.get('phoneNo')?.invalid &&
+            (addFleetOwnerForm.get('phoneNo')?.dirty || addFleetOwnerForm.get('phoneNo')?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            addFleetOwnerForm.get('phoneNo')?.invalid &&
+            (addFleetOwnerForm.get('phoneNo')?.dirty || addFleetOwnerForm.get('phoneNo')?.touched)
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          <span *ngIf="addFleetOwnerForm.get('phoneNo')?.errors?.['required']"
+            >Phone number is required</span
+          >
+          <span *ngIf="addFleetOwnerForm.get('phoneNo')?.errors?.['pattern']"
+            >Please enter a valid phone number (10-15 digits)</span
+          >
+        </div>
+      </div>
+
+      <!-- Company Name -->
+      <div>
+        <input
+          type="text"
+          id="companyName"
+          name="companyName"
+          formControlName="companyName"
+          required
+          placeholder="Company Name"
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+          [class.border-red-500]="
+            addFleetOwnerForm.get('companyName')?.invalid &&
+            (addFleetOwnerForm.get('companyName')?.dirty || addFleetOwnerForm.get('companyName')?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            addFleetOwnerForm.get('companyName')?.invalid &&
+            (addFleetOwnerForm.get('companyName')?.dirty || addFleetOwnerForm.get('companyName')?.touched)
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          Company name is required
+        </div>
+      </div>
+
+      <!-- Company Registration Number -->
+      <div>
+        <input
+          type="text"
+          id="companyRegistrationNumber"
+          name="companyRegistrationNumber"
+          formControlName="companyRegistrationNumber"
+          required
+          placeholder="Company Registration Number"
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+          [class.border-red-500]="
+            addFleetOwnerForm.get('companyRegistrationNumber')?.invalid &&
+            (addFleetOwnerForm.get('companyRegistrationNumber')?.dirty || addFleetOwnerForm.get('companyRegistrationNumber')?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            addFleetOwnerForm.get('companyRegistrationNumber')?.invalid &&
+            (addFleetOwnerForm.get('companyRegistrationNumber')?.dirty || addFleetOwnerForm.get('companyRegistrationNumber')?.touched)
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          Company registration number is required
+        </div>
+      </div>
+
+      <!-- Fleet Size -->
+      <div>
+        <input
+          type="number"
+          id="fleetSize"
+          name="fleetSize"
+          formControlName="fleetSize"
+          required
+          placeholder="Fleet Size"
+          min="1"
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+          [class.border-red-500]="
+            addFleetOwnerForm.get('fleetSize')?.invalid &&
+            (addFleetOwnerForm.get('fleetSize')?.dirty || addFleetOwnerForm.get('fleetSize')?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            addFleetOwnerForm.get('fleetSize')?.invalid &&
+            (addFleetOwnerForm.get('fleetSize')?.dirty || addFleetOwnerForm.get('fleetSize')?.touched)
+          "
+          class="text-red-500 text-sm mt-1"
+        >
+          <span *ngIf="addFleetOwnerForm.get('fleetSize')?.errors?.['required']"
+            >Fleet size is required</span
+          >
+          <span *ngIf="addFleetOwnerForm.get('fleetSize')?.errors?.['min']"
+            >Fleet size must be at least 1</span
+          >
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="pt-4 flex gap-4">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="w-1/2 cursor-pointer bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          (click)="onSubmit()"
+          class="w-1/2 cursor-pointer bg-pink-600 hover:bg-pink-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+        >
+          Add Fleet Owner
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

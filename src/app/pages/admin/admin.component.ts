@@ -50,7 +50,7 @@ export class AdminComponent implements OnInit {
   getAdmins(): void {
     this.isLoading = true;
     this.http
-      .get<any>('http://41.76.110.219:8443/profile/get-users-by-role/admin')
+      .get<any>('http://196.168.8.29:8443/profile/get-users-by-role/admin')
       .subscribe({
         next: (response) => {
           this.admins = response.data || [];
@@ -104,6 +104,7 @@ export class AdminComponent implements OnInit {
         }
       });
   }
+
   getDocumentUrlByUsernameAndPurpose(
     username: string,
     purpose: string
@@ -111,8 +112,17 @@ export class AdminComponent implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://196.168.8.29:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
+    getInitials(name: string): string {
+  if (!name) return '';
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
+imageLoadFailed: { [email: string]: boolean } = {};
+
+onImageError(email: string) {
+  this.imageLoadFailed[email] = true;
+}
   toggleFilter(filterId: string): void {
     this.filters = this.filters.map((filter) => ({
       ...filter,

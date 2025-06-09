@@ -68,10 +68,20 @@
           <div class="flex items-center gap-3">
             <div
               class="h-10 w-10 rounded-full overflow-hidden bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
-              <ng-container *ngIf="getDocumentUrlByUsernameAndPurpose(driver.email, 'PROFILE_PICTURE'); else initials">
-                <img [src]="getDocumentUrlByUsernameAndPurpose(driver.email, 'PROFILE_PICTURE')" alt="Profile Picture"
-                  class="h-full w-full object-cover" />
-              </ng-container>
+<ng-container *ngIf="!imageLoadFailed[driver.email]; else initials">
+  <img 
+    [src]="getDocumentUrlByUsernameAndPurpose(driver.email, 'PROFILE_PICTURE')" 
+    alt="Profile Picture" 
+    class="h-full w-full object-cover"
+    (error)="onImageError(driver.email)" />
+</ng-container>
+
+<ng-template #initials>
+  <div class="h-full w-full flex items-center justify-center bg-gray-300 text-white text-xl font-bold">
+    {{ getInitials(driver.firstName || driver.email) }}
+  </div>
+</ng-template>
+
               <ng-template #initials>
                 <span class="text-pink-600 dark:text-pink-300 font-medium">
                   {{ driver.firstName?.charAt(0) || 'D' }}{{ driver.lastName?.charAt(0) || '' }}

@@ -10,5 +10,6 @@ GET_PASSENGER='profile/get-users-by-role/passenger',
 GET_FLEET_OWNERS='profile/get-users-by-role/fleet_owner',
 DELETE_FLEET_OWNER='',
 DELETE_PASSENGER='',
-DELETE_ADMIN=''
+DELETE_ADMIN='',
+REGISTER_FLEET_OWNER='api/register',
 }

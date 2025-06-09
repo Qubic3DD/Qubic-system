@@ -3,47 +3,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../environments/environment.development'
 import { DriverProfile } from '../api/Response/interfaces';
+import { Tablet, TabletCreateDto, TabletUpdateDto } from '../api/Request/Tablet';
 
-export interface Tablet {
-  id: number;
-  model: string;
-  serialNumber: string;
-  status: 'AVAILABLE' | 'ASSIGNED' | 'MAINTENANCE' | 'LOST' | 'DECOMMISSIONED';
-  assignedDate: string | null;
-  lastUpdated: string;
-  storage?: string;
-  screen?: string;
-  os?: string;
-  userInformation?: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email?: string;
-    phoneNumber: string;
-  };
-}
 
-export interface TabletCreateDto {
-  model: string;
-  serialNumber: string;
-  storage?: string;
-  screen?: string;
-  os?: string;
-}
-
-export interface TabletUpdateDto {
-  model?: string;
-  serialNumber?: string;
-  storage?: string;
-  screen?: string;
-  os?: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class TabletService {
-  private apiUrl = `${environment.api}/api/tablets`;
+  private apiUrl = `${environment.api}api/tablets`;
 
   constructor(private http: HttpClient) { }
 
@@ -145,13 +113,14 @@ export class TabletService {
   /**
    * Get count of tablets by status
    */
-  getTabletCountByStatus(status: Tablet['status']): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/count`, {
-      params: { status }
-    }).pipe(
-      catchError(this.handleError)
-    );
-  }
+getTabletCountByStatus(status: Exclude<Tablet['status'], undefined>): Observable<number> {
+  return this.http.get<number>(`${this.apiUrl}/count`, {
+    params: { status: status.toString() }
+  }).pipe(
+    catchError(this.handleError)
+  );
+}
+
 
   /**
    * Handle HTTP errors
@@ -201,3 +170,5 @@ getDrivers(search?: string): Observable<DriverProfile[]> {
 }
 
 }
+
+
