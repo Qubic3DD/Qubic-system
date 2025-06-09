@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { DriverProfile } from '../../api/Response/interfaces';
+import { Observable } from 'rxjs/internal/Observable';
+import { map } from 'rxjs/internal/operators/map';
 
 @Component({
   selector: 'app-driver',
@@ -41,20 +44,29 @@ export class DriverComponent implements OnInit {
     this.fetchDrivers();
   }
 
-  fetchDrivers(): void {
-    this.isLoading = true;
-    this.http.get<any>('http://41.76.110.219:8443/profile/drivers').subscribe({
-      next: (response) => {
-        this.drivers = response.data;
-        this.filteredDrivers = [...this.drivers];
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error fetching drivers:', error);
-        this.isLoading = false;
-      },
-    });
-  }
+  fetchDriversd(): Observable<DriverProfile[]> {
+  return this.http.get<any>('http://41.76.110.219:8443/profile/drivers').pipe(
+    map((response: { data: any; }) => response.data) // extract data here
+  );
+}
+
+fetchDrivers(): void {
+  this.isLoading = true;
+  this.http.get<any>('http://41.76.110.219:8443/profile/drivers').subscribe({
+    next: (response) => {
+      this.drivers = response.data;
+      this.filteredDrivers = [...this.drivers];
+      this.isLoading = false;
+    },
+    error: (error) => {
+      console.error('Error fetching drivers:', error);
+      this.isLoading = false;
+    },
+  });
+}
+
+    
+  
   getDocumentUrlByUsernameAndPurpose(
     username: string,
     purpose: string
