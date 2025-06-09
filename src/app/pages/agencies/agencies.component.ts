@@ -47,7 +47,7 @@ export class AgenciesComponent implements OnInit {
 
   getAgencies(): void {
     this.isLoading = true;
-    this.http.get<any>('http://196.168.8.29:8443/profile/get-users-by-role/agency')
+    this.http.get<any>('http://41.76.110.219:8443/profile/get-users-by-role/agency')
       .subscribe({
         next: (response) => {
           this.agencies = response.data || [];

@@ -150,7 +150,7 @@ hasValidImageUrl(email: string): boolean {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://196.168.8.29:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
     getInitials(name: string): string {
   if (!name) return '';
@@ -164,7 +164,7 @@ onImageError(email: string) {
   fetchFleetOwner(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<ApiResponse<FleetOwner>>(`http://196.168.8.29:8443/profile/retrieve/${encodedEmail}`).pipe(
+    this.http.get<ApiResponse<FleetOwner>>(`http://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching fleet owner:', error);
         this.error = `Failed to load fleet owner profile ${email}`;
@@ -201,7 +201,7 @@ onImageError(email: string) {
   }
   fetchDrivers(): void {
     this.isLoading = true;
-    this.http.get<ApiResponse<DriverProfile[]>>('http://196.168.8.29:8443/profile/drivers').pipe(
+    this.http.get<ApiResponse<DriverProfile[]>>('http://41.76.110.219:8443/profile/drivers').pipe(
       map(response => response.data || []),
       tap(drivers => {
         this.drivers = drivers;
