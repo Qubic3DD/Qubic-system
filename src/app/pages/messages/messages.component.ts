@@ -1,6 +1,9 @@
+// src/app/messages/messages.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from '../../services/message.service';
+import { finalize } from 'rxjs';
 
 type MessageReport = {
   id: number;
@@ -19,9 +22,8 @@ type Filter = {
   id: string;
   label: string;
   active: boolean;
-  count?: number;  // optional count property
+  count?: number;
 };
-
 
 @Component({
   selector: 'app-messages',
@@ -35,63 +37,73 @@ export class MessagesComponent implements OnInit {
   filteredMessages: MessageReport[] = [];
   searchQuery: string = '';
   activeFilter: string = 'all';
+  isLoading = false;
 
   filters: Filter[] = [
-    { id: 'all', label: 'All', active: true },
-    { id: 'unread', label: 'Unread', active: false },
-    { id: 'read', label: 'Read', active: false },
-    { id: 'flagged', label: 'Flagged', active: false }
+    { id: 'all', label: 'All', active: true, count: 0 },
+    { id: 'unread', label: 'Unread', active: false, count: 0 },
+    { id: 'read', label: 'Read', active: false, count: 0 },
+    { id: 'flagged', label: 'Flagged', active: false, count: 0 }
   ];
 
-  // For multi-select message IDs
   selectedMessages: number[] = [];
-
-  // For tag filters (flagged, urgent, read, unread)
   activeTags: string[] = [];
-
-  // Pagination
   currentPage: number = 1;
-  totalPages: number = 1; // placeholder
+  totalPages: number = 1;
+  itemsPerPage = 10;
 
-  defaultAvatar = 'https://www.gravatar.com/avatar/?d=mp&s=48'; // generic avatar url
+  defaultAvatar = 'https://www.gravatar.com/avatar/?d=mp&s=48';
+
+  constructor(private messageService: MessageService) {}
 
   ngOnInit(): void {
     this.fetchMessages();
+    this.fetchMessageCounts();
   }
 
-  fetchMessages() {
-    // Mock data with some flags and urgent flags
-    this.allMessages = [
-      { id: 1, sender: 'John Doe', senderAvatarUrl: '', subject: 'Bug Report', content: 'Issue with app crashing on startup...', timestamp: '2025-06-04 12:20', status: 'unread', isFlagged: false, isUrgent: true },
-      { id: 2, sender: 'Mary Jane', senderAvatarUrl: '', subject: 'Abuse Report', content: 'Someone is spamming inappropriate content.', timestamp: '2025-06-03 14:15', status: 'read', isFlagged: true, isUrgent: false },
-      { id: 3, sender: 'Admin', senderAvatarUrl: '', subject: 'System Notice', content: 'System maintenance scheduled for tomorrow.', timestamp: '2025-06-02 10:00', status: 'flagged', isFlagged: true, isUrgent: false }
-    ];
-    this.applyFilter('all');
+  fetchMessages(): void {
+    this.isLoading = true;
+    const status = this.activeFilter === 'all' ? undefined : this.activeFilter;
+    
+    this.messageService.getMessages(this.currentPage, status)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (response: { messages: MessageReport[]; totalCount: number; }) => {
+          this.allMessages = response.messages;
+          this.filteredMessages = [...this.allMessages];
+          this.totalPages = Math.ceil(response.totalCount / this.itemsPerPage);
+          this.applyTagFilters();
+        },
+        error: (err: any) => console.error('Failed to fetch messages', err)
+      });
+  }
+
+  fetchMessageCounts(): void {
+    this.messageService.getMessageCounts().subscribe({
+      next: (counts: { all: number | undefined; unread: number | undefined; read: number | undefined; flagged: number | undefined; }) => {
+        this.filters[0].count = counts.all;
+        this.filters[1].count = counts.unread;
+        this.filters[2].count = counts.read;
+        this.filters[3].count = counts.flagged;
+      },
+      error: (err: any) => console.error('Failed to fetch message counts', err)
+    });
   }
 
   applyFilter(filterId: string): void {
     this.filters.forEach(f => f.active = f.id === filterId);
     this.activeFilter = filterId;
-
-    if (filterId === 'all') {
-      this.filteredMessages = [...this.allMessages];
-    } else {
-      this.filteredMessages = this.allMessages.filter(msg => msg.status === filterId);
-    }
-
-    this.applyTagFilters();
-
-    if (this.searchQuery) {
-      this.searchMessages();
-    }
-
-    this.clearSelection();
+    this.currentPage = 1; // Reset to first page when filter changes
+    this.fetchMessages();
   }
 
   applyTagFilters(): void {
-    if (this.activeTags.length === 0) return;
+    if (this.activeTags.length === 0) {
+      this.filteredMessages = [...this.allMessages];
+      return;
+    }
 
-    this.filteredMessages = this.filteredMessages.filter(msg => {
+    this.filteredMessages = this.allMessages.filter(msg => {
       for (const tag of this.activeTags) {
         if (tag === 'flagged' && !msg.isFlagged) return false;
         if (tag === 'urgent' && !msg.isUrgent) return false;
@@ -102,47 +114,93 @@ export class MessagesComponent implements OnInit {
     });
   }
 
-  searchMessages() {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredMessages = this.filteredMessages.filter(msg =>
-      msg.subject.toLowerCase().includes(query) ||
-      msg.sender.toLowerCase().includes(query) ||
-      msg.content.toLowerCase().includes(query)
-    );
-  }
-updateFilterCounts() {
-  this.filters.forEach(filter => {
-    if (filter.id === 'all') {
-      filter.count = this.allMessages.length;
-    } else {
-      filter.count = this.allMessages.filter(msg => msg.status === filter.id).length;
+  searchMessages(): void {
+    if (!this.searchQuery.trim()) {
+      this.filteredMessages = [...this.allMessages];
+      return;
     }
-  });
-}
 
-  markAsRead(id: number) {
-    const msg = this.allMessages.find(m => m.id === id);
-    if (msg) {
-      msg.status = 'read';
-      this.applyFilter(this.activeFilter);
-    }
+    this.messageService.searchMessages(this.searchQuery).subscribe({
+      next: (messages: MessageReport[]) => {
+        this.filteredMessages = messages;
+      },
+      error: (err: any) => console.error('Search failed', err)
+    });
   }
 
-  deleteMessage(id: number) {
-    this.allMessages = this.allMessages.filter(m => m.id !== id);
-    this.applyFilter(this.activeFilter);
+  markAsRead(id: number): void {
+    this.messageService.markAsRead(id).subscribe({
+      next: (updatedMessage: MessageReport) => {
+        const index = this.allMessages.findIndex(m => m.id === id);
+        if (index !== -1) {
+          this.allMessages[index] = updatedMessage;
+          this.applyFilter(this.activeFilter);
+        }
+      },
+      error: (err: any) => console.error('Failed to mark as read', err)
+    });
   }
 
-  flagMessage(id: number) {
-    const msg = this.allMessages.find(m => m.id === id);
-    if (msg) {
-      msg.status = 'flagged';
-      msg.isFlagged = true;
-      this.applyFilter(this.activeFilter);
-    }
+  deleteMessage(id: number): void {
+    this.messageService.deleteMessage(id).subscribe({
+      next: () => {
+        this.allMessages = this.allMessages.filter(m => m.id !== id);
+        this.applyFilter(this.activeFilter);
+      },
+      error: (err: any) => console.error('Failed to delete message', err)
+    });
   }
 
-  // Multi-select toggle
+  flagMessage(id: number): void {
+    this.messageService.flagMessage(id).subscribe({
+      next: (updatedMessage: MessageReport) => {
+        const index = this.allMessages.findIndex(m => m.id === id);
+        if (index !== -1) {
+          this.allMessages[index] = updatedMessage;
+          this.applyFilter(this.activeFilter);
+        }
+      },
+      error: (err: any) => console.error('Failed to flag message', err)
+    });
+  }
+
+  // Multi-select operations
+  markSelectedAsRead(): void {
+    if (this.selectedMessages.length === 0) return;
+    
+    this.messageService.markMultipleAsRead(this.selectedMessages).subscribe({
+      next: () => {
+        this.fetchMessages();
+        this.clearSelection();
+      },
+      error: (err: any) => console.error('Failed to mark selected as read', err)
+    });
+  }
+
+  flagSelected(): void {
+    if (this.selectedMessages.length === 0) return;
+    
+    this.messageService.flagMultipleMessages(this.selectedMessages).subscribe({
+      next: () => {
+        this.fetchMessages();
+        this.clearSelection();
+      },
+      error: (err: any) => console.error('Failed to flag selected messages', err)
+    });
+  }
+
+  deleteSelected(): void {
+    if (this.selectedMessages.length === 0) return;
+    
+    this.messageService.deleteMultipleMessages(this.selectedMessages).subscribe({
+      next: () => {
+        this.fetchMessages();
+        this.clearSelection();
+      },
+      error: (err: any) => console.error('Failed to delete selected messages', err)
+    });
+  }
+
   toggleSelection(id: number): void {
     const index = this.selectedMessages.indexOf(id);
     if (index > -1) {
@@ -156,35 +214,6 @@ updateFilterCounts() {
     this.selectedMessages = [];
   }
 
-  // Batch operations
-  markSelectedAsRead(): void {
-    this.selectedMessages.forEach(id => {
-      const msg = this.allMessages.find(m => m.id === id);
-      if (msg) msg.status = 'read';
-    });
-    this.applyFilter(this.activeFilter);
-    this.clearSelection();
-  }
-
-  flagSelected(): void {
-    this.selectedMessages.forEach(id => {
-      const msg = this.allMessages.find(m => m.id === id);
-      if (msg) {
-        msg.status = 'flagged';
-        msg.isFlagged = true;
-      }
-    });
-    this.applyFilter(this.activeFilter);
-    this.clearSelection();
-  }
-
-  deleteSelected(): void {
-    this.allMessages = this.allMessages.filter(m => !this.selectedMessages.includes(m.id));
-    this.applyFilter(this.activeFilter);
-    this.clearSelection();
-  }
-
-  // Tag toggling for sidebar tags
   toggleTag(tagId: string): void {
     const idx = this.activeTags.indexOf(tagId);
     if (idx > -1) {
@@ -192,26 +221,25 @@ updateFilterCounts() {
     } else {
       this.activeTags.push(tagId);
     }
-    this.applyFilter(this.activeFilter);
+    this.applyTagFilters();
   }
 
-  // Pagination placeholders
+  // Pagination
   loadNextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      // Load next page data here (API call if needed)
+      this.fetchMessages();
     }
   }
 
   loadPreviousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      // Load previous page data here (API call if needed)
+      this.fetchMessages();
     }
   }
 
   composeMessage(): void {
     alert('Compose new message functionality to be implemented.');
   }
-  
 }

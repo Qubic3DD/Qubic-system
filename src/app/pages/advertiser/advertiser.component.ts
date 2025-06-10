@@ -55,7 +55,11 @@ getAdvertisers() {
   }
 
 
-
+viewFleetOwnerDetails(userName: string): void {
+  this.router.navigate(['/advertisers/details'], {
+    queryParams: { username: userName },
+  });
+}
   toggleFilter(filterId: string): void {
     this.filters = this.filters.map(filter => ({
       ...filter,
@@ -70,4 +74,22 @@ getAdvertisers() {
     { id: 'pending', label: 'Pending', active: false }
   ];
 
+  getDocumentUrlByUsernameAndPurpose(
+    username: string,
+    purpose: string
+  ): string {
+    if (!username || !purpose) return '';
+    const encodedUsername = encodeURIComponent(username);
+    const encodedPurpose = encodeURIComponent(purpose);
+    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+  }
+    getInitials(name: string): string {
+  if (!name) return '';
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
+imageLoadFailed: { [email: string]: boolean } = {};
+
+onImageError(email: string) {
+  this.imageLoadFailed[email] = true;
+}
 }

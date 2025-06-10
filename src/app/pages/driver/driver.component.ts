@@ -65,7 +65,11 @@ fetchDrivers(): void {
   });
 }
 
-    
+    viewDriverDetails(userName: string): void {
+  this.router.navigate(['/drivers/details'], {
+    queryParams: { username: userName },
+  });
+}
   
   getDocumentUrlByUsernameAndPurpose(
     username: string,
@@ -156,10 +160,7 @@ onImageError(email: string) {
   editDriver(driver: any) {
     this.router.navigate(['/drivers/edit', driver.email]);
   }
-  viewDriverDetails(id: number): void {
-    // Implement view details functionality
-    console.log('View details for driver with ID:', id);
-  }
+
 
   deleteDriver(id: number): void {
     if (confirm('Are you sure you want to delete this driver?')) {

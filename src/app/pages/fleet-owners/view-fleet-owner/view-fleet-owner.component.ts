@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import {  of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Chart, ChartConfiguration, ChartType } from 'chart.js';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -17,7 +16,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { DriverDetailsDialogComponent } from '../driver-details-dialog/driver-details-dialog.component';
-import { EditFleetOwnerDialogComponentComponent } from '../edit-fleet-owner-dialog-component/edit-fleet-owner-dialog-component.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AddDriverDialogComponent } from '../add-driver-dialog/add-driver-dialog.component';
@@ -279,40 +277,8 @@ openAddDriverDialog(fleetOwnerEmail: string): void {
     });
   }
 
-  editDriver(driver: DriverProfile): void {
-    const dialogRef = this.dialog.open(EditFleetOwnerDialogComponentComponent, {
-      width: '600px',
-      data: { driver }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.snackBar.open('Driver updated successfully', 'Close', {
-          duration: 3000,
-          panelClass: 'success-snackbar'
-        });
-        this.fetchDrivers();
-      }
-    });
-  }
-
-  editFleetOwner(): void {
-    if (!this.fleetOwner) return;
-
-    const dialogRef = this.dialog.open(EditFleetOwnerDialogComponentComponent, {
-      width: '800px',
-      data: { fleetOwner: this.fleetOwner }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.snackBar.open('Fleet owner updated successfully', 'Close', {
-          duration: 3000,
-          panelClass: 'success-snackbar'
-        });
-        this.fetchFleetOwner(this.fleetOwner?.email || '');
-      }
-    });
+  editFleetOwner(driver: any) {
+    this.router.navigate(['/fleet-owners/edit', driver.email]);
   }
 
   downloadDocument(documentId: string): void {

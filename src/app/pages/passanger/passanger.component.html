@@ -16,7 +16,7 @@
           </svg>
           Refresh
         </button>
-        <button (click)="addPassenger()"
+        <button (click)="addPassanger()"
           class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-lg text-white flex items-center justify-center gap-2 transition-colors cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -163,7 +163,7 @@
 
         <!-- Card Footer -->
         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 flex justify-end gap-2">
-          <button (click)="editPassenger(passenger.userName)"
+          <button (click)="editPassanger(passenger.userName)"
             class="text-gray-700 dark:text-gray-300 hover:text-pink-600 dark:hover:text-pink-400 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -179,7 +179,7 @@
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h10" />
             </svg>
           </button>
-          <button (click)="viewPassengerDetails(passenger.userName)"
+          <button (click)="viewPassangerDetails(passenger.email)"
             class="text-gray-700 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -202,7 +202,7 @@
       </svg>
       <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">No passengers found</h3>
       <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by adding a new passenger</p>
-      <button (click)="addPassenger()"
+      <button (click)="addPassanger()"
         class="mt-4 inline-flex items-center cursor-pointer px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
         Add Passenger
       </button>

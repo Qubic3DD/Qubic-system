@@ -134,28 +134,44 @@
             </svg>
           </button>
 
-          <!-- Dropdown Menu -->
-          <div *ngIf="activeDropdown === tablet.id"
-            class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
-            <div class="py-1">
-              <a href="#"
-                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                (click)="viewTabletInfo(tablet)">
-                Details
-              </a>
-              <a *ngIf="tablet.user" href="#"
-                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                (click)="viewUserInfo(tablet.user)">
-                User Info
-              </a>
-              <div class="border-t border-gray-200 dark:border-gray-700"></div>
-              <a href="#"
-                class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                (click)="removeTablet(tablet.id!)">
-                Remove
-              </a>
-            </div>
-          </div>
+    <!-- In the dropdown menu section of your tablet card -->
+<div *ngIf="activeDropdown === tablet.id"
+  class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
+  <div class="py-1">
+    <a href="#"
+      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+      (click)="viewTabletInfo(tablet)">
+      Details
+    </a>
+    <a *ngIf="tablet.user" href="#"
+      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+      (click)="viewUserInfo(tablet.user)">
+      User Info
+    </a>
+    <!-- Add these new options -->
+    <a *ngIf="tablet.status === 'AVAILABLE'" href="#"
+      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+      (click)="openAssignDialog(tablet)">
+      Assign
+    </a>
+    <a *ngIf="tablet.status === 'ASSIGNED'" href="#"
+      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+      (click)="openReassignDialog(tablet)">
+      Reassign
+    </a>
+    <a *ngIf="tablet.status === 'ASSIGNED'" href="#"
+      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+      (click)="unassignTablet(tablet.id!)">
+      Unassign
+    </a>
+    <div class="border-t border-gray-200 dark:border-gray-700"></div>
+    <a href="#"
+      class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+      (click)="removeTablet(tablet.id!)">
+      Remove
+    </a>
+  </div>
+</div>
         </div>
       </div>
 
@@ -311,17 +327,34 @@
             </div>
           </div>
         </div>
-        <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse bg-gray-50 dark:bg-gray-700/30 rounded-b-lg">
-          <button type="button"
-            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-pink-600 dark:bg-pink-700 text-base font-medium text-white hover:bg-pink-700 dark:hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
-            Edit Details
-          </button>
-          <button type="button"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
-            (click)="closeModal()">
-            Close
-          </button>
-        </div>
+     <!-- In the tablet info modal footer -->
+<div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse bg-gray-50 dark:bg-gray-700/30 rounded-b-lg">
+  <button *ngIf="selectedTablet?.status === 'AVAILABLE'" type="button"
+    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 dark:bg-green-700 text-base font-medium text-white hover:bg-green-700 dark:hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
+    (click)="openAssignDialog(selectedTablet!)">
+    Assign Tablet
+  </button>
+  <button *ngIf="selectedTablet?.status === 'ASSIGNED'" type="button"
+    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 dark:bg-blue-700 text-base font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
+    (click)="openReassignDialog(selectedTablet!)">
+    Reassign Tablet
+  </button>
+  <button *ngIf="selectedTablet?.status === 'ASSIGNED'" type="button"
+    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 dark:bg-yellow-700 text-base font-medium text-white hover:bg-yellow-700 dark:hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
+    (click)="unassignTablet(selectedTablet!.id!)">
+    Unassign Tablet
+  </button>
+  <button type="button"
+    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-pink-600 dark:bg-pink-700 text-base font-medium text-white hover:bg-pink-700 dark:hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
+    (click)="editTablet(selectedTablet!)">
+    Edit Details
+  </button>
+  <button type="button"
+    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
+    (click)="closeModal()">
+    Close
+  </button>
+</div>
       </div>
     </div>
   </div>

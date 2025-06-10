@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Tablet Info</h2>
+
+<mat-dialog-content class="space-y-4">
+  <div class="grid grid-cols-2 gap-4">
+    <div><strong>Model:</strong> {{ data.tablet.model }}</div>
+    <div><strong>Serial:</strong> {{ data.tablet.serialNumber }}</div>
+    <div><strong>Storage:</strong> {{ data.tablet.storage }}</div>
+    <div><strong>Screen:</strong> {{ data.tablet.screen }}</div>
+    <div><strong>OS:</strong> {{ data.tablet.os }}</div>
+    <div><strong>Status:</strong> {{ data.tablet.status }}</div>
+    <div><strong>Created:</strong> {{ data.tablet.createdAt | date }}</div>
+    <div><strong>Updated:</strong> {{ data.tablet.lastUpdated | date }}</div>
+    <div *ngIf="data.tablet.assignedDate"><strong>Assigned:</strong> {{ data.tablet.assignedDate | date }}</div>
+  </div>
+
+  <div *ngIf="data.tablet.user" class="pt-4 border-t border-gray-200 dark:border-gray-700">
+    <h3 class="font-semibold text-gray-800 dark:text-gray-100">Assigned User</h3>
+    <p>{{ data.tablet.user.firstName }} {{ data.tablet.user.lastName }}</p>
+    <p>{{ data.tablet.user.email }}</p>
+    <p>{{ data.tablet.user.phoneNo }}</p>
+    <p>{{ data.tablet.user.city }}, {{ data.tablet.user.country }}</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

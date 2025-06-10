@@ -62,18 +62,24 @@ export class PassengerComponent implements OnInit {
         }
       });
   }
-
-  addPassenger(): void {
-    this.router.navigate(['/passengers/add']);
+  addPassanger(): void {
+    // this.showAddDriverModal = true;
+    this.router.navigate(['/passenger/add']);
   }
 
-  editPassenger(userName: string): void {
-    this.router.navigate(['/passengers/edit'], { queryParams: { username: userName } });
+
+  editPassanger(userName: string): void {
+    this.router.navigate(['/passenger/edit'], {
+      queryParams: { username: userName },
+    });
   }
 
-  viewPassengerDetails(userName: string): void {
-    this.router.navigate(['/passengers/details'], { queryParams: { username: userName } });
+  viewPassangerDetails(userName: string): void {
+    this.router.navigate(['/passenger/details'], {
+      queryParams: { username: userName },
+    });
   }
+
 
   deletePassenger(userName: string): void {
     this.confirmDialog.confirm('Confirm Delete', `Are you sure you want to delete ${userName}?`)

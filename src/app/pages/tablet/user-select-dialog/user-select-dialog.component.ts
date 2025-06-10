@@ -1,37 +1,40 @@
-// user-select-dialog.component.ts
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@angular/material/select';
+
+import { TabletService } from '../../../services/tablet.service';
+import { UserInfo } from '../../../api/Request/Tablet';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UserInfo } from '../../../api/Request/Tablet'; // Adjust path
-import { TabletService } from '../../../services/tablet.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSpinner } from '@angular/material/progress-spinner';
+import { MatFormField, MatLabel, MatOption } from '@angular/material/select';
 
 @Component({
   selector: 'app-user-select-dialog',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatSelectModule],
-  template: `
-    <h2 mat-dialog-title>{{ data.title }}</h2>
-    <mat-dialog-content>
-      <div class="mb-4">
-        <label for="user-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select User</label>
-        <select id="user-select" [(ngModel)]="selectedUserId" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800">
-          <option *ngFor="let user of users" [value]="user.id">{{ user.firstName }} {{ user.lastName }} ({{ user.email }})</option>
-        </select>
-      </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancel</button>
-      <button mat-button color="primary" (click)="onConfirm()" [disabled]="!selectedUserId">Confirm</button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: './user-select-dialog.component.html',
+  styleUrls: ['./user-select-dialog.component.css'],
+   standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSnackBarModule,
+    MatSpinner,
+    MatOption,
+    MatFormField,
+    MatLabel
+
+  ],
+
 })
 export class UserSelectDialogComponent {
   users: UserInfo[] = [];
   selectedUserId: number | null = null;
+  loading = true;
 
   constructor(
     public dialogRef: MatDialogRef<UserSelectDialogComponent>,
@@ -42,8 +45,16 @@ export class UserSelectDialogComponent {
   }
 
   loadUsers(): void {
-    this.tabletService.getDrivers().subscribe(users => {
-      this.users = users;
+    this.loading = true;
+    this.tabletService.getDrivers().subscribe({
+      next: users => {
+        this.users = users;
+        this.loading = false;
+      },
+      error: err => {
+        console.error('Failed to load users', err);
+        this.loading = false;
+      }
     });
   }
 

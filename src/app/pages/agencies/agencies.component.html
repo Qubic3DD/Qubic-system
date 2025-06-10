@@ -64,24 +64,45 @@
       <div
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden transition-transform hover:scale-[1.02]">
         <!-- Card Header -->
+          <!-- Card Header -->
         <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div class="flex items-center gap-3">
-            <img [src]="agency.logo" alt="{{agency.companyName}} logo" class="h-10 w-10 rounded-full object-cover">
+            <div
+              class="h-10 w-10 rounded-full overflow-hidden bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
+<ng-container *ngIf="!imageLoadFailed[agency.email]; else initials">
+  <img 
+    [src]="getDocumentUrlByUsernameAndPurpose(agency.email, 'PROFILE_PICTURE')" 
+    alt="Profile Picture" 
+    class="h-full w-full object-cover"
+    (error)="onImageError(agency.email)" />
+</ng-container>
+
+<ng-template #initials>
+  <div class="h-full w-full flex items-center justify-center bg-gray-300 text-white text-xl font-bold">
+    {{ getInitials(agency.firstName || agency.email) }}
+  </div>
+</ng-template>
+
+              <ng-template #initials>
+                <span class="text-pink-600 dark:text-pink-300 font-medium">
+                  {{ agency.firstName.charAt(0) || 'D' }}{{ agency.lastName.charAt(0) || '' }}
+                </span>
+              </ng-template>
+            </div>
+
             <div>
-              <h2 class="font-semibold">{{ agency.companyName }}</h2>
-              <p class="text-xs text-gray-500 dark:text-gray-400">{{ agency.roles }}</p>
+              <h2 class="font-semibold">{{ agency.firstName }} {{ agency.lastName }}</h2>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ agency.roles.join(', ') || 'agency' }}
+              </p>
             </div>
           </div>
           <span [class.bg-green-100]="agency.status === 'Active'" [class.text-green-800]="agency.status === 'Active'"
             [class.dark:bg-green-900]="agency.status === 'Active'"
             [class.dark:text-green-200]="agency.status === 'Active'" [class.bg-red-100]="agency.status === 'Inactive'"
             [class.text-red-800]="agency.status === 'Inactive'" [class.dark:bg-red-900]="agency.status === 'Inactive'"
-            [class.dark:text-red-200]="agency.status === 'Inactive'" [class.bg-yellow-100]="agency.status === 'Pending'"
-            [class.text-yellow-800]="agency.status === 'Pending'"
-            [class.dark:bg-yellow-900]="agency.status === 'Pending'"
-            [class.dark:text-yellow-200]="agency.status === 'Pending'"
-            class="text-xs px-2 py-1 rounded-full font-medium">
-            {{ agency.status }}
+            [class.dark:text-red-200]="agency.status === 'Inactive'" class="text-xs px-2 py-1 rounded-full font-medium">
+            {{ agency.status || 'Active' }}
           </span>
         </div>
 
@@ -154,7 +175,7 @@
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h10" />
             </svg>
           </button>
-          <button
+          <button (click)="viewAgencyDetails(agency.email)"
             class="text-gray-700 dark:text-gray-300 hover:text-pink-500 dark:hover:text-pink-400 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">

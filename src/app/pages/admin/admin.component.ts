@@ -63,10 +63,11 @@ export class AdminComponent implements OnInit {
         },
       });
   }
-
   addAdmin(): void {
+    // this.showAddDriverModal = true;
     this.router.navigate(['/admins/add']);
   }
+
 
   editAdmin(userName: string): void {
     this.router.navigate(['/admins/edit'], {

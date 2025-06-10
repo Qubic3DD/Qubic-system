@@ -6,6 +6,7 @@ export interface AgenciesResponse {
     userName: string;
     userHandle: string;
     roles: string[];
+    premium: string | null
 
     // Personal Info
     firstName: string;

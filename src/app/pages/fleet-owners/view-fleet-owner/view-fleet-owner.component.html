@@ -25,7 +25,7 @@
         <div class="avatar-container">
   <ng-container *ngIf="!imageLoadFailed[fleetOwner.email]; else initialsFallback">
     <img
-      [src]="getDocumentUrlByUsernameAndPurpose(fleetOwner.email, 'LOGO') || 'assets/images/default-company-logo.png'"
+      [src]="getDocumentUrlByUsernameAndPurpose(fleetOwner.email, 'PROFILE_PICTURE') || 'assets/images/default-company-logo.png'"
       alt="{{ fleetOwner.firstName || 'Company Logo' }}"
       class="company-logo"
       (error)="onImageError(fleetOwner.email)"
@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button mat-raised-button color="primary" (click)="editFleetOwner()">
+          <button mat-raised-button color="primary" (click)="editFleetOwner(fleetOwner)">
             <mat-icon>edit</mat-icon> Edit Profile
           </button>
           <button mat-stroked-button class="ml-2">
@@ -349,7 +349,7 @@
                 <button mat-stroked-button (click)="viewDriver(driver)" class="action-button">
                   <mat-icon>visibility</mat-icon> View
                 </button>
-                <button mat-stroked-button (click)="editDriver(driver)" class="action-button">
+                <button mat-stroked-button (click)="editFleetOwner(driver)" class="action-button">
                   <mat-icon>edit</mat-icon> Edit
                 </button>
               </div>

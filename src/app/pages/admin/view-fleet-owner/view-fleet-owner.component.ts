@@ -1,0 +1,215 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ApiResponse } from '../../../api/Response/interfaces';
+
+@Component({
+  selector: 'app-admin-profile',
+  templateUrl: './view-fleet-owner.component.html',
+  styleUrls: ['./view-fleet-owner.component.css'],
+    imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatTabsModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    MatMenuModule,
+    NgxChartsModule,
+     MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule
+  ]
+})
+export class ViewAdminComponent  implements OnInit {
+  admin: any = null;
+  isLoading = true;
+  error: string | null = null;
+
+  recentActivity: any[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) {}
+
+ ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const username = params['username'];
+      if (username) this.fetchAdmin(username);
+      else {
+        this.error = 'No username provided';
+        this.isLoading = false;
+      }
+    });
+  }
+  revenueData = [
+    {
+      "name": "Jan",
+      "value": 0
+    },
+    {
+      "name": "Feb",
+      "value": 0
+    },
+    {
+      "name": "Mar",
+      "value": 0
+    },
+    {
+      "name": "Apr",
+      "value": 0
+    },
+    {
+      "name": "May",
+      "value": 0
+    },
+    {
+      "name": "Jun",
+      "value": 0
+    }
+  ];
+
+  adminStatusData = [
+    {
+      "name": "Active",
+      "value": 0
+    },
+    {
+      "name": "Inactive",
+      "value": 0
+    },
+    {
+      "name": "On Leave",
+      "value": 0
+    }
+  ];
+Math = Math;
+
+
+  fetchAdmin(username: string): void {
+    this.isLoading = true;
+    this.http.get(`http://41.76.110.219:8443/admin/retrieve/${encodeURIComponent(username)}`)
+      .pipe(catchError(() => {
+        this.error = 'Failed to load admin profile';
+        this.isLoading = false;
+        return of(null);
+      }))
+      .subscribe(data => {
+        this.admin = data;
+        this.isLoading = false;
+      });
+  }
+  initializeCharts(): void {
+    if (!this.admin) return;
+
+    // Update revenue data
+    this.revenueData = this.revenueData.map(item => ({
+      ...item,
+      value: Math.floor(Math.random() * 10000) + 1000
+    }));
+
+    // Initialize other chart data based on fleet owner data
+    if (this.admin.revenue) {
+      this.revenueData[this.revenueData.length - 1].value = this.admin.revenue;
+    }
+  }
+
+
+fetchRecentActivity(adminId: string): void {
+  this.http.get<any[]>(`http://41.76.110.219:8443/activity/${adminId}`)
+    .pipe(
+      catchError(() => of([]))
+    )
+    .subscribe(activity => {
+      this.recentActivity = activity.slice(0, 5); // Show only 5 most recent
+    });
+}
+
+
+  getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
+    if (!username || !purpose) return '';
+    const encodedUsername = encodeURIComponent(username);
+    const encodedPurpose = encodeURIComponent(purpose);
+    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+
+  imageLoadFailed: { [email: string]: boolean } = {};
+
+  onImageError(email: string) {
+    this.imageLoadFailed[email] = true;
+  }
+
+  getStatusClass(status: string): string {
+    switch (status?.toLowerCase()) {
+      case 'active': return 'status-active';
+      case 'inactive': return 'status-inactive';
+      case 'on leave': return 'status-on-leave';
+      default: return 'status-unknown';
+    }
+  }
+
+  getActivityIcon(activityType: string): string {
+    switch (activityType) {
+      case 'login': return 'login';
+      case 'trip': return 'directions_car';
+      case 'document': return 'description';
+      case 'update': return 'edit';
+      default: return 'notifications';
+    }
+  }
+
+  editadmin(admin: any): void {
+    this.router.navigate(['/admins/edit', admin.id]);
+  }
+
+  downloadDocument(documentId: string): void {
+    this.snackBar.open('Downloading document...', 'Close', { duration: 2000 });
+    // Actual download implementation would go here
+  }
+
+  viewDocuments(): void {
+    // Implement document viewing logic
+  }
+
+  viewActivity(): void {
+    // Implement full activity view
+  }
+
+  downloadProfile(): void {
+    this.snackBar.open('Exporting profile data...', 'Close', { duration: 2000 });
+    // Implement profile export
+  }
+
+  goBack(): void {
+    this.router.navigate(['/admins']);
+  }
+}
