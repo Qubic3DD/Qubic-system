@@ -8,7 +8,7 @@ import { environment } from '../environments/environment.development';
   providedIn: 'root',
 })
 export class CampaignService {
-private baseUrl = `${environment.api}/api/campaigns`;
+private baseUrl = `${environment.api}api/campaigns`;
 
   constructor(private http: HttpClient) {}
 
