@@ -37,6 +37,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'campaigns/new', component: AddCampaignComponent },
+ 
       {
         path: 'campaign/:id',
         loadComponent: () =>
@@ -161,6 +162,15 @@ export const routes: Routes = [
       },
         ],
       },
+
+      {
+  path: 'approvals/:id',
+  loadComponent: () =>
+    import('../app/pages/approvals/view-application.component/view-application.component.component').then(
+      m => m.ViewApplicationComponent
+    )
+}
+
     ],
   },
   { path: '**', redirectTo: '' },

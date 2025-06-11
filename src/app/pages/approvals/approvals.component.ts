@@ -8,185 +8,236 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { ApiResponse, Application, UserDocuments } from '../../api/Response/interfaceAproval';
+import { ViewApplicationComponent } from './view-application.component/view-application.component.component';
+
+
 
 
 @Component({
   selector: 'app-approvals',
   templateUrl: './approvals.component.html',
   styleUrls: ['./approvals.component.css'],
-    imports: [CommonModule,FormsModule,MatInputModule,MatButtonModule,MatDialogModule,MatCardModule,MatSelectModule,MatIconModule,MatFormFieldModule]
+  imports: [CommonModule ,FormsModule, MatInputModule, MatButtonModule, 
+            MatDialogModule, MatCardModule, MatSelectModule, MatIconModule, MatFormFieldModule],
+  standalone: true
 })
 export class ApprovalsComponent {
+  applications: Application[] = [];
   searchQuery = '';
   filterType = '';
-  filteredApplications: any[] = [];
-  get totalApplications(): number {
-  return this.applications.length;
+  filterStatus = '';
+  filteredApplications: Application[] = [];
+  selectedApplication: Application | null = null;
+  isLoading = false;
+  errorMessage = '';
+  dialogRef: any;
+  dialog: any;
+  data: any;
+
+  constructor(private http: HttpClient,) {
+    this.loadApplications();
+  }
+
+
+loadApplications() {
+  this.isLoading = true;
+  this.http.get<Application[]>(`${environment.api}api/applications/pending`)
+    .subscribe({
+      next: (response) => {
+        this.applications = response.map(app => ({
+          ...app,
+          submissionDate: app.submissionDate ? new Date(app.submissionDate) : undefined,
+          approvalDate: app.approvalDate ? new Date(app.approvalDate) : undefined,
+          documents: this.mapDocuments(app),
+          applicantName: `${app.firstName} ${app.lastName}`,
+          contactEmail: app.email
+        }));
+        this.filterApplications();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to load applications';
+        this.isLoading = false;
+        console.error(err);
+      }
+    });
 }
 
-get pendingReviewApplications(): number {
-  return this.applications.filter(app => !app.reviewed).length;
-}
+  
+private mapDocuments(app: Application): UserDocuments[] {
+    const documents: UserDocuments[] = [];
+
+    // Map ID document if exists
+    if (app.idNumber) {
+      documents.push({
+        id: app.id || 0,
+        name: 'ID Document',
+        fileType: 'application/pdf',
+        documentPurpose: 'ID_DOCUMENT',
+        creationDate: new Date().toISOString(),
+        downloadUrl: `${environment.api}api/applications/${app.id}/documents/download?documentPurpose=ID_DOCUMENT`
+      });
+    }
+
+    // Map license document if exists
+    if (app.licenseType) {
+      documents.push({
+        id: app.id || 0,
+        name: 'License Document',
+        fileType: 'application/pdf',
+        documentPurpose: 'LICENSE',
+        creationDate: new Date().toISOString(),
+        downloadUrl: `${environment.api}api/applications/${app.id}/documents/download?documentPurpose=LICENSE`
+      });
+    }
+
+    return documents;
+  }
+
+
+
+
+  get totalApplications(): number {
+    return this.filteredApplications.length;
+  }
+
+  get pendingReviewApplications(): number {
+    return this.filteredApplications.filter(app => !app.reviewed).length;
+  }
 
 get approvedTodayApplications(): number {
-  return this.applications.filter(app => app.approved && app.approvalDate && this.isToday(app.approvalDate)).length;
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const startOfTomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getTime();
+
+  return this.filteredApplications.filter(app => {
+    if (!app.approved || !app.approvalDate) return false;
+
+    const approvalTime = app.approvalDate instanceof Date 
+      ? app.approvalDate.getTime()
+      : new Date(app.approvalDate).getTime();
+
+    return approvalTime >= startOfToday && approvalTime < startOfTomorrow;
+  }).length;
 }
 
-  applications = [
-    {
-      id: 1,
-      type: 'driver',
-      title: 'Driver Application - John Doe',
-      description: 'John Doe has applied to become a driver. He has 5 years of experience and a clean driving record.',
-      applicantName: 'John Doe',
-      submissionDate: new Date('2023-05-15'),
-      contactEmail: 'john.doe@example.com',
-      reviewed: false,
-      approved: false,
-      rejected: false,
-      notes: '',
-      documents: [
-        { name: 'Driver License.pdf', url: '#' },
-        { name: 'Vehicle Registration.pdf', url: '#' }
-      ]
-    },
-    {
-      id: 2,
-      type: 'advertiser',
-      title: 'Advertiser Application - Acme Corp',
-      description: 'Acme Corporation wants to advertise their products on our platform.',
-      applicantName: 'Jane Smith (Acme Corp)',
-      submissionDate: new Date('2023-05-18'),
-      contactEmail: 'jane.smith@acme.com',
-      reviewed: true,
-      approved: true,
-      rejected: false,
-      approvalDate: new Date('2023-05-20'),
-      notes: 'Approved after reviewing their marketing materials. High quality products.',
-      documents: [
-        { name: 'Business License.pdf', url: '#' },
-        { name: 'Marketing Plan.pdf', url: '#' }
-      ]
-    },
-    {
-      id: 3,
-      type: 'agency',
-      title: 'Agency Application - Star Media',
-      description: 'Star Media Agency represents multiple clients who want to advertise.',
-      applicantName: 'Michael Johnson (Star Media)',
-      submissionDate: new Date('2023-05-20'),
-      contactEmail: 'michael@starmedia.com',
-      reviewed: false,
-      approved: false,
-      rejected: false,
-      notes: '',
-      documents: [
-        { name: 'Agency License.pdf', url: '#' },
-        { name: 'Client Portfolio.pdf', url: '#' }
-      ]
-    },
-    {
-      id: 4,
-      type: 'driver',
-      title: 'Driver Application - Sarah Williams',
-      description: 'Sarah Williams is applying as a part-time driver with flexible hours.',
-      applicantName: 'Sarah Williams',
-      submissionDate: new Date('2023-05-22'),
-      contactEmail: 'sarah.w@example.com',
-      reviewed: true,
-      approved: false,
-      rejected: true,
-      rejectionDate: new Date('2023-05-23'),
-      notes: 'Rejected due to insufficient driving experience.',
-      documents: [
-        { name: 'Driver License.pdf', url: '#' },
-        { name: 'Background Check.pdf', url: '#' }
-      ]
-    }
-  ];
+filterApplications() {
+  const query = this.searchQuery.toLowerCase();
 
-  selectedApplication: any = null;
+  this.filteredApplications = this.applications.filter(app => {
+    const lastName = app.lastName?.toLowerCase() || '';
+    const phone = app.phoneNo?.toLowerCase() || '';
 
-  constructor() {
-    this.filteredApplications = [...this.applications];
-  }
+    const matchesSearch = lastName.includes(query) || phone.includes(query);
+    const matchesType = !this.filterType || app.type === this.filterType;
+    const matchesStatus = !this.filterStatus || 
+                         (this.filterStatus === 'pending' && !app.reviewed) ||
+                         (this.filterStatus === 'approved' && app.approved) ||
+                         (this.filterStatus === 'rejected' && app.rejected);
 
-  filterApplications() {
-    this.filteredApplications = this.applications.filter(app => {
-      const matchesSearch = app.title.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
-                          app.applicantName.toLowerCase().includes(this.searchQuery.toLowerCase());
-      const matchesType = !this.filterType || app.type === this.filterType;
-      return matchesSearch && matchesType;
-    });
-  }
+    return matchesSearch && matchesType && matchesStatus;
+  });
+}
+
 
   refreshApplications() {
-    // In a real app, this would fetch fresh data from the server
-    this.filterApplications();
+    this.loadApplications();
   }
 
-  viewApplication(app: any) {
-    this.selectedApplication = {...app};
-  }
+  
+viewApplication(application: Application) {
+    const dialogRef = this.dialog.open(ViewApplicationComponent, {
+      width: '700px',
+      data: { application },
+      panelClass: 'custom-dialog-container' // Optional: for custom styling
+    });
 
-  approveApplication(app: any) {
-    app.reviewed = true;
-    app.approved = true;
-    app.rejected = false;
-    app.approvalDate = new Date();
-    this.closeModal();
-    this.filterApplications();
-  }
-
-  rejectApplication(app: any) {
-    app.reviewed = true;
-    app.approved = false;
-    app.rejected = true;
-    app.rejectionDate = new Date();
-    this.filterApplications();
-  }
-
-  deleteApplication(app: any) {
-    if (confirm(`Are you sure you want to delete ${app.title}? This action cannot be undone.`)) {
-      this.applications = this.applications.filter(a => a.id !== app.id);
-      this.filterApplications();
-      if (this.selectedApplication && this.selectedApplication.id === app.id) {
-        this.closeModal();
+    dialogRef.afterClosed().subscribe((result: { action: string }) => {
+      if (result?.action === 'approved' || result?.action === 'rejected') {
+        this.loadApplications(); // Refresh your applications list
       }
+    });
+  }
+ closeDialog(): void {
+    this.dialogRef.close();
+  }
+
+  getStatusClass(): string {
+    if (this.data.application.approved) return 'approved';
+    if (this.data.application.rejected) return 'rejected';
+    return 'pending';
+  }
+
+
+  approveApplication(app: Application) {
+    this.http.post(`${environment.api}api/applications/${app.id}/approve`, null)
+      .subscribe({
+        next: () => {
+          app.reviewed = true;
+          app.approved = true;
+          app.rejected = false;
+          app.approvalDate = new Date();
+          this.closeModal();
+          this.filterApplications();
+        },
+        error: (err) => {
+          this.errorMessage = 'Failed to approve application';
+          console.error(err);
+        }
+      });
+  }
+
+  rejectApplication(app: Application) {
+    const reason = prompt('Please enter rejection reason:');
+    if (reason) {
+      this.http.post(`${environment.api}api/applications/${app.id}/reject`, { reason })
+        .subscribe({
+          next: () => {
+            app.reviewed = true;
+            app.approved = false;
+            app.rejected = true;
+            app.rejectionReason = reason;
+        
+            this.filterApplications();
+          },
+          error: (err) => {
+            this.errorMessage = 'Failed to reject application';
+            console.error(err);
+          }
+        });
     }
   }
 
-  saveNotes(app: any) {
-    // In a real app, this would save to the server
-    const index = this.applications.findIndex(a => a.id === app.id);
-    if (index !== -1) {
-      this.applications[index].notes = app.notes;
+downloadDocument(appId: number, documentPurpose: string) {
+    if (!appId) {
+      console.error('Invalid application ID');
+      return;
     }
-    alert('Notes saved successfully');
+    window.open(`${environment.api}api/applications/${appId}/documents/download?documentPurpose=${documentPurpose}`, '_blank');
   }
 
-  downloadDocument(doc: any) {
-    // In a real app, this would download the document
-    console.log(`Downloading ${doc.name}`);
-    alert(`Downloading ${doc.name}`);
-  }
 
   closeModal() {
     this.selectedApplication = null;
   }
 
-  getStatusText(app: any): string {
+  getStatusText(app: Application): string {
     if (app.approved) return 'Approved';
     if (app.rejected) return 'Rejected';
     return 'Pending Review';
   }
 
-  isToday(date: Date): boolean {
-    if (!date) return false;
-    const today = new Date();
-    return date.getDate() === today.getDate() && 
-           date.getMonth() === today.getMonth() && 
-           date.getFullYear() === today.getFullYear();
+getApplicationTypeDisplay(type?: string): string {
+  if (!type) return 'Unknown';
+  switch(type.toLowerCase()) {
+    case 'driver': return 'Driver';
+    case 'advertiser': return 'Advertiser';
+    case 'agency': return 'Agency';
+    default: return type;
   }
-  
+}
+
 }

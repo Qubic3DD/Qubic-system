@@ -1,0 +1,87 @@
+/* view-application.component.css */
+
+/* === Shared Styles === */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.error-message,
+.success-message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+/* === Light Mode === */
+@media (prefers-color-scheme: light) {
+  .status-badge.pending {
+    background-color: #fef3c7; /* yellow-100 */
+    color: #92400e; /* yellow-800 */
+  }
+
+  .status-badge.approved {
+    background-color: #d1fae5; /* green-100 */
+    color: #065f46; /* green-800 */
+  }
+
+  .status-badge.rejected {
+    background-color: #fecaca; /* red-100 */
+    color: #991b1b; /* red-800 */
+  }
+
+  .error-message {
+    background-color: #fecaca; /* red-100 */
+    border: 1px solid #f87171; /* red-400 */
+    color: #b91c1c; /* red-700 */
+  }
+
+  .success-message {
+    background-color: #d1fae5; /* green-100 */
+    border: 1px solid #34d399; /* green-400 */
+    color: #047857; /* green-700 */
+  }
+
+  .document-item:hover {
+    background-color: #f9fafb; /* gray-50 */
+  }
+}
+
+/* === Dark Mode === */
+@media (prefers-color-scheme: dark) {
+  .status-badge.pending {
+    background-color: #ca8a04; /* yellow-600 */
+    color: #fef9c3; /* yellow-200 */
+  }
+
+  .status-badge.approved {
+    background-color: #16a34a; /* green-600 */
+    color: #bbf7d0; /* green-200 */
+  }
+
+  .status-badge.rejected {
+    background-color: #dc2626; /* red-600 */
+    color: #fecaca; /* red-200 */
+  }
+
+  .error-message {
+    background-color: #7f1d1d; /* dark red background */
+    border: 1px solid #f87171; /* red-400 */
+    color: #fecaca; /* red-200 */
+  }
+
+  .success-message {
+    background-color: #064e3b; /* dark green background */
+    border: 1px solid #34d399; /* green-400 */
+    color: #bbf7d0; /* green-200 */
+  }
+
+  .document-item:hover {
+    background-color: #374151; /* gray-700 */
+  }
+}
+
+/* Add any additional styling as needed */
