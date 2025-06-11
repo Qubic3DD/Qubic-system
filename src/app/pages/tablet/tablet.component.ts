@@ -11,6 +11,7 @@ import { Tablet, UserInfo } from '../../api/Request/Tablet'; // Adjust import pa
 import { TabletService } from '../../services/tablet.service';
 import { AddTabletComponent } from './add-tablet/add-tablet.component'; // Adjust path if needed
 import { UserSelectDialogComponent } from './user-select-dialog/user-select-dialog.component';
+import { TabletViewComponent } from './tablet-view.component/tablet-view.component.component';
 
 @Component({
   selector: 'app-tablet',
@@ -83,10 +84,27 @@ export class TabletComponent implements OnInit {
     );
   }
 
+
 viewTabletInfo(tablet: Tablet): void {
-  this.selectedTablet = tablet;
-  this.selectedUser = null; // Clear any previous user selection
+  const dialogRef = this.dialog.open(TabletViewComponent, {
+    width: '70vw',      // full viewport width
+    height: '80vh',     // full viewport height
+    maxWidth: '80vw',   // override maxWidth limit (default is 80vw)
+    maxHeight: '800vh',  // override maxHeight limit
+    panelClass: 'full-screen-dialog',  // optional, for extra styling if needed
+    data: { tabletId: tablet.id }
+  });
+
+  dialogRef.afterClosed().subscribe((result: Tablet | undefined) => {
+    if (result) {
+      this.refreshTabletList();
+      this.snackBar.open('Tablet updated successfully!', 'Close', { duration: 3000 });
+      console.log('Tablet updated:', result);
+    }
+  });
 }
+
+
 viewUserInfo(user: UserInfo): void {
   this.selectedUser = user;
   this.selectedTablet = null; // Clear any previous tablet selection
@@ -139,19 +157,22 @@ closeModal(): void {
   this.selectedUser = null;
   this.activeDropdown = null; // Also close any open dropdowns
 }
-  openAssignDialog(tablet: Tablet): void {
+
+
+openAssignDialog(tablet: Tablet): void {
   const dialogRef = this.dialog.open(UserSelectDialogComponent, {
-    width: '500px',
-    data: { title: 'Assign Tablet', tabletId: tablet.id }
+    width: '600px',
+    data: { title: 'Assign Tablet', tabletId: tablet.id ,tablet: tablet }
   });
 
-  dialogRef.afterClosed().subscribe((userId: number) => {
-    if (userId) {
-      this.assignTablet(tablet.id!, userId);
+  dialogRef.afterClosed().subscribe((result: Tablet | undefined) => {
+    if (result) {
+      this.refreshTabletList();
+      this.snackBar.open('Tablet updated successfully!', 'Close', { duration: 3000 });
+      console.log('Tablet updated:', result);
     }
   });
 }
-
 openReassignDialog(tablet: Tablet): void {
   const dialogRef = this.dialog.open(UserSelectDialogComponent, {
     width: '500px',

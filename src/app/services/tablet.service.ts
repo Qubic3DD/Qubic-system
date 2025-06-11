@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../environments/environment.development'
 import { DriverProfile } from '../api/Response/interfaces';
 import { Tablet, TabletCreateDto, TabletUpdateDto } from '../api/Request/Tablet';
+import { ApiResponse } from '../api/Response/interfaceAproval';
 
 
 
@@ -34,7 +35,12 @@ export class TabletService {
         catchError(this.handleError)
       );
   }
-
+  assignTabletToUser(tabletId: number, userId: number): Observable<any> {
+  const url = `http://41.76.110.219:8443/api/tablets/${tabletId}/assign/${userId}`;
+  return this.http.post(url, null).pipe(
+    catchError(this.handleError)
+  );
+}
   /**
    * Create a new tablet
    */
@@ -161,13 +167,17 @@ getTabletCountByStatus(status: Exclude<Tablet['status'], undefined>): Observable
   }
 
   // Add to TabletService interface
-getDrivers(search?: string): Observable<DriverProfile[]> {
-  return this.http.get<DriverProfile[]>(`${environment.api}/api/users/drivers`, {
-    params: search ? { search } : {}
-  }).pipe(
-    catchError(this.handleError)
-  );
-}
+getDrivers(search?: string): Observable<ApiResponse<DriverProfile[]>> {
+    let params = new HttpParams();
+    if (search) {
+      params = params.set('search', search);
+    }
+
+    return this.http.get<ApiResponse<DriverProfile[]>>(`http://41.76.110.219:8443/profile/drivers`, { params })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
 }
 

@@ -5,7 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { HttpClient } from '@angular/common/http';
@@ -34,11 +34,11 @@ export class ApprovalsComponent {
   isLoading = false;
   errorMessage = '';
   dialogRef: any;
-  dialog: any;
   data: any;
 
-  constructor(private http: HttpClient,) {
+  constructor(private http: HttpClient,private dialog: MatDialog) {
     this.loadApplications();
+    
   }
 
 
@@ -148,16 +148,20 @@ filterApplications() {
   }
 
   
-viewApplication(application: Application) {
+ viewApplication(application: Application) {
     const dialogRef = this.dialog.open(ViewApplicationComponent, {
-      width: '700px',
-      data: { application },
-      panelClass: 'custom-dialog-container' // Optional: for custom styling
+ width: '70vw',      // full viewport width
+    height: '80vh',     // full viewport height
+    maxWidth: '80vw',   // override maxWidth limit (default is 80vw)
+    maxHeight: '800vh',  // override maxHeight limit
+
+      data: { application }
+      
     });
 
     dialogRef.afterClosed().subscribe((result: { action: string }) => {
       if (result?.action === 'approved' || result?.action === 'rejected') {
-        this.loadApplications(); // Refresh your applications list
+        this.loadApplications();
       }
     });
   }

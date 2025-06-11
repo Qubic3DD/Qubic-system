@@ -1,159 +1,274 @@
 <!-- view-application.component.html -->
-<div class="p-6 max-w-4xl mx-auto">
-  <!-- Header -->
-  <div class="flex justify-between items-start mb-6">
+<div class="p-6 max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow-sm">
+  <!-- Header Section -->
+  <div class="flex justify-between items-start mb-8">
     <div>
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
-        {{ application.firstName }} {{ application.lastName }}'s Application
-      </h2>
-      <span class="status-badge {{ getStatusClass() }}">
-        {{ getStatusText() }}
-      </span>
-      <p *ngIf="application.approvalDate" class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-        Approved on: {{ application.approvalDate | date:'medium' }}
-      </p>
-      <p *ngIf="application.rejectionReason" class="text-sm text-gray-600 dark:text-gray-300 mt-1">
-        Rejection Reason: {{ application.rejectionReason }}
-      </p>
+      <div class="flex items-center gap-3">
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-white tracking-tight">
+          {{ application.firstName }} {{ application.lastName }}
+        </h2>
+        <span class="status-badge {{ getStatusClass() }} px-3 py-1 rounded-full text-sm font-medium">
+          {{ getStatusText() }}
+        </span>
+      </div>
+      
+      <div class="mt-2 flex flex-wrap gap-4 text-sm">
+        <div class="flex items-center text-gray-600 dark:text-gray-300">
+          <mat-icon class="mr-1 text-base opacity-70">email</mat-icon>
+          {{ application.email }}
+        </div>
+        <div class="flex items-center text-gray-600 dark:text-gray-300">
+          <mat-icon class="mr-1 text-base opacity-70">phone</mat-icon>
+          {{ application.phoneNo }}
+        </div>
+        <div class="flex items-center text-gray-600 dark:text-gray-300">
+          <mat-icon class="mr-1 text-base opacity-70">fingerprint</mat-icon>
+          {{ application.idNumber }}
+        </div>
+      </div>
+      
+      <div *ngIf="application.approvalDate || application.rejectionReason" class="mt-3">
+        <p *ngIf="application.approvalDate" class="text-sm text-gray-600 dark:text-gray-300 flex items-center">
+          <mat-icon class="mr-1 text-base">check_circle</mat-icon>
+          Approved on {{ application.approvalDate | date:'mediumDate' }}
+        </p>
+        <p *ngIf="application.rejectionReason" class="text-sm text-gray-600 dark:text-gray-300 flex items-center">
+          <mat-icon class="mr-1 text-base">cancel</mat-icon>
+          Rejected: {{ application.rejectionReason }}
+        </p>
+      </div>
     </div>
-    <button mat-icon-button (click)="closeDialog()">
-      <mat-icon>close</mat-icon>
+    <button mat-icon-button class="hover:bg-gray-100 dark:hover:bg-gray-700" (click)="closeDialog()">
+      <mat-icon class="text-gray-500 dark:text-gray-400">close</mat-icon>
     </button>
   </div>
 
-  <!-- Error/Success Messages -->
-  <div *ngIf="errorMessage" class="error-message mb-4">
+  <!-- Status Messages -->
+  <div *ngIf="errorMessage" class="error-message mb-6 p-4 rounded-lg flex items-start">
+    <mat-icon class="mr-2">error</mat-icon>
     {{ errorMessage }}
   </div>
-  <div *ngIf="successMessage" class="success-message mb-4">
+  <div *ngIf="successMessage" class="success-message mb-6 p-4 rounded-lg flex items-start">
+    <mat-icon class="mr-2">check_circle</mat-icon>
     {{ successMessage }}
   </div>
 
-  <!-- Application Details -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <!-- Personal Information -->
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title class="flex items-center">
-          <mat-icon class="mr-2">person</mat-icon>
-          Personal Information
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-list>
-          <mat-list-item>
-            <span class="font-medium">Name:</span> {{ application.firstName }} {{ application.lastName }}
-          </mat-list-item>
-          <mat-list-item>
-            <span class="font-medium">Email:</span> {{ application.email }}
-          </mat-list-item>
-          <mat-list-item>
-            <span class="font-medium">Phone:</span> {{ application.phoneNo }}
-          </mat-list-item>
-          <mat-list-item>
-            <span class="font-medium">ID Number:</span> {{ application.idNumber }}
-          </mat-list-item>
-          <mat-list-item *ngIf="application.dateOfBirth">
-            <span class="font-medium">Date of Birth:</span> {{ application.dateOfBirth | date }}
-          </mat-list-item>
-          <mat-list-item *ngIf="application.gender">
-            <span class="font-medium">Gender:</span> {{ application.gender }}
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left Column -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Personal Information Card -->
+      <mat-card class="rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <mat-card-header class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+          <mat-card-title class="flex items-center text-lg font-semibold">
+            <mat-icon class="mr-2 text-blue-500">person_outline</mat-icon>
+            Personal Information
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="p-0">
+          <mat-list class="divide-y divide-gray-100 dark:divide-gray-700">
+            <mat-list-item class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Full Name</span>
+                <span class="font-medium">{{ application.firstName }} {{ application.lastName }}</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="application.dateOfBirth" class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Date of Birth</span>
+                <span>{{ application.dateOfBirth | date }}</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="application.gender" class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Gender</span>
+                <span>{{ application.gender }}</span>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
 
-    <!-- Address Information -->
-    <mat-card *ngIf="application.address">
-      <mat-card-header>
-        <mat-card-title class="flex items-center">
-          <mat-icon class="mr-2">location_on</mat-icon>
-          Address Information
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <mat-list>
-          <mat-list-item>
-            <span class="font-medium">Address:</span> {{ application.address }}
-          </mat-list-item>
-          <mat-list-item *ngIf="application.city">
-            <span class="font-medium">City:</span> {{ application.city }}
-          </mat-list-item>
-          <mat-list-item *ngIf="application.postalCode">
-            <span class="font-medium">Postal Code:</span> {{ application.postalCode }}
-          </mat-list-item>
-          <mat-list-item *ngIf="application.country">
-            <span class="font-medium">Country:</span> {{ application.country }}
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
+      <!-- Address Information Card -->
+      <mat-card *ngIf="application.address" class="rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <mat-card-header class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+          <mat-card-title class="flex items-center text-lg font-semibold">
+            <mat-icon class="mr-2 text-blue-500">location_on</mat-icon>
+            Address Information
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="p-0">
+          <mat-list class="divide-y divide-gray-100 dark:divide-gray-700">
+            <mat-list-item class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Address</span>
+                <span class="text-right">{{ application.address }}</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="application.city" class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">City</span>
+                <span>{{ application.city }}</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="application.postalCode" class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Postal Code</span>
+                <span>{{ application.postalCode }}</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="application.country" class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Country</span>
+                <span>{{ application.country }}</span>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Documents Section -->
+      <mat-card class="rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <mat-card-header class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+          <mat-card-title class="flex items-center text-lg font-semibold">
+            <mat-icon class="mr-2 text-blue-500">folder</mat-icon>
+            Application Documents
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="p-0">
+          <mat-list class="divide-y divide-gray-100 dark:divide-gray-700">
+            <mat-list-item *ngFor="let doc of application.documents" class="h-20 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 mr-4">
+                    <mat-icon class="text-blue-500">description</mat-icon>
+                  </div>
+                  <div>
+                    <div class="font-medium">{{ doc.name }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded mr-2">{{ doc.documentPurpose }}</span>
+                      <span>{{ doc.fileType }}</span>
+                    </div>
+                  </div>
+                </div>
+                <button mat-icon-button class="hover:bg-gray-200 dark:hover:bg-gray-700" 
+                        (click)="downloadDocument(doc)" [disabled]="isDownloading">
+                  <mat-icon class="text-gray-500 dark:text-gray-400">download</mat-icon>
+                </button>
+              </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="!application.documents?.length" class="h-24">
+              <div class="w-full text-center text-gray-500 dark:text-gray-400 py-4">
+                <mat-icon class="text-4xl opacity-50 mb-2">folder_off</mat-icon>
+                <div>No documents available</div>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Right Column -->
+    <div class="space-y-6">
+      <!-- Driver Information (if applicable) -->
+      <mat-card *ngIf="application.type === 'driver' || application.licenseType" 
+                class="rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <mat-card-header class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+          <mat-card-title class="flex items-center text-lg font-semibold">
+            <mat-icon class="mr-2 text-blue-500">directions_car</mat-icon>
+            Driver Information
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="p-0">
+          <mat-list class="divide-y divide-gray-100 dark:divide-gray-700">
+            <mat-list-item *ngIf="application.licenseType" class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">License Type</span>
+                <span class="font-medium">{{ application.licenseType }}</span>
+              </div>
+            </mat-list-item>
+            <mat-list-item *ngIf="application.vehicleInformation?.length" class="h-16 px-6 hover:bg-gray-50 dark:hover:bg-gray-800">
+              <div class="w-full flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Vehicles</span>
+                <span class="text-right">{{ application.vehicleInformation }}</span>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Application Timeline -->
+      <mat-card class="rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <mat-card-header class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+          <mat-card-title class="flex items-center text-lg font-semibold">
+            <mat-icon class="mr-2 text-blue-500">timeline</mat-icon>
+            Application Timeline
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="p-6">
+          <div class="space-y-4">
+            <div class="flex items-start">
+              <div class="flex flex-col items-center mr-4">
+                <div class="w-2 h-2 bg-blue-500 rounded-full mt-1"></div>
+                <div class="w-px h-full bg-gray-200 dark:bg-gray-600"></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium">Application Submitted</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">June 10, 2023</div>
+              </div>
+            </div>
+            <div class="flex items-start">
+              <div class="flex flex-col items-center mr-4">
+                <div class="w-2 h-2 bg-gray-300 dark:bg-gray-500 rounded-full mt-1"></div>
+                <div class="w-px h-full bg-gray-200 dark:bg-gray-600"></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium">Under Review</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Pending</div>
+              </div>
+            </div>
+            <div class="flex items-start">
+              <div class="flex flex-col items-center mr-4">
+                <div class="w-2 h-2 bg-gray-300 dark:bg-gray-500 rounded-full mt-1"></div>
+              </div>
+              <div>
+                <div class="text-sm font-medium">Decision</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Pending</div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 
-  <!-- Documents Section -->
-  <mat-card class="mb-6">
-    <mat-card-header>
-      <mat-card-title class="flex items-center">
-        <mat-icon class="mr-2">description</mat-icon>
-        Application Documents
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-list>
-        <mat-list-item *ngFor="let doc of application.documents" class="document-item">
-          <mat-icon mat-list-icon>description</mat-icon>
-          <div mat-line>{{ doc.name }}</div>
-          <div mat-line class="text-xs text-gray-500">
-            {{ doc.documentPurpose }} • {{ doc.fileType }}
-          </div>
-          <button mat-icon-button (click)="downloadDocument(doc)" [disabled]="isDownloading">
-            <mat-icon>cloud_download</mat-icon>
-          </button>
-        </mat-list-item>
-      </mat-list>
-      <div *ngIf="!application.documents?.length" class="text-center py-4 text-gray-500">
-        No documents available
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Additional Information -->
-  <mat-card *ngIf="application.type === 'driver' || application.licenseType" class="mb-6">
-    <mat-card-header>
-      <mat-card-title class="flex items-center">
-        <mat-icon class="mr-2">directions_car</mat-icon>
-        Driver Information
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-list>
-        <mat-list-item *ngIf="application.licenseType">
-          <span class="font-medium">License Type:</span> {{ application.licenseType }}
-        </mat-list-item>
-        <mat-list-item *ngIf="application.vehicleInformation?.length">
-          <span class="font-medium">Vehicles:</span> {{ application.vehicleInformation }}
-        </mat-list-item>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
-
   <!-- Action Buttons -->
-  <div class="flex justify-end gap-4 mt-6">
-    <button mat-button (click)="closeDialog()">Close</button>
+  <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-gray-800">
+    <button mat-stroked-button (click)="closeDialog()" class="px-6">
+      Close
+    </button>
     <button 
       mat-raised-button 
       color="warn" 
       (click)="rejectApplication()" 
-      [disabled]="application.reviewed || isLoading">
-      <span *ngIf="!isLoading">Reject</span>
+      [disabled]="application.reviewed || isLoading"
+      class="px-6">
+      <span *ngIf="!isLoading" class="flex items-center">
+        <mat-icon class="mr-1">block</mat-icon>
+        Reject
+      </span>
       <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
     </button>
     <button 
       mat-raised-button 
       color="primary" 
       (click)="approveApplication()" 
-      [disabled]="application.reviewed || isLoading">
-      <span *ngIf="!isLoading">Approve</span>
+      [disabled]="application.reviewed || isLoading"
+      class="px-6">
+      <span *ngIf="!isLoading" class="flex items-center">
+        <mat-icon class="mr-1">check_circle</mat-icon>
+        Approve
+      </span>
       <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
     </button>
   </div>

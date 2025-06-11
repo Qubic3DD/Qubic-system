@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AssignTabletComponent } from './assign-tablet.component';
+import { UserSelectDialogComponent } from './assign-tablet.component';
 
-describe('AssignTabletComponent', () => {
-  let component: AssignTabletComponent;
-  let fixture: ComponentFixture<AssignTabletComponent>;
+describe('UserSelectDialogComponent', () => {
+  let component: UserSelectDialogComponent;
+  let fixture: ComponentFixture<UserSelectDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AssignTabletComponent]
+      imports: [UserSelectDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AssignTabletComponent);
+    fixture = TestBed.createComponent(UserSelectDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,132 +1,101 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TabletService } from '../../../services/tablet.service';
-import { DriverProfile } from '../../../api/Response/interfaces';
-import { DriverComponent } from '../../driver/driver.component';
+import { DriverService } from '../../../services/DriverService';  // <- import driver service
+import { UserInfo } from '../../../api/Request/Tablet'; // keep if UserInfo is compatible or change to DriverProfile
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-interface Driver {
-  id: number;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email?: string;
-}
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-      imports: [
+  selector: 'app-user-select-dialog',
+  standalone: true,
+  imports: [
     CommonModule,
-FormsModule
+    FormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatProgressSpinnerModule
   ],
-  selector: 'app-assign-tablet',
-  template: `
-    <div class="p-6 bg-white rounded-lg shadow-xl max-w-2xl">
-      <h2 class="text-2xl font-bold mb-4 text-gray-800">Assign Tablet to Driver</h2>
-      
-      <div class="mb-6">
-        <h3 class="text-lg font-semibold mb-2">Tablet Details</h3>
-        <p><span class="font-medium">Model:</span> {{data.tablet.model}}</p>
-        <p><span class="font-medium">Serial:</span> {{data.tablet.serialNumber}}</p>
-      </div>
-      
-      <div class="mb-4">
-        <input [(ngModel)]="searchQuery" (input)="searchDrivers()" 
-               placeholder="Search drivers..." class="w-full p-2 border rounded mb-4">
-        
-        <div *ngIf="isLoading" class="text-center py-4">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-        
-        <div *ngIf="drivers.length === 0 && !isLoading" class="text-center py-4 text-gray-500">
-          No drivers found
-        </div>
-        
-        <div class="space-y-2 max-h-96 overflow-y-auto">
-          <div *ngFor="let driver of drivers" 
-               class="p-3 border rounded hover:bg-gray-50 cursor-pointer"
-               [class.bg-blue-50]="selectedDriver?.accountId === driver.accountId"
-               (click)="selectDriver(driver)">
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="font-medium">{{driver.firstName}} {{driver.lastName}}</p>
-                <p class="text-sm text-gray-600">{{driver.phoneNo}}</p>
-              </div>
-              <div *ngIf="selectedDriver?.accountId === driver.accountId" class="text-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="mt-6 flex justify-end space-x-3">
-        <button (click)="onCancel()" 
-                class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
-        <button (click)="onAssign()" [disabled]="!selectedDriver"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300">
-          Assign Tablet
-        </button>
-      </div>
-    </div>
-  `,
-  styles: []
+  templateUrl: './assign-tablet.component.html',
+  styleUrls: ['./assign-tablet.component.css']
 })
-export class AssignTabletComponent {
-  drivers: DriverProfile[] = [];
+export class UserSelectDialogComponent implements OnInit {
+  users: UserInfo[] = [];  // or DriverProfile[] if you prefer
+  filteredUsers: UserInfo[] = [];
   isLoading = false;
   searchQuery = '';
-  selectedDriver: DriverProfile | null = null;
+  selectedUser: UserInfo | null = null;
 
   constructor(
-    private userService: DriverComponent,
+    private driverService: DriverService,  // changed from userService
     private tabletService: TabletService,
-    private dialogRef: MatDialogRef<AssignTabletComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.loadDrivers();
+    private dialogRef: MatDialogRef<UserSelectDialogComponent>,
+    private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: { title: string, tabletId: number }
+  ) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
   }
 
-
-    filteredDrivers: DriverProfile[] = [];
-loadDrivers(): void {
-  if (!this.searchQuery || this.searchQuery.trim() === '') {
-    this.filteredDrivers = [...this.drivers];
-  } else {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredDrivers = this.drivers.filter(driver =>
-      driver.firstName.toLowerCase().includes(query) || // example field
-      driver.email?.toLowerCase().includes(query)  // another example
-    );
+  loadUsers(): void {
+    this.isLoading = true;
+    this.driverService.fetchDriversd().subscribe({
+      next: (drivers) => {
+        this.users = drivers;  // assign drivers as users
+        this.filteredUsers = [...drivers];
+        this.isLoading = false;
+      },
+      error: () => {
+        this.snackBar.open('Failed to load drivers', 'Close', { duration: 3000 });
+        this.isLoading = false;
+      }
+    });
   }
+
+  searchUsers(): void {
+    if (!this.searchQuery || this.searchQuery.trim() === '') {
+      this.filteredUsers = [...this.users];
+    } else {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredUsers = this.users.filter(user =>
+        (user.firstName?.toLowerCase().includes(query) || 
+         user.lastName?.toLowerCase().includes(query) || 
+         user.email?.toLowerCase().includes(query) ||
+         user.phoneNo?.toLowerCase().includes(query))
+      );
+    }
+  }
+trackById(index: number, user: any): number {
+  return user.id;
 }
 
-  searchDrivers() {
-    this.loadDrivers();
+  selectUser(user: UserInfo): void {
+    this.selectedUser = user;
   }
 
-  selectDriver(driver: DriverProfile) {
-    this.selectedDriver = driver;
-  }
-
-  onAssign() {
-    if (this.selectedDriver) {
+  onAssign(): void {
+    if (this.selectedUser) {
       this.isLoading = true;
-      this.tabletService.assignTablet(this.data.tablet.id, this.selectedDriver.accountId)
+      this.tabletService.assignTablet(this.data.tabletId, this.selectedUser.id!)
         .subscribe({
           next: (updatedTablet) => {
             this.dialogRef.close(updatedTablet);
+            this.snackBar.open('Tablet assigned successfully!', 'Close', { duration: 3000 });
           },
-          error: (err) => {
-            console.error('Assignment failed:', err);
+          error: () => {
+            this.snackBar.open('Failed to assign tablet', 'Close', { duration: 3000 });
             this.isLoading = false;
           }
         });
     }
   }
 
-  onCancel() {
+  onCancel(): void {
     this.dialogRef.close();
   }
 }

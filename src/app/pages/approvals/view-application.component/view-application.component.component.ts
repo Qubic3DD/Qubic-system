@@ -11,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { MatChip } from '@angular/material/chips';
 
 @Component({
   selector: 'app-view-application',
@@ -26,9 +28,17 @@ import { MatListModule } from '@angular/material/list';
     MatDividerModule,
     MatListModule,
      MatDialogModule,
+     MatTab,
+     MatTabGroup,MatChip
   ]
 })
 export class ViewApplicationComponent {
+previewDocument(_t243: UserDocuments) {
+throw new Error('Method not implemented.');
+}
+getDocumentIcon(arg0: string) {
+throw new Error('Method not implemented.');
+}
   application: Application;
   isLoading = false;
   isDownloading = false;

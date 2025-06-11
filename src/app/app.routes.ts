@@ -24,6 +24,8 @@ import { EditAgenciesComponent } from './pages/agencies/edit-profile.component/e
 import { AddPassengerComponent } from './pages/passanger/add-advertiser/add-advertiser.component';
 import { EditPassengerComponent } from './pages/passanger/edit-profile.component/edit-profile.component.component';
 import { EditFleetProfileComponentComponent } from './pages/fleet-owners/edit-profile.component/edit-profile.component.component';
+import { TabletViewComponent } from './pages/tablet/tablet-view.component/tablet-view.component.component';
+import { UserSelectDialogComponent } from './pages/tablet/user-select-dialog/user-select-dialog.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
@@ -121,14 +123,15 @@ export const routes: Routes = [
   ],
 }
 ,
-            {
-        path: 'tablets',
-        children: [
-          { path: '', component: TabletComponent },
-          // { path: 'add', component: AddAgenciesComponent },
-          // { path: 'edit', component: EditAgenciesComponent },
-        ],
-      },
+ {
+  path: 'tablets',
+  children: [
+    { path: '', component: TabletComponent },
+    { path: ':id', component: TabletViewComponent },
+    {path:'assign',component: UserSelectDialogComponent}
+  ],
+},
+
       
              {
         path: 'passenger',
@@ -169,7 +172,8 @@ export const routes: Routes = [
     import('../app/pages/approvals/view-application.component/view-application.component.component').then(
       m => m.ViewApplicationComponent
     )
-}
+},
+
 
     ],
   },

@@ -28,5 +28,9 @@
 
 <mat-dialog-actions align="end">
   <button mat-stroked-button (click)="onCancel()">Cancel</button>
-  <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="!selectedUserId">Confirm</button>
+  <button mat-flat-button color="primary"
+          (click)="onConfirm()"
+          [disabled]="selectedUserId == null">
+    Confirm
+  </button>
 </mat-dialog-actions>

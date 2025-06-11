@@ -1,14 +1,17 @@
-h1.mat-dialog-title {
-  margin-bottom: 16px;
-  color: #333;
+::ng-deep .mat-dialog-container {
+  border-radius: 1rem;
+  padding: 0;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  font-family: 'Inter', sans-serif;
 }
 
-.mat-dialog-content {
-  margin-bottom: 24px;
-  font-size: 16px;
-  color: #555;
+mat-dialog-content {
+  padding: 0 24px;
 }
 
-.mat-dialog-actions {
-  padding: 8px 0;
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
 }
