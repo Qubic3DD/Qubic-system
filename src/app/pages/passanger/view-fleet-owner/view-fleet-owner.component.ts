@@ -16,9 +16,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 import { ApiResponse } from '../../../api/Response/interfaces';
 import { DriverProfile } from '../../../api/Response/FleetOwnersResponse';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-driver-profile',
