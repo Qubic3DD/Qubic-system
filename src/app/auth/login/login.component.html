@@ -1,113 +1,209 @@
-<div
-  class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-200 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl w-full space-y-8">
     <div class="flex flex-col items-center">
       <!-- Logo with dark mode inversion -->
-      <img src="https://i.ibb.co/d07sYYvs/logo.png" alt="Logo" class="h-16 w-auto mb-4" />
+      <img src="https://i.ibb.co/d07sYYvs/logo.png" alt="Logo" class="h-20 w-auto mb-4" />
 
-      <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-        Admin Dashboard
+      <h2 class="mt-2 text-center text-4xl font-extrabold text-gray-900 dark:text-white">
+        Qubic3D Admin Portal
       </h2>
-      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
-        Sign in to your account
+      <p class="mt-2 text-center text-lg text-gray-600 dark:text-gray-300">
+        Welcome to the unified management system
       </p>
     </div>
 
-    <form class="mt-8 space-y-6" (ngSubmit)="onLogin()" #loginForm="ngForm">
-      <div class="rounded-md shadow-sm -space-y-px">
-        <div>
-          <input name="email" [(ngModel)]="email" type="email" required
-            class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 rounded-t-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm transition-colors duration-200"
-            placeholder="Email address" />
-        </div>
-        <div>
-          <input name="password" [(ngModel)]="password" type="password" required
-            class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 rounded-b-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm transition-colors duration-200"
-            placeholder="Password" />
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <input id="remember-me" name="remember-me" type="checkbox"
-            class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700" />
-          <label for="remember-me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-            Remember me
-          </label>
-        </div>
-
-        <div class="text-sm">
-          <a href="#" class="font-medium text-pink-500 hover:text-pink-400 dark:text-pink-400 dark:hover:text-pink-300">
-            Forgot password?
-          </a>
-        </div>
-      </div>
-
-      <div>
-        <button type="submit"
-          class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
-          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-            <svg class="h-5 w-5 text-pink-300 group-hover:text-pink-200" xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd"
-                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                clip-rule="evenodd" />
+    <!-- Role Selection Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+      <div 
+        *ngFor="let role of roles" 
+        (click)="selectRole(role)"
+        [class]="selectedRole === role ? 'ring-2 ring-pink-500 scale-105' : 'hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-600'"
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 cursor-pointer transition-all duration-200 transform hover:shadow-lg"
+      >
+        <div class="flex flex-col items-center text-center">
+          <div class="p-3 rounded-full bg-pink-100 dark:bg-pink-900/30 mb-4">
+            <svg class="h-8 w-8 text-pink-600 dark:text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path *ngIf="role === 'DRIVER'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              <path *ngIf="role === 'FLEET_OWNER'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              <path *ngIf="role === 'AGENCY'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              <path *ngIf="role === 'ADVERTISER'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+              <path *ngIf="role === 'APPLICANT'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-          </span>
-          Sign in
-        </button>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ getRoleLabel(role) }}</h3>
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            {{ getRoleLabel(role) }}
+          </p>
+        </div>
+      </div>
+    </div>
 
+    <!-- Dynamic Form Section -->
+    <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 transition-all duration-200">
+      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+        {{ selectedRole ? 'Continue as ' + getRoleLabel(selectedRole) : 'Select a portal to continue' }}
+      </h3>
+
+      <div *ngIf="selectedRole === 'APPLICANT'">
+        <form class="space-y-6" (ngSubmit)="fetchApplication()">
+          <div>
+            <label for="applicant-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Enter applicant email
+            </label>
+            <div class="flex gap-2">
+              <input id="applicant-email" name="email" [(ngModel)]="email" type="email" required
+                class="flex-1 appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200"
+                placeholder="applicant@example.com" />
+              <button type="submit"
+                class="inline-flex items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
+                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
+                Search
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Application Details Card -->
+        <div *ngIf="applicationData" class="mt-6 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <img class="h-12 w-12 rounded-full" [src]="applicationData.profileImage || 'https://avatar-placeholder.iran.liara.run/avatar'" alt="Applicant">
+            </div>
+            <div class="ml-4">
+              <h4 class="text-lg font-medium text-gray-900 dark:text-white">{{ applicationData.fullName || 'Applicant' }}</h4>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ applicationData.email }}</p>
+              <div class="mt-2 flex flex-wrap gap-2">
+                <span class="px-2 py-1 text-xs rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200">
+                  {{ applicationData.status || 'Pending' }}
+                </span>
+                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
+                  Applied: {{ applicationData.applicationDate | date }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">Contact</h5>
+              <p class="text-sm text-gray-900 dark:text-white">{{ applicationData.phone || 'Not provided' }}</p>
+            </div>
+            <div>
+              <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">Position</h5>
+              <p class="text-sm text-gray-900 dark:text-white">{{ applicationData.position || 'Not specified' }}</p>
+            </div>
+          </div>
+          <div class="mt-4 flex justify-end space-x-3">
+            <button (click)="downloadDocuments()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
+              Download Documents
+            </button>
+            <button (click)="processApplication()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
+              Process Application
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div *ngIf="errorMessage"
-        class="p-3 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900 dark:bg-opacity-20 rounded-md text-center transition-colors duration-200">
+      <div *ngIf="selectedRole && selectedRole !== 'APPLICANT'">
+        <form class="space-y-6" (ngSubmit)="onLogin()">
+          <div class="rounded-md shadow-sm space-y-4">
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email address
+              </label>
+              <input id="email" name="email" [(ngModel)]="email" type="email" required autocomplete="email"
+                class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200"
+                placeholder="your@email.com" />
+            </div>
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Password
+              </label>
+              <input id="password" name="password" [(ngModel)]="password" type="password" required autocomplete="current-password"
+                class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200"
+                placeholder="••••••••" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input id="remember-me" name="remember-me" type="checkbox"
+                class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700" />
+              <label for="remember-me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                Remember me
+              </label>
+            </div>
+
+            <div class="text-sm">
+              <a href="#" class="font-medium text-pink-600 hover:text-pink-500 dark:text-pink-400 dark:hover:text-pink-300">
+                Forgot password?
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <button type="submit"
+              class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
+              <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                <svg class="h-5 w-5 text-pink-300 group-hover:text-pink-200" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd" />
+                </svg>
+              </span>
+              Sign in as {{ getRoleLabel(selectedRole) }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div *ngIf="errorMessage"
+      class="p-4 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900 dark:bg-opacity-20 rounded-md text-center transition-colors duration-200">
+      <div class="flex items-center justify-center">
+        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
         {{ errorMessage }}
       </div>
-    </form>
-
-    <div class="text-center text-sm text-gray-500 dark:text-gray-400">
-      <p>Don't have an account? <a href="#"
-          class="font-medium text-pink-600 hover:text-pink-500 dark:text-pink-400 dark:hover:text-pink-300">Contact
-          support</a></p>
     </div>
-  </div>
 
-
-  <!-- Success Message Modal -->
-  <div *ngIf="loginSuccess"
-    class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm transition-all duration-300">
-    <div
-      class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all duration-300 ease-out scale-95 opacity-0"
-      [class]="loginSuccess ? 'scale-100 opacity-100' : ''">
-
-      <!-- Animated Checkmark -->
-      <div
-        class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 dark:bg-purple-900/30 mb-4">
-        <svg class="h-10 w-10 text-pink-600 dark:text-pink-400 animate-checkmark" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    <div *ngIf="isLoading"
+      class="p-4 text-sm text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 rounded-md text-center transition-colors duration-200">
+      <div class="flex items-center justify-center">
+        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
+        Processing your request...
       </div>
+    </div>
 
-      <!-- Message Content -->
-      <div class="text-center">
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-pink-900 mb-2">
-          Login Successful!
-        </h3>
-        <p class="text-gray-600 dark:text-gray-900 mb-6">
-          Welcome back! Redirecting to your dashboard...
-        </p>
-
-        <!-- Animated Progress Bar -->
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-4">
-          <div class="bg-pink-600 dark:bg-pink-500 h-1.5 rounded-full animate-progress"></div>
+    <!-- Success Modal -->
+    <div *ngIf="loginSuccess" class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm transition-all duration-300">
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all duration-300"
+        [class]="loginSuccess ? 'scale-100 opacity-100' : 'scale-95 opacity-0'">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
+          <svg class="h-10 w-10 text-green-600 dark:text-green-400 animate-checkmark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
         </div>
+        <div class="text-center">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            Welcome, {{ userFirstName }}!
+          </h3>
+    <p class="text-gray-600 dark:text-gray-300 mb-6" *ngIf="selectedRole">
+  You're being redirected to the {{ getRoleLabel(selectedRole) }} dashboard...
+</p>
 
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-          Didn't redirect? <a href="#" class="text-pink-600 dark:text-pink-400 hover:underline">Click here</a>
-        </p>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-4">
+            <div class="bg-pink-600 dark:bg-pink-500 h-1.5 rounded-full animate-progress"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
 </div>

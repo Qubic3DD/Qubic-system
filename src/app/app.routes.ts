@@ -26,12 +26,13 @@ import { EditPassengerComponent } from './pages/passanger/edit-profile.component
 import { EditFleetProfileComponentComponent } from './pages/fleet-owners/edit-profile.component/edit-profile.component.component';
 import { TabletViewComponent } from './pages/tablet/tablet-view.component/tablet-view.component.component';
 import { UserSelectDialogComponent } from './pages/tablet/user-select-dialog/user-select-dialog.component';
+import { ApplicationDashboardComponent } from './pages/application-dashboard/application-dashboard.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   // Login route (now the landing page)
-  { path: 'login', component: LoginComponent },
-
+{ path: '', component: LoginComponent },
+  { path: 'application/:email', component: ApplicationDashboardComponent },
   {
     path: '',
     component: HomeComponent,

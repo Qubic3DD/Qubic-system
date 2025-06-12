@@ -35,6 +35,7 @@ export class ApprovalsComponent {
   errorMessage = '';
   dialogRef: any;
   data: any;
+  router: any;
 
   constructor(private http: HttpClient,private dialog: MatDialog) {
     this.loadApplications();
@@ -66,7 +67,61 @@ loadApplications() {
     });
 }
 
-  
+  searchApplications() {
+  if (!this.searchQuery) {
+    this.filterApplications();
+    return;
+  }
+
+  // Check if search query is an email
+  if (this.isValidEmail(this.searchQuery)) {
+    this.fetchApplicationByEmail(this.searchQuery);
+  } else {
+    // Fall back to regular filtering for non-email searches
+    this.filterApplications();
+  }
+}
+private isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}private fetchApplicationByEmail(email: string) {
+  if (!this.isValidEmail(email)) {
+    this.errorMessage = 'Invalid email format.';
+    return;
+  }
+
+  this.isLoading = true;
+  const encodedEmail = encodeURIComponent(email.trim().toLowerCase());
+  const apiUrl = `http://196.168.8.29:8443/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
+
+  console.log(`curl -X 'GET' '${apiUrl}' -H 'accept: */*'`);
+
+  this.http.get<Application>(apiUrl).subscribe({
+    next: (response) => {
+      this.isLoading = false;
+      if (response?.email?.toLowerCase() === email.trim().toLowerCase()) {
+        this.router.navigate(['/application', email]);
+      } else {
+        this.errorMessage = 'No application found for this email.';
+        this.filterApplications();
+      }
+    },
+    error: (error) => {
+      this.isLoading = false;
+      if (error.status === 404) {
+        this.errorMessage = 'No application found for this email.';
+        this.filterApplications();
+      } else {
+        this.errorMessage = 'Failed to search application. Please try again.';
+        console.error(error);
+      }
+    }
+  });
+}
+
+
+
+
 private mapDocuments(app: Application): UserDocuments[] {
     const documents: UserDocuments[] = [];
 
@@ -141,6 +196,7 @@ filterApplications() {
     return matchesSearch && matchesType && matchesStatus;
   });
 }
+
 
 
   refreshApplications() {

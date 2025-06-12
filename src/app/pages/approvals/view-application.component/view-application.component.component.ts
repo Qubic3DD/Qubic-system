@@ -28,8 +28,6 @@ import { MatChip } from '@angular/material/chips';
     MatDividerModule,
     MatListModule,
      MatDialogModule,
-     MatTab,
-     MatTabGroup,MatChip
   ]
 })
 export class ViewApplicationComponent {
