@@ -36,7 +36,7 @@ export class TabletService {
       );
   }
   assignTabletToUser(tabletId: number, userId: number): Observable<any> {
-  const url = `http://41.76.110.219:8443/api/tablets/${tabletId}/assign/${userId}`;
+  const url = `http://192.168.8.100:8443/api/tablets/${tabletId}/assign/${userId}`;
   return this.http.post(url, null).pipe(
     catchError(this.handleError)
   );
@@ -173,7 +173,7 @@ getDrivers(search?: string): Observable<ApiResponse<DriverProfile[]>> {
       params = params.set('search', search);
     }
 
-    return this.http.get<ApiResponse<DriverProfile[]>>(`http://41.76.110.219:8443/profile/drivers`, { params })
+    return this.http.get<ApiResponse<DriverProfile[]>>(`http://192.168.8.100:8443/profile/drivers`, { params })
       .pipe(
         catchError(this.handleError)
       );

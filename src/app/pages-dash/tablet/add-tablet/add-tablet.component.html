@@ -1,0 +1,37 @@
+<div class="p-6 bg-white rounded-lg shadow-xl">
+  <h2 class="text-2xl font-bold mb-4 text-gray-800">Add New Tablet</h2>
+  <form [formGroup]="tabletForm" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 gap-6">
+      <div>
+        <label class="block text-gray-700">Model</label>
+        <input formControlName="model" class="w-full p-2 border rounded">
+      </div>
+      <div>
+        <label class="block text-gray-700">Serial Number</label>
+        <input formControlName="serialNumber" class="w-full p-2 border rounded">
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="block text-gray-700">Storage</label>
+          <input formControlName="storage" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-gray-700">Screen Size</label>
+          <input formControlName="screen" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-gray-700">OS Version</label>
+          <input formControlName="os" class="w-full p-2 border rounded">
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 flex justify-end space-x-3">
+      <button type="button" (click)="onCancel()" 
+              class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+      <button type="submit" [disabled]="!tabletForm.valid"
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300">
+        Save Tablet
+      </button>
+    </div>
+  </form>
+</div>

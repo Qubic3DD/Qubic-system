@@ -4,6 +4,7 @@ export enum Role {
   AGENCY = 'AGENCY',
   ADVERTISER = 'ADVERTISER',
   APPLICANT = 'APPLICANT',
+
 }
 
 export interface RoleConfig {

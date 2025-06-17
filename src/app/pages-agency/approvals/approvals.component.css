@@ -1,0 +1,7 @@
+.custom-dialog-container .mat-dialog-container {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+}.cdk-global-overlay-wrapper {
+  z-index: 1000 !important;
+}

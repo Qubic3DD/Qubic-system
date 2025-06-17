@@ -1,15 +1,23 @@
+import { DocumentPurpose } from "../api/Response/interfaceAproval";
+import { ApplicationStatus } from "../services/application-status";
 import { Role } from "../services/role.enum";
+import { VehicleInformation } from "./adverrtiser.model";
 
 export interface ApplicationDto {
+gender: any;
+  role: Role | ApplicationStatus;
   id: number;
   email: string;
   profileImage?: string;
   phoneNo: string;
+  applicationRole:Role;
   firstName: string;
   lastName: string;
+  fleetSize: number;
+  
   roles: Role[];
-  submissionDate: Date;
-  approvalDate?: Date;
+ submissionDate: string | Date;  // Allow both string and Date types
+  approvalDate?: string | Date;   // Optional and allows both types
   status: string; // Corresponds to ApplicationStatus in backend
   idNumber: string;
   licenseType: string;
@@ -19,6 +27,7 @@ export interface ApplicationDto {
   postalCode?: string;
   country?: string;
   location?: string;
+  applicationStatus?: ApplicationStatus;
 
   // Business Information
   serviceInformation?: string;
@@ -87,21 +96,3 @@ export interface ApplicationDocument {
   uploadedDate: Date;
 }
 
-export interface VehicleInformation {
-  id: number;
-  make: string;
-  model: string;
-  year: number;
-  licensePlate: string;
-  vehicleType: string;
-}
-
-export enum DocumentPurpose {
-  ID_DOCUMENT = 'ID_DOCUMENT',
-  DRIVER_LICENSE = 'DRIVER_LICENSE',
-  PROOF_OF_ADDRESS = 'PROOF_OF_ADDRESS',
-  VEHICLE_REGISTRATION = 'VEHICLE_REGISTRATION',
-  OPERATING_LICENSE = 'OPERATING_LICENSE',
-  BUSINESS_REGISTRATION = 'BUSINESS_REGISTRATION',
-  TAX_CLEARANCE = 'TAX_CLEARANCE'
-}

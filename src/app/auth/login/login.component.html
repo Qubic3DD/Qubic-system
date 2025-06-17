@@ -44,66 +44,18 @@
         {{ selectedRole ? 'Continue as ' + getRoleLabel(selectedRole) : 'Select a portal to continue' }}
       </h3>
 
-      <div *ngIf="selectedRole === 'APPLICANT'">
-        <form class="space-y-6" (ngSubmit)="fetchApplication()">
-          <div>
-            <label for="applicant-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Enter applicant email
-            </label>
-            <div class="flex gap-2">
-              <input id="applicant-email" name="email" [(ngModel)]="email" type="email" required
-                class="flex-1 appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200"
-                placeholder="applicant@example.com" />
-              <button type="submit"
-                class="inline-flex items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
-                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                </svg>
-                Search
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <!-- Application Details Card -->
-        <div *ngIf="applicationData" class="mt-6 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-          <div class="flex items-start">
-            <div class="flex-shrink-0">
-              <img class="h-12 w-12 rounded-full" [src]="applicationData.profileImage || 'https://avatar-placeholder.iran.liara.run/avatar'" alt="Applicant">
-            </div>
-            <div class="ml-4">
-              <h4 class="text-lg font-medium text-gray-900 dark:text-white">{{ applicationData.fullName || 'Applicant' }}</h4>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ applicationData.email }}</p>
-              <div class="mt-2 flex flex-wrap gap-2">
-                <span class="px-2 py-1 text-xs rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200">
-                  {{ applicationData.status || 'Pending' }}
-                </span>
-                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">
-                  Applied: {{ applicationData.applicationDate | date }}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">Contact</h5>
-              <p class="text-sm text-gray-900 dark:text-white">{{ applicationData.phone || 'Not provided' }}</p>
-            </div>
-            <div>
-              <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">Position</h5>
-              <p class="text-sm text-gray-900 dark:text-white">{{ applicationData.position || 'Not specified' }}</p>
-            </div>
-          </div>
-          <div class="mt-4 flex justify-end space-x-3">
-            <button (click)="downloadDocuments()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
-              Download Documents
-            </button>
-            <button (click)="processApplication()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
-              Process Application
-            </button>
-          </div>
-        </div>
-      </div>
+  <div *ngIf="selectedRole === 'APPLICANT'">
+  <div class="text-center py-8">
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Applicant Dashboard</h3>
+    <button (click)="navigateToDashboard()"
+      class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 dark:focus:ring-offset-gray-800 transition-colors duration-200">
+      <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+      </svg>
+      Go to Application Dashboard
+    </button>
+  </div>
+</div>
 
       <div *ngIf="selectedRole && selectedRole !== 'APPLICANT'">
         <form class="space-y-6" (ngSubmit)="onLogin()">

@@ -7,6 +7,7 @@ export interface ApiResponse<T> {
 }
 
 export interface DriverProfile {
+  id:number;
   accountId: number;
   username: string;
   email: string;
@@ -51,6 +52,8 @@ export interface VehicleInfo {
   userInformationId: number | null;
   public: boolean;
 }
+
+
 export interface UserDocument {
   id: number;
   name: string;
@@ -62,7 +65,22 @@ export interface UserDocument {
   documentPurpose: string;
   downloadUrl?: string;
 }
-
+// vehicle.model.ts
+export interface VehicleInfo2 {
+  id?: number;
+  capacity: string;
+  colour: string;
+  licenseRegistrationNo: string;
+  creationDate: string | null;
+  transportType: string;
+  vehicleType: string;
+  userInformationId: number | null;
+  public: boolean;
+  make?: string;
+  model?: string;
+  year?: number;
+  plateNumber?: string;
+}
 export interface UserDocument {
   id: number;
   name: string;

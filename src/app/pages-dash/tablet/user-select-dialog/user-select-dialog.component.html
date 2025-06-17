@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content class="min-w-[300px]">
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="spinner-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- User Select Dropdown -->
+  <div *ngIf="!loading && users.length > 0" class="select-container">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Select User</mat-label>
+      <mat-select [(ngModel)]="selectedUserId">
+        <mat-option *ngFor="let user of users" [value]="user.id">
+          {{ user.firstName }} {{ user.lastName }} ({{ user.email }})
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- No users available -->
+  <div *ngIf="!loading && users.length === 0" class="no-users">
+    No available users to assign.
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary"
+          (click)="onConfirm()"
+          [disabled]="selectedUserId == null">
+    Confirm
+  </button>
+</mat-dialog-actions>

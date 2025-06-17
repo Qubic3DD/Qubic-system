@@ -1,0 +1,20 @@
+<!-- vehicle-statistics.component.html -->
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Vehicle Statistics</h2>
+  <div class="grid grid-cols-2 gap-4">
+    <div class="text-center">
+      <div class="text-2xl font-bold">{{ totalVehicles }}</div>
+      <div class="text-sm text-gray-500">Total Vehicles</div>
+    </div>
+    
+    <div class="text-center">
+      <div class="text-2xl font-bold">{{ publicVehicles }}</div>
+      <div class="text-sm text-gray-500">Public Vehicles</div>
+    </div>
+    
+    <div class="text-center col-span-2">
+      <div class="text-xl font-bold">{{ privateVehicles }}</div>
+      <div class="text-sm text-gray-500">Private Vehicles</div>
+    </div>
+  </div>
+</div>

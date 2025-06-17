@@ -1,0 +1,354 @@
+<div class="driver-profile-container">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading driver data...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3 class="error-title">Error Loading Driver Data</h3>
+      <p class="error-message">{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Back to Drivers List
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="driver && !isLoading" class="driver-profile-content">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <div class="profile-display">
+          <div class="avatar-container">
+            <ng-container *ngIf="!imageLoadFailed[driver.email]; else initialsFallback">
+              <img
+                [src]="getDocumentUrlByUsernameAndPurpose(driver.email, 'PROFILE_PICTURE') || 'assets/images/default-avatar.png'"
+                alt="{{ driver.firstName || 'Driver Photo' }}"
+                class="profile-image"
+                (error)="onImageError(driver.email)"
+              />
+            </ng-container>
+
+            <ng-template #initialsFallback>
+              <div class="initials-fallback" aria-label="Driver initials">
+                {{ getInitials(driver.firstName || driver.email) }}
+              </div>
+            </ng-template>
+          </div>
+          
+          <div class="status-indicator" [ngClass]="getStatusClass(driver.status)">
+            {{ driver.status || 'Unknown' }}
+          </div>
+        </div>
+        
+        <div class="driver-headline">
+          <h1 class="driver-name">{{ driver.firstName }} {{ driver.lastName }}</h1>
+          <div class="driver-meta">
+            <span class="meta-item">
+              <mat-icon>star</mat-icon>
+              {{ driver.rating || 'N/A' }}
+            </span>
+            <span class="meta-item">
+              <mat-icon>directions_car</mat-icon>
+              {{ driver.licenseType || 'No license' }}
+            </span>
+            <span class="meta-item">
+              <mat-icon>location_on</mat-icon>
+              {{ driver.city || 'Location not set' }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="editDriver(driver)">
+            <mat-icon>edit</mat-icon> Edit Profile
+          </button>
+          <button mat-stroked-button class="ml-2">
+            <mat-icon>message</mat-icon> Send Message
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="more-actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="viewDocuments()">
+              <mat-icon>folder_open</mat-icon>
+              <span>View Documents</span>
+            </button>
+            <button mat-menu-item (click)="viewActivity()">
+              <mat-icon>timeline</mat-icon>
+              <span>View Activity</span>
+            </button>
+            <button mat-menu-item (click)="downloadProfile()">
+              <mat-icon>file_download</mat-icon>
+              <span>Export Profile</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Personal Info Card -->
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">person</mat-icon>
+              Personal Information
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Full Name:</span>
+                <span class="info-value">{{ driver.firstName }} {{ driver.lastName }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ driver.email }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Phone:</span>
+                <span class="info-value">{{ driver.phoneNo || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Gender:</span>
+                <span class="info-value">{{ driver.gender || 'Not specified' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Date of Birth:</span>
+                <span class="info-value">{{ driver.dateOfBirth ? (driver.dateOfBirth | date) : 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">ID Number:</span>
+                <span class="info-value">{{ driver.idNumber || 'Not provided' }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Address Card -->
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">home</mat-icon>
+              Address Information
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Address:</span>
+                <span class="info-value">{{ driver.address || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">City:</span>
+                <span class="info-value">{{ driver.city || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Postal Code:</span>
+                <span class="info-value">{{ driver.postalCode || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Country:</span>
+                <span class="info-value">{{ driver.country || 'Not provided' }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Languages & Disability Card -->
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">language</mat-icon>
+              Languages & Additional Info
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Languages:</span>
+                <span class="info-value">
+                  <span *ngIf="driver.languages?.length; else noLanguages">
+                    <span *ngFor="let lang of driver.languages" class="language-tag">{{ lang }}</span>
+                  </span>
+                  <ng-template #noLanguages>Not specified</ng-template>
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Disability:</span>
+                <span class="info-value">{{ driver.disability || 'None reported' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Bio:</span>
+                <span class="info-value">{{ driver.bio || 'No bio provided' }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Driver Stats Card -->
+        <mat-card class="stats-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">assessment</mat-icon>
+              Driver Statistics
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>calendar_today</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ driver.joinedDate ? (driver.joinedDate | date) : 'Unknown' }}</div>
+                  <div class="stat-label">Join Date</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>event_available</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ driver.lastTripDate ? (driver.lastTripDate | date) : 'Never' }}</div>
+                  <div class="stat-label">Last Trip</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>star_rate</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ driver.rating || 'N/A' }}</div>
+                  <div class="stat-label">Rating</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>verified_user</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ driver.status || 'Unknown' }}</div>
+                  <div class="stat-label">Status</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- License & Vehicle Info Card -->
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">directions_car</mat-icon>
+              License & Vehicle Information
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">License Type:</span>
+                <span class="info-value">{{ driver.licenseType || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Vehicle Assigned:</span>
+                <span class="info-value">{{ driver.vehicleInformation?.length ? driver.vehicleInformation[0].type : 'None' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Vehicle Details:</span>
+                <span class="info-value">
+                  <span *ngIf="driver.vehicleInformation?.length; else noVehicle">
+                    {{ driver.vehicleInformation[0].make }} {{ driver.vehicleInformation[0].model }} 
+                    ({{ driver.vehicleInformation[0].year }})
+                  </span>
+                  <ng-template #noVehicle>No vehicle assigned</ng-template>
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Plate Number:</span>
+                <span class="info-value">
+                  {{ driver.vehicleInformation?.length ? driver.vehicleInformation[0].plateNumber : 'N/A' }}
+                </span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Documents Card -->
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">description</mat-icon>
+              Documents
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngIf="driver.uploadedDocuments?.length; else noDocuments" class="documents-list">
+              <div *ngFor="let doc of driver.uploadedDocuments" class="document-item">
+                <mat-icon class="document-icon">insert_drive_file</mat-icon>
+                <div class="document-info">
+                  <div class="document-name">{{ doc.name || 'Unnamed Document' }}</div>
+                  <div class="document-meta">
+                    <span>{{ doc.type }}</span>
+                    <span>•</span>
+                    <span>{{ doc.uploadDate | date }}</span>
+                  </div>
+                </div>
+                <button mat-icon-button (click)="downloadDocument(doc.id)">
+                  <mat-icon>cloud_download</mat-icon>
+                </button>
+              </div>
+            </div>
+            <ng-template #noDocuments>
+              <div class="empty-state">
+                <mat-icon>folder_open</mat-icon>
+                <p>No documents uploaded</p>
+              </div>
+            </ng-template>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Recent Activity Card -->
+        <mat-card class="info-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">timeline</mat-icon>
+              Recent Activity
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngIf="recentActivity?.length; else noActivity" class="activity-timeline">
+              <div *ngFor="let activity of recentActivity" class="activity-item">
+                <div class="activity-icon">
+                  <mat-icon>{{ getActivityIcon(activity.type) }}</mat-icon>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-message">{{ activity.message }}</div>
+                  <div class="activity-time">{{ activity.timestamp | date:'medium' }}</div>
+                </div>
+              </div>
+            </div>
+            <ng-template #noActivity>
+              <div class="empty-state">
+                <mat-icon>notifications_none</mat-icon>
+                <p>No recent activity</p>
+              </div>
+            </ng-template>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

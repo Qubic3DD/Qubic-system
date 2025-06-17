@@ -1,0 +1,46 @@
+<!-- user-breakdown.component.html -->
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+  <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Breakdown</h2>
+  <div class="space-y-4">
+    <div>
+      <div class="flex justify-between mb-1">
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Individual Users</span>
+        <span class="text-sm font-medium text-gray-900 dark:text-white">
+          {{ individualUsers }} ({{ totalUsers > 0 ? (individualUsers / totalUsers * 100 | number:'1.0-0') : 0 }}%)
+        </span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        <div class="bg-blue-600 h-2.5 rounded-full" 
+             [style.width]="totalUsers > 0 ? (individualUsers / totalUsers * 100) + '%' : '0%'"></div>
+      </div>
+    </div>
+    
+    <div>
+      <div class="flex justify-between mb-1">
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Company Users</span>
+        <span class="text-sm font-medium text-gray-900 dark:text-white">
+          {{ companyUsers }} ({{ totalUsers > 0 ? (companyUsers / totalUsers * 100 | number:'1.0-0') : 0 }}%)
+        </span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        <div class="bg-green-600 h-2.5 rounded-full" 
+             [style.width]="totalUsers > 0 ? (companyUsers / totalUsers * 100) + '%' : '0%'"></div>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4 pt-2">
+      <div class="text-center">
+        <div class="text-2xl font-bold">{{ passengers }}</div>
+        <div class="text-sm text-gray-500">Passengers</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold">{{ drivers }}</div>
+        <div class="text-sm text-gray-500">Drivers</div>
+      </div>
+      <div class="text-center col-span-2">
+        <div class="text-lg font-semibold">{{ usersWithMultipleVehicles }}</div>
+        <div class="text-sm text-gray-500">Users with multiple vehicles</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<h2 mat-dialog-title class="flex items-center gap-2 text-xl font-semibold text-gray-800">
+  <mat-icon color="warn">report_problem</mat-icon>
+  {{ data.title }}
+</h2>
+
+<mat-dialog-content class="py-4 text-gray-700 text-base leading-relaxed">
+  <p>{{ data.message }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-4 pb-4">
+  <button mat-button (click)="onNoClick()" class="text-gray-600 hover:text-black">
+    Cancel
+  </button>
+  <button mat-raised-button color="warn" (click)="onConfirm()" cdkFocusInitial>
+    Confirm
+  </button>
+</mat-dialog-actions>

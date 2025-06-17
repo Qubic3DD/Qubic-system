@@ -1,0 +1,421 @@
+<div class="advertiser-container">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading advertiser data...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3 class="error-title">Error Loading Data</h3>
+      <p class="error-message">{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Back to Advertisers
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="advertiser && !isLoading" class="advertiser-content">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="header-content">
+        <div class="avatar-container">
+          <ng-container *ngIf="!imageLoadFailed[advertiser.email]; else initialsFallback">
+            <img
+              [src]="getDocumentUrlByUsernameAndPurpose(advertiser.email, 'PROFILE_PICTURE') || 'assets/images/default-avatar.png'"
+              alt="{{ advertiser.firstName || 'Profile Picture' }}"
+              class="profile-image"
+              (error)="onImageError(advertiser.email)"
+            />
+          </ng-container>
+
+          <ng-template #initialsFallback>
+            <div class="initials-fallback" aria-label="User initials">
+              {{ getInitials(advertiser.firstName || advertiser.email) }}
+            </div>
+          </ng-template>
+
+          <div
+            class="online-status"
+            [ngClass]="{
+              'online': advertiser.status === 'Active',
+              'offline': advertiser.status !== 'Active'
+            }"
+            [attr.aria-label]="advertiser.status === 'Active' ? 'Online' : 'Offline'"
+          ></div>
+        </div>
+
+        <div class="header-details">
+          <h1 class="advertiser-name">{{ advertiser.firstName }} {{ advertiser.lastName }}</h1>
+          <div class="flex items-center space-x-4">
+            <span class="company-name" *ngIf="advertiser.companyName">{{ advertiser.companyName }}</span>
+            <span class="status-badge" [ngClass]="getStatusColor('active')">
+              {{ advertiser.status || 'Unknown' }}
+            </span>
+          </div>
+          <div class="contact-info">
+            <a [href]="'mailto:' + advertiser.email" class="contact-item">
+              <mat-icon>email</mat-icon>
+              <span>{{ advertiser.email }}</span>
+            </a>
+            <a [href]="'tel:' + advertiser.phoneNo" class="contact-item" *ngIf="advertiser.phoneNo">
+              <mat-icon>phone</mat-icon>
+              <span>{{ advertiser.phoneNo }}</span>
+            </a>
+            <a [href]="advertiser.website" target="_blank" class="contact-item" *ngIf="advertiser.website">
+              <mat-icon>public</mat-icon>
+              <span>{{ advertiser.website }}</span>
+            </a>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button color="primary" (click)="editAdvertiser(advertiser)">
+            <mat-icon>edit</mat-icon> Edit Profile
+          </button>
+          <button mat-stroked-button class="ml-2">
+            <mat-icon>message</mat-icon> Contact
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="more-actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>file_download</mat-icon>
+              <span>Export Data</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>print</mat-icon>
+              <span>Print Profile</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>history</mat-icon>
+              <span>View Activity</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <mat-tab-group [(selectedIndex)]="activeTabIndex" (selectedTabChange)="setActiveTab($event.index)">
+      <mat-tab label="Profile">
+        <div class="tab-content">
+          <!-- Basic Info Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="col-span-1">
+              <mat-card class="info-card">
+                <mat-card-header>
+                  <mat-card-title>Personal Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="info-item">
+                    <span class="info-label">Gender:</span>
+                    <span class="info-value">{{ advertiser.gender || 'Not specified' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Date of Birth:</span>
+                    <span class="info-value">{{ advertiser.dateOfBirth ? (advertiser.dateOfBirth | date) : 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">ID Number:</span>
+                    <span class="info-value">{{ advertiser.idNumber || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Disability:</span>
+                    <span class="info-value">{{ advertiser.disability || 'None' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Languages:</span>
+                    <span class="info-value">{{ advertiser.languages.join(', ') || 'Not specified' }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="info-card mt-6" *ngIf="advertiser.company">
+                <mat-card-header>
+                  <mat-card-title>Company Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="info-item">
+                    <span class="info-label">Company Name:</span>
+                    <span class="info-value">{{ advertiser.companyName || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Website:</span>
+                    <span class="info-value">{{ advertiser.website || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Service Information:</span>
+                    <span class="info-value">{{ advertiser.serviceInformation || 'Not provided' }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Middle Column -->
+            <div class="col-span-1">
+              <mat-card class="info-card">
+                <mat-card-header>
+                  <mat-card-title>Contact Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="info-item">
+                    <span class="info-label">Address:</span>
+                    <span class="info-value">
+                      {{ advertiser.address || 'Not provided' }}<br>
+                      {{ advertiser.city }}, {{ advertiser.postalCode }}<br>
+                      {{ advertiser.country }}
+                    </span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value">{{ advertiser.phoneNo || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ advertiser.email }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="info-card mt-6">
+                <mat-card-header>
+                  <mat-card-title>Statistics</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="stats-grid">
+                    <div class="stat-item">
+                      <div class="stat-value">{{ campaigns.length }}</div>
+                      <div class="stat-label">Total Campaigns</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">{{ campaignStatusData[0].value }}</div>
+                      <div class="stat-label">Active Campaigns</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">{{ advertiser.revenue | currency:'USD':'symbol':'1.0-0' }}</div>
+                      <div class="stat-label">Total Spent</div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-span-1">
+              <mat-card class="info-card">
+                <mat-card-header>
+                  <mat-card-title>Account Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="info-item">
+                    <span class="info-label">Username:</span>
+                    <span class="info-value">{{ advertiser.userName }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">User Handle:</span>
+                    <span class="info-value">{{ advertiser.userHandle }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Roles:</span>
+                    <span class="info-value">{{ advertiser.roles.join(', ') }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Account Type:</span>
+                    <span class="info-value">{{ advertiser.company ? 'Business' : 'Individual' }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="info-card mt-6" *ngIf="advertiser.bio">
+                <mat-card-header>
+                  <mat-card-title>About</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <p class="bio-text">{{ advertiser.bio }}</p>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Campaigns">
+        <div class="tab-content">
+          <div class="campaigns-header">
+            <h2 class="campaigns-title">Advertising Campaigns ({{ campaigns.length }})</h2>
+            <div class="campaigns-search">
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Search campaigns</mat-label>
+                <input matInput [(ngModel)]="searchQuery" (input)="filterCampaigns()">
+                <mat-icon matPrefix>search</mat-icon>
+              </mat-form-field>
+              <button mat-raised-button color="primary" (click)="openAddCampaignDialog(advertiser.id)" *ngIf="advertiser">
+                <mat-icon>add</mat-icon> New Campaign
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="filteredCampaigns.length === 0" class="empty-state">
+            <mat-icon class="empty-icon">campaign</mat-icon>
+            <h3>No campaigns found</h3>
+            <p *ngIf="searchQuery">Try adjusting your search query</p>
+            <p *ngIf="!searchQuery">This advertiser has no campaigns yet</p>
+          </div>
+
+          <div *ngIf="filteredCampaigns.length > 0" class="campaigns-grid">
+            <mat-card *ngFor="let campaign of filteredCampaigns" class="campaign-card">
+              <div class="campaign-header">
+                <div class="campaign-media" *ngIf="campaign.mediaFile">
+                  <img [src]="campaign.mediaFile.downloadUrl" 
+                       [alt]="campaign.name" 
+                       class="media-preview"
+                       (error)="campaign.mediaFile">
+                </div>
+                <div class="campaign-info">
+                  <h3 class="campaign-name">{{ campaign.name }}</h3>
+                  <div class="campaign-status">
+                    <span class="status-badge" [ngClass]="getStatusColor(isCampaignActive(campaign) ? 'Active' : 'Inactive')">
+                      {{ isCampaignActive(campaign) ? 'Active' : 'Inactive' }}
+                    </span>
+                    <span class="campaign-dates">
+                      {{ campaign.startDate | date }} - {{ campaign.endDate | date }}
+                    </span>
+                  </div>
+                  <p class="campaign-description" *ngIf="campaign.description">
+                    {{ campaign.description | truncate:100 }}
+                  </p>
+                </div>
+              </div>s
+              
+              <div class="campaign-progress">
+                <div class="progress-info">
+                  <span>Impressions: {{ campaign.accumulatedImpressions || 0 }} / {{ campaign.requiredImpressions || 0 }}</span>
+                  <span>{{ getCampaignProgress(campaign) | number:'1.0-0' }}%</span>
+                </div>
+                <mat-progress-bar 
+                  mode="determinate" 
+                  [value]="getCampaignProgress(campaign)"
+                  [color]="isCampaignActive(campaign) ? 'primary' : 'warn'">
+                </mat-progress-bar>
+              </div>
+              
+              <div class="campaign-actions">
+                <button mat-stroked-button (click)="viewCampaign(campaign)" class="action-button">
+                  <mat-icon>visibility</mat-icon> View
+                </button>
+                <button mat-stroked-button class="action-button">
+                  <mat-icon>analytics</mat-icon> Stats
+                </button>
+                <button mat-stroked-button class="action-button">
+                  <mat-icon>edit</mat-icon> Edit
+                </button>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Analytics">
+        <div class="tab-content">
+          <div class="analytics-grid">
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Monthly Impressions</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <ngx-charts-bar-vertical
+                  [view]="view"
+                  [results]="impressionsData"
+                  [gradient]="gradient"
+                  [xAxis]="showXAxis"
+                  [yAxis]="showYAxis"
+                  [legend]="showLegend"
+                  [showXAxisLabel]="showXAxisLabel"
+                  [showYAxisLabel]="showYAxisLabel"
+                  [xAxisLabel]="xAxisLabel"
+                  [yAxisLabel]="yAxisLabel">
+                </ngx-charts-bar-vertical>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Campaign Status</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <ngx-charts-pie-chart
+                  [view]="[400, 300]"
+                  [results]="campaignStatusData"
+                  [legend]="true"
+                  [labels]="true">
+                </ngx-charts-pie-chart>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Top Performing Campaigns</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="placeholder-chart">
+                  <mat-icon>bar_chart</mat-icon>
+                  <p>Performance comparison chart</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Engagement Metrics</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="placeholder-chart">
+                  <mat-icon>trending_up</mat-icon>
+                  <p>Engagement metrics over time</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Documents">
+        <div class="tab-content">
+          <div *ngIf="advertiser.uploadedDocuments?.length; else noDocuments" class="documents-grid">
+            <mat-card *ngFor="let doc of advertiser.uploadedDocuments" class="document-card">
+              <div class="document-icon">
+                <mat-icon>description</mat-icon>
+              </div>
+              <div class="document-info">
+                <h3 class="document-name">{{ doc.name || 'Unnamed Document' }}</h3>
+                <p class="document-type">{{ doc.type || 'Unknown type' }}</p>
+                <p class="document-date">Uploaded: {{ doc.uploadDate | date }}</p>
+              </div>
+              <div class="document-actions">
+                <button mat-icon-button (click)="downloadDocument(doc.id)">
+                  <mat-icon>cloud_download</mat-icon>
+                </button>
+                <button mat-icon-button>
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </mat-card>
+          </div>
+
+          <ng-template #noDocuments>
+            <div class="empty-state">
+              <mat-icon class="empty-icon">folder_open</mat-icon>
+              <h3>No documents uploaded</h3>
+              <p>This advertiser hasn't uploaded any documents yet</p>
+            </div>
+          </ng-template>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

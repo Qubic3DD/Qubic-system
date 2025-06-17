@@ -1,301 +1,242 @@
-
-import { Component, AfterViewInit, Input } from '@angular/core';
-import Chart from 'chart.js/auto';
-import { AnalyticsService } from '../../services/analytics.service';
-import {MetricsCardComponent} from '../../components/dashboard/metrics-card/metrics-card.component'
-import {CampaignStatusComponent} from '../../components/dashboard/campaign-status/campaign-status.component'
-import {VehicleDistributionComponent} from'../../components/dashboard/vehicle-distribution/vehicle-distribution.component'
 import { CommonModule } from '@angular/common';
-import { CardsComponent } from "../cards/cards.component";
-import { CampaignsComponent } from "../campaigns/campaigns.component";
-import { ActiveCampaignsComponent } from "../active-campaigns/active-campaigns.component";
-import { RevenueTrendComponent } from "../revenue-trend/revenue-trend.component";
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Role, ROLE_CONFIGS } from '../../services/role.enum';
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [MetricsCardComponent, CampaignStatusComponent, VehicleDistributionComponent, CommonModule, CardsComponent, CampaignsComponent, ActiveCampaignsComponent, RevenueTrendComponent],
+  selector: 'dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
 })
-export class DashboardComponent implements AfterViewInit {
- analyticsData: any;
-  isLoading = true;
-  error: string | null = null;
+export class DashboardComponent {
+  email: string = '';
+  password: string = '';
+  errorMessage: string = '';
+  loginSuccess: boolean = false;
+  isLoading: boolean = false;
+  selectedRole: Role | null = null;
+  applicationData: any = null;
+  userFirstName: string = '';
+  rememberMe: boolean = false;
 
-  isSidebarCollapsed = false;
- constructor(private analyticsService: AnalyticsService) {}
-ngOnInit() {
-    this.loadAnalyticsData();
-  }
+  // Available roles from the enum
+  roles = Object.values(Role);
 
- loadAnalyticsData() {
-    this.analyticsService.getAnalytics().subscribe({
-      next: (data) => {
-        this.analyticsData = data.analytics;
-        this.isLoading = false;
-        setTimeout(() => this.initCharts(), 0); // Wait for view to update
-      },
-      error: (err) => {
-        this.error = 'Failed to load analytics data';
-        this.isLoading = false;
-        console.error(err);
-      }
-    });
-  }
-// Add to dashboard.component.ts
-private initCharts() {
-  this.createRevenueChart();
-  this.createCampaignPerformanceChart();
-}
-
-private createRevenueChart() {
-  const isDarkMode = document.documentElement.classList.contains('dark');
-  const ctx = document.getElementById('revenueChart') as HTMLCanvasElement;
-  
-  if (!ctx) return;
-
-  // Sample data - in a real app you would use actual revenue data from analyticsData
-  const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const data = [65, 59, 80, 81, 56, 55, 40, 72, 68, 85, 90, 95];
-
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Revenue',
-        data: data,
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        borderWidth: 2,
-        tension: 0.3,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: {
-            color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-          },
-          ticks: {
-            callback: function(value) {
-              return 'R' + value + 'k';
-            },
-            color: isDarkMode ? '#9CA3AF' : '#6B7280'
-          }
-        },
-        x: {
-          grid: {
-            display: false,
-            color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-          },
-          ticks: {
-            color: isDarkMode ? '#9CA3AF' : '#6B7280'
-          }
-        }
-      }
-    }
-  });
-}
-
-private createCampaignPerformanceChart() {
-  const campaignCtx = document.getElementById('campaignPerformanceChart') as HTMLCanvasElement;
-  
-  if (!campaignCtx || !this.analyticsData) return;
-
-  new Chart(campaignCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Active', 'Inactive', 'Saved'],
-      datasets: [{
-        label: 'Campaigns',
-        data: [
-          this.analyticsData.activeCampaigns,
-          this.analyticsData.inactiveCampaigns,
-          this.analyticsData.totalSavedCampaigns
-        ],
-        backgroundColor: [
-          'rgba(59, 130, 246, 0.7)',
-          'rgba(107, 114, 128, 0.7)',
-          'rgba(16, 185, 129, 0.7)'
-        ],
-        borderColor: [
-          'rgb(59, 130, 246)',
-          'rgb(107, 114, 128)',
-          'rgb(16, 185, 129)'
-        ],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            precision: 0
-          }
-        }
-      }
-    }
-  });
-}
-formatCurrency(amount: number): string {
-    return 'R' + (amount?.toFixed(2) || '0.00');
-  }
-
-  // Format numbers with commas
-  formatNumber(num: number): string {
-    return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") || '0';
-  }
-
-  // Calculate percentage
-  calculatePercentage(part: number, total: number): number {
-    return total > 0 ? Math.round((part / total) * 100) : 0;
-  }
-  toggleSidebar() {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
-  }
-
-  ngAfterViewInit() {
-  this.revenueChart()
-  this.campaignsChart()
-  this.tabletChart()
+  constructor(private router: Router, private http: HttpClient) {
+    // Check for remembered credentials
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    const rememberedRole = localStorage.getItem('rememberedRole') as Role;
     
+    if (rememberedEmail && rememberedRole) {
+      this.email = rememberedEmail;
+      this.selectedRole = rememberedRole;
+      this.rememberMe = true;
+    }
   }
 
-    activeCampaigns = [
-    { campaign: 'Summer Sale Promotion', advertiser: 'Metro Retail', impressions: 25420, clicks: 1240, ctr: '4.8%', spend: 'R3,200' },
-    { campaign: 'New Restaurant Launch', advertiser: 'Fusion Foods', impressions: 18650, clicks: 982, ctr: '5.2%', spend: 'R2,400' },
-    { campaign: 'Mobile App Download', advertiser: 'TechStart Inc', impressions: 31250, clicks: 2150, ctr: '6.8%', spend: 'R4,100' },
-    { campaign: 'Holiday Special Offers', advertiser: 'City Mall', impressions: 28100, clicks: 1520, ctr: '5.4%', spend: 'R3,600' },
-  ]
-
-   recentAlerts = [
-    { icon: '⚠️', message: 'Tablet TD-358 has low battery (15%)', time: '10 minutes ago' },
-    { icon: '❗', message: 'Driver John Smith reported technical issue with tablet', time: '35 minutes ago' },
-    { icon: '✅', message: 'Campaign "Summer Sale Promotion" exceeded target impressions', time: '2 hours ago' },
-    { icon: '⚠️', message: '3 tablets went offline in the last hour', time: '1 hour ago' },
-    { icon: '📊', message: 'System maintenance scheduled for tonight at 2 AM', time: '4 hours ago' },
-  ];
-
-
-
-  private campaignsChart() {
-    const campaignCtx = document.getElementById('campaignChart') as HTMLCanvasElement;
-    new Chart(campaignCtx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-        datasets: [{
-          label: 'Performance',
-          data: [65, 59, 80, 81, 56],
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }
-        },
-        scales: {
-          y: { display: false },
-          x: { display: false }
-        }
-      }
-    });
-
+  getRoleConfig(role: Role) {
+    return ROLE_CONFIGS[role];
   }
-  private tabletChart() {
-   const tabletCtx = document.getElementById('tabletChart') as HTMLCanvasElement;
-    new Chart(tabletCtx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Active', 'Inactive', 'Maintenance'],
-        datasets: [{
-          data: [75, 15, 10],
-          backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '70%',
-        plugins: {
-          legend: { display: false }
+
+  selectRole(role: Role) {
+    this.selectedRole = role;
+    this.errorMessage = '';
+    this.applicationData = null;
+  }
+
+  fetchApplication() {
+    if (!this.email) {
+      this.errorMessage = 'Please enter an email address';
+      return;
+    }
+
+    if (!this.isValidEmail(this.email)) {
+      this.errorMessage = 'Please enter a valid email address';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    const apiUrl = 'http://196.168.8.29:8443/api/applications/by-email/';
+    
+    this.http.get(`${apiUrl}?email=${encodeURIComponent(this.email)}`).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        if (response && response.data) {
+          this.applicationData = this.transformApplicationData(response.data);
+        } else {
+          this.errorMessage = 'No application found for this email';
         }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = error.error?.message || 'Failed to fetch application. Please try again later.';
+        console.error('Error fetching application:', error);
       }
     });
   }
-    private revenueChart() {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    const ctx = document.getElementById('revenueChart') as HTMLCanvasElement;
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        datasets: [{
-          label: 'Revenue',
-          data: [65, 59, 80, 81, 56, 55, 40, 72, 68, 85, 90, 95],
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          borderWidth: 2,
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            grid: {
-               color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-              lineWidth: 1,
 
-            },
-            ticks: {
-              callback: function(value) {
-                return 'R' + value + 'k';
-              },
-              color: isDarkMode ? '#9CA3AF' : '#6B7280'
-            }
-          },
-          x: {
-            grid: {
-              display: false,
-                color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
-            },
-            ticks: {
-              display: false ,
-                color: isDarkMode ? '#9CA3AF' : '#6B7280'
-            }
-          }
-        }
-      }
-    });
+  private transformApplicationData(data: any): any {
+    return {
+      ...data,
+      fullName: `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'Not provided',
+      applicationDate: data.applicationDate ? new Date(data.applicationDate) : new Date(),
+      status: data.status || 'Pending'
+    };
+  }
+
+  private isValidEmail(email: string): boolean {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  downloadDocuments() {
+    if (!this.applicationData?.documentsUrl) {
+      this.errorMessage = 'No documents available for download';
+      return;
+    }
+
+    this.isLoading = true;
+    const link = document.createElement('a');
+    link.href = this.applicationData.documentsUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.click();
+    this.isLoading = false;
+  }
+
+  processApplication() {
+    if (!this.applicationData) {
+      this.errorMessage = 'No application selected';
+      return;
+    }
+
+    this.isLoading = true;
+    
+    // In a real app, you would call an API endpoint here
+    setTimeout(() => {
+      this.isLoading = false;
+      this.applicationData.status = 'Processed';
+      
+      // Show success message
+      this.errorMessage = '';
+      setTimeout(() => {
+        this.applicationData = null;
+        this.email = '';
+      }, 2000);
+    }, 1500);
+  }
+
+  onLogin() {
+    if (!this.selectedRole) {
+      this.errorMessage = 'Please select a portal type';
+      return;
+    }
+
+    const roleConfig = ROLE_CONFIGS[this.selectedRole];
+    
+    if (!this.email) {
+      this.errorMessage = 'Please enter your email address';
+      return;
+    }
+
+if (roleConfig?.requiresPassword && !this.password) {
+  this.errorMessage = 'Please enter your password';
+  return;
+}
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    // In a real app, you would call your authentication API here
+    setTimeout(() => {
+      this.authenticateUser();
+    }, 1000);
+  }
+
+  private authenticateUser() {
+    this.isLoading = false;
+    
+    // Demo authentication logic - replace with real API call
+    const isAdmin = this.email === 'admin@qubic3d.co.za' && this.password === 'admin123';
+    const isValidLogin = isAdmin || 
+                       (this.email.endsWith('@qubic3d.co.za') && this.password === 'demo123');
+    
+    if (isValidLogin) {
+      this.handleSuccessfulLogin(isAdmin);
+    } else {
+      this.handleFailedLogin();
+    }
+  }
+
+  private handleSuccessfulLogin(isAdmin: boolean) {
+    this.userFirstName = isAdmin ? 'Admin' : this.email.split('@')[0];
+    this.loginSuccess = true;
+    
+    // Store user session
+    this.storeUserSession();
+    
+    // Remember credentials if requested
+    if (this.rememberMe) {
+      localStorage.setItem('rememberedEmail', this.email);
+      localStorage.setItem('rememberedRole', this.selectedRole!);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+      localStorage.removeItem('rememberedRole');
+    }
+    
+  setTimeout(() => {
+  // Safely navigate with null check
+  const route = ROLE_CONFIGS[this.selectedRole!]?.route;
+  if (route) {
+    this.router.navigate([route]);
+  } else {
+    console.error('No route defined for role:', this.selectedRole);
+    // Optionally navigate to a fallback or show error
+    this.router.navigate(['/error']);
+  }
+}, 2500);
+  }
+getRoleLabel(role: Role): string {
+  return ROLE_CONFIGS[role]?.label || role;
+}
+
+
+  private handleFailedLogin() {
+    this.errorMessage = 'Invalid credentials for selected portal';
+    this.password = '';
+  }
+
+  private storeUserSession() {
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('userRole', this.selectedRole!);
+    localStorage.setItem('userEmail', this.email);
+    localStorage.setItem('userName', this.userFirstName);
+    sessionStorage.setItem('sessionToken', this.generateSessionToken());
+  }
+
+  private generateSessionToken(): string {
+    return 'token-' + Math.random().toString(36).substr(2, 16) + 
+           '-' + Date.now().toString(36);
+  }
+
+  forgotPassword() {
+    if (!this.email) {
+      this.errorMessage = 'Please enter your email address first';
+      return;
+    }
+
+    this.isLoading = true;
+    
+    // In a real app, you would call your password reset API here
+    setTimeout(() => {
+      this.isLoading = false;
+      this.errorMessage = '';
+      alert(`Password reset instructions sent to ${this.email}`);
+    }, 1500);
   }
 }

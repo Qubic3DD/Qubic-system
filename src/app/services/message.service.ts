@@ -46,25 +46,14 @@ export class MessageService {
     });
   }
 
-  markAsRead(id: number): Observable<Message> {
-    return this.http.put<Message>(`${this.apiUrl}/${id}/read`, {});
-  }
-
   markMultipleAsRead(ids: number[]): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/bulk/read`, { messageIds: ids });
-  }
-
-  flagMessage(id: number): Observable<Message> {
-    return this.http.put<Message>(`${this.apiUrl}/${id}/flag`, {});
   }
 
   flagMultipleMessages(ids: number[]): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/bulk/flag`, { messageIds: ids });
   }
 
-  deleteMessage(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
 
   deleteMultipleMessages(ids: number[]): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/bulk`, { 
@@ -74,5 +63,26 @@ export class MessageService {
 
   getMessageCounts(): Observable<{all: number, unread: number, read: number, flagged: number}> {
     return this.http.get<{all: number, unread: number, read: number, flagged: number}>(`${this.apiUrl}/counts`);
+  }
+
+  
+  getMessagesForUser(userId: number): Observable<Message[]> {
+    return this.http.get<Message[]>(`${this.apiUrl}/user/${userId}`);
+  }
+
+  sendMessage(message: Partial<Message>): Observable<Message> {
+    return this.http.post<Message>(this.apiUrl, message);
+  }
+
+  markAsRead(messageId: number): Observable<Message> {
+    return this.http.patch<Message>(`${this.apiUrl}/${messageId}/read`, {});
+  }
+
+  flagMessage(messageId: number): Observable<Message> {
+    return this.http.patch<Message>(`${this.apiUrl}/${messageId}/flag`, {});
+  }
+
+  deleteMessage(messageId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${messageId}`);
   }
 }

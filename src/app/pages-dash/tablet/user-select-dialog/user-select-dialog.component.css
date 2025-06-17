@@ -1,0 +1,15 @@
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.select-container {
+  margin-bottom: 1rem;
+}
+
+.no-users {
+  color: #6b7280; /* Tailwind gray-500 */
+  text-align: center;
+  padding: 1rem 0;
+}

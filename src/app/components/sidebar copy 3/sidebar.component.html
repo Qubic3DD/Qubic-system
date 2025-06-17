@@ -1,0 +1,87 @@
+<div class="bg-gradient-to-b from-pink-600 via-pink-700 to-purple-800 dark:from-gray-800 dark:via-gray-900 dark:to-gray-900 text-white h-full flex flex-col transition-all duration-300 ease-in-out"
+    [class.w-64]="!isCollapsed" [class.w-20]="isCollapsed">
+    <div class="p-4 overflow-y-auto">
+        <h1 class="text-2xl font-bold mb-8" [class.hidden]="isCollapsed">Menu</h1>
+        <nav>
+            <ul class="space-y-2">
+              <li>
+  <div
+    (click)="navigate('/dashboard')"
+    class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+      />
+    </svg>
+    <span class="ml-2" [class.hidden]="isCollapsed">Dashboard</span>
+  </div>
+</li>
+
+  <li>
+  <div
+    (click)="viewcampaigns()"
+    class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 17v-2l12-5V7a2 2 0 1 1 4 0v10a2 2 0 1 1-4 0v-3l-12-5v2l10 4.167V17a4 4 0 1 0 8 0V7a4 4 0 1 0-8 0v3.167L3 15z"/>
+    </svg>
+    <span class="ml-2" [class.hidden]="isCollapsed">Campaigns</span>
+  </div>
+</li>
+
+
+                <li>
+  <div
+    (click)="profile()"
+    class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+    </svg>
+    <span class="ml-2" [class.hidden]="isCollapsed">My Profile</span>
+  </div>
+</li>
+                
+
+        
+                
+        
+
+
+                
+       
+
+<li>
+  <div
+    (click)="message()"
+    class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"/>
+    </svg>
+    <span class="ml-2" [class.hidden]="isCollapsed">Messages</span>
+  </div>
+</li>
+
+<hr class="my-4 border-t-2 border-pink-400 dark:border-gray-700 opacity-50">
+
+
+
+                <li>
+                    <div class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                                d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="ml-2" [class.hidden]="isCollapsed">Financial</span>
+                    </div>
+                </li>
+              
+            </ul>
+        </nav>
+    </div>
+</div>

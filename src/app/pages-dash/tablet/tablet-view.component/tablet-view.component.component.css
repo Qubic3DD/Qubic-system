@@ -1,0 +1,28 @@
+/* tablet-view.component.css */
+/* Custom styles if needed */
+.dark .status-badge {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.status-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.status-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation for status change */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-change {
+  animation: pulse 1.5s ease-in-out infinite;
+}

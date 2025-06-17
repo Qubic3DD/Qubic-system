@@ -1,0 +1,462 @@
+<div class="fleet-owner-container">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading fleet owner data...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3 class="error-title">Error Loading Data</h3>
+      <p class="error-message">{{ error }}</p>
+     <button mat-raised-button color="primary" (click)="goBack()">
+  Back to Fleet Owners
+</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="fleetOwner && !isLoading" class="fleet-owner-content">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="header-content">
+        <div class="avatar-container">
+  <ng-container *ngIf="!imageLoadFailed[fleetOwner.email]; else initialsFallback">
+    <img
+      [src]="getDocumentUrlByUsernameAndPurpose(fleetOwner.email, 'PROFILE_PICTURE') || 'assets/images/default-company-logo.png'"
+      alt="{{ fleetOwner.firstName || 'Company Logo' }}"
+      class="company-logo"
+      (error)="onImageError(fleetOwner.email)"
+    />
+  </ng-container>
+
+  <ng-template #initialsFallback>
+    <div class="initials-fallback" aria-label="Company initials">
+      {{ getInitials(fleetOwner.firstName || fleetOwner.email) }}
+    </div>
+  </ng-template>
+
+  <div
+    class="online-status"
+    [ngClass]="{
+      'online': fleetOwner.status === 'Active',
+      'offline': fleetOwner.status !== 'Active'
+    }"
+    [attr.aria-label]="fleetOwner.status === 'Active' ? 'Online' : 'Offline'"
+  ></div>
+</div>
+
+        <div class="header-details">
+          <h1 class="company-name">{{ fleetOwner.companyName || 'Unnamed Company' }}</h1>
+          <div class="flex items-center space-x-4">
+            <span class="fleet-owner-name">{{ fleetOwner.firstName }} {{ fleetOwner.lastName }}</span>
+            <span class="status-badge" [ngClass]="getStatusColor('ACTIVE')">
+              {{ fleetOwner.status || 'Unknown' }}
+            </span>
+          </div>
+          <div class="contact-info">
+            <a [href]="'mailto:' + fleetOwner.email" class="contact-item">
+              <mat-icon>email</mat-icon>
+              <span>{{ fleetOwner.email }}</span>
+            </a>
+            <a [href]="'tel:' + fleetOwner.phoneNo" class="contact-item" *ngIf="fleetOwner.phoneNo">
+              <mat-icon>phone</mat-icon>
+              <span>{{ fleetOwner.phoneNo }}</span>
+            </a>
+            <a [href]="fleetOwner.website" target="_blank" class="contact-item" *ngIf="fleetOwner.website">
+              <mat-icon>public</mat-icon>
+              <span>{{ fleetOwner.website }}</span>
+            </a>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button color="primary" (click)="editFleetOwner(fleetOwner)">
+            <mat-icon>edit</mat-icon> Edit Profile
+          </button>
+          <button mat-stroked-button class="ml-2">
+            <mat-icon>message</mat-icon> Contact
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="more-actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>file_download</mat-icon>
+              <span>Export Data</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>print</mat-icon>
+              <span>Print Profile</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>history</mat-icon>
+              <span>View Activity</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+<mat-tab-group [(selectedIndex)]="activeTabIndex" (selectedTabChange)="setActiveTab($event.index)">  <mat-tab label="Profile">
+        <div class="tab-content">
+          <!-- Basic Info Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="col-span-1">
+              <mat-card class="info-card">
+                <mat-card-header>
+                  <mat-card-title>Company Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="info-item">
+                    <span class="info-label">Registration Number:</span>
+                    <span class="info-value">{{ fleetOwner.companyRegistrationNumber || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Company Type:</span>
+                    <span class="info-value">{{ fleetOwner.companyType || 'Not specified' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Tax Number:</span>
+                    <span class="info-value">{{ fleetOwner.taxNumber || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">VAT Registered:</span>
+                    <span class="info-value">{{ fleetOwner.vatRegistered ? 'Yes' : 'No' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Documents Verified:</span>
+                    <span class="info-value">{{ fleetOwner.documentsVerified ? 'Yes' : 'No' }}</span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="info-card mt-6">
+                <mat-card-header>
+                  <mat-card-title>Contact Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="info-item">
+                    <span class="info-label">Primary Contact:</span>
+                    <span class="info-value">{{ fleetOwner.firstName }} {{ fleetOwner.lastName }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Support Contact:</span>
+                    <span class="info-value">{{ fleetOwner.supportContact || 'Not provided' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Address:</span>
+                    <span class="info-value">
+                      {{ fleetOwner.address || 'Not provided' }}<br>
+                      {{ fleetOwner.city }}, {{ fleetOwner.postalCode }}<br>
+                      {{ fleetOwner.country }}
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Middle Column -->
+            <div class="col-span-1">
+              <mat-card class="info-card">
+                <mat-card-header>
+                  <mat-card-title>Fleet Statistics</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="stats-grid">
+                    <div class="stat-item">
+                      <div class="stat-value">{{ fleetOwner.numberOfVehicles || fleetOwner.vehicleCount || 0 }}</div>
+                      <div class="stat-label">Vehicles</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">{{ fleetOwner.numberOfDrivers || 0 }}</div>
+                      <div class="stat-label">Drivers</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">{{ fleetOwner.activeContracts || 0 }}</div>
+                      <div class="stat-label">Active Contracts</div>
+                    </div>
+                    <div class="stat-item">
+                      <div class="stat-value">{{ fleetOwner.revenue | currency:'USD':'symbol':'1.0-0' }}</div>
+                      <div class="stat-label">Total Revenue</div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4">
+                    <h3 class="section-subtitle">Vehicle Types</h3>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                      <span *ngFor="let type of fleetOwner.availableVehicleTypes || []" 
+                            class="vehicle-type-badge" 
+                            [ngClass]="getVehicleTypeColor(type)">
+                        {{ type }}
+                      </span>
+                      <span *ngIf="!fleetOwner.availableVehicleTypes?.length" class="text-gray-500">
+                        No vehicle types specified
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="mt-4">
+                    <h3 class="section-subtitle">Operating Areas</h3>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                      <span *ngFor="let area of fleetOwner.preferredOperatingAreas || []" 
+                            class="area-badge">
+                        {{ area }}
+                      </span>
+                      <span *ngIf="!fleetOwner.preferredOperatingAreas?.length" class="text-gray-500">
+                        No operating areas specified
+                      </span>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-span-1">
+              <mat-card class="info-card">
+                <mat-card-header>
+                  <mat-card-title>Account Information</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="info-item">
+                    <span class="info-label">Account Created:</span>
+                    <span class="info-value">{{ fleetOwner.accountCreatedAt | date:'mediumDate' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Last Active:</span>
+                    <span class="info-value">{{ fleetOwner.lastActive ? (fleetOwner.lastActive | date:'medium') : 'Never' }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Subscription Plan:</span>
+                    <span class="info-value">
+                      {{ fleetOwner.subscriptionPlan || 'None' }}
+                      <span *ngIf="fleetOwner.subscriptionExpiry">
+                        (expires {{ fleetOwner.subscriptionExpiry | date }})
+                      </span>
+                    </span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Fleet Rating:</span>
+                    <span class="info-value">
+                      <span *ngIf="fleetOwner.fleetRating">
+                        <span class="rating-stars">
+                          <mat-icon *ngFor="let star of [1,2,3,4,5]" 
+                                    [ngClass]="{'text-yellow-400': star <= Math.round(fleetOwner.fleetRating)}">
+                            {{ star <= fleetOwner.fleetRating ? 'star' : 
+                               (star - 0.5 <= fleetOwner.fleetRating ? 'star_half' : 'star_border') }}
+                          </mat-icon>
+                        </span>
+                        ({{ fleetOwner.fleetRating | number:'1.1-1' }})
+                      </span>
+                      <span *ngIf="!fleetOwner.fleetRating">Not rated</span>
+                    </span>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="info-card mt-6" *ngIf="fleetOwner.bio">
+                <mat-card-header>
+                  <mat-card-title>About</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <p class="bio-text">{{ fleetOwner.bio }}</p>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Drivers">
+        <div class="tab-content">
+          <div class="drivers-header">
+            <h2 class="drivers-title">Fleet Drivers ({{ drivers.length }})</h2>
+            <div class="drivers-search">
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Search drivers</mat-label>
+                <input matInput [(ngModel)]="searchQuery" (input)="filterDrivers()">
+                <mat-icon matPrefix>search</mat-icon>
+              </mat-form-field>
+        <!-- parent.component.html -->
+<button mat-raised-button color="primary" (click)="openAddDriverDialog(fleetOwner.email)">
+  <mat-icon>person_add</mat-icon> Add Driver
+</button>
+
+
+            </div>
+          </div>
+
+          <div *ngIf="filteredDrivers.length === 0" class="empty-state">
+            <mat-icon class="empty-icon">people_outline</mat-icon>
+            <h3>No drivers found</h3>
+            <p *ngIf="searchQuery">Try adjusting your search query</p>
+            <p *ngIf="!searchQuery">This fleet owner has no drivers registered yet</p>
+          </div>
+
+          <div *ngIf="filteredDrivers.length > 0" class="drivers-grid">
+            <mat-card *ngFor="let driver of filteredDrivers" class="driver-card">
+              <div class="driver-header">
+           <div class="driver-avatar">
+<ng-container *ngIf="!imageLoadFailed[driver.email]; else initialsFallback">
+  <img 
+    [src]="getDocumentUrlByUsernameAndPurpose(driver.email, 'PROFILE_PICTURE') || 'assets/images/default-avatar.png'" 
+    [alt]="'Photo of ' + (driver.firstName || driver.email)"
+    class="avatar-image"
+    loading="lazy"
+    (error)="onImageError(driver.email)" />
+</ng-container>
+
+<ng-template #initialsFallback>
+  <div class="avatar-initials">
+    {{ getInitials(driver.firstName || driver.email) }}
+  </div>
+</ng-template>
+
+<div class="driver-status" [ngClass]="getStatusColor(driver.status)"></div>
+</div>
+
+                <div class="driver-info">
+                  <h3 class="driver-name">{{ driver.firstName }} {{ driver.lastName }}</h3>
+                  <p class="driver-email">{{ driver.email }}</p>
+                  <div class="driver-meta">
+                    <span class="driver-rating" *ngIf="driver.rating">
+                      <mat-icon>star</mat-icon>
+                      {{ driver.rating | number:'1.1-1' }}
+                    </span>
+                    <span class="driver-license">{{ driver.licenseType || 'No license' }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="driver-details">
+                <div class="detail-item">
+                  <mat-icon>phone</mat-icon>
+                  <span>{{ driver.phoneNo || 'Not provided' }}</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ driver.city || 'Location not set' }}</span>
+                </div>
+                <div class="detail-item">
+                  <mat-icon>event</mat-icon>
+                  <span>Joined {{ driver.joinedDate | date }}</span>
+                </div>
+              </div>
+              <div class="driver-actions">
+                <button mat-stroked-button (click)="viewDriver(driver)" class="action-button">
+                  <mat-icon>visibility</mat-icon> View
+                </button>
+                <button mat-stroked-button (click)="editFleetOwner(driver)" class="action-button">
+                  <mat-icon>edit</mat-icon> Edit
+                </button>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Analytics">
+        <div class="tab-content">
+          <div class="analytics-grid">
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Monthly Revenue</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <ngx-charts-bar-vertical
+                  [view]="view"
+         
+                  [results]="revenueData"
+                  [gradient]="gradient"
+                  [xAxis]="showXAxis"
+                  [yAxis]="showYAxis"
+                  [legend]="showLegend"
+                  [showXAxisLabel]="showXAxisLabel"
+                  [showYAxisLabel]="showYAxisLabel"
+                  [xAxisLabel]="xAxisLabel"
+                  [yAxisLabel]="yAxisLabel">
+                </ngx-charts-bar-vertical>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Driver Status</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+  <ngx-charts-pie-chart
+    [view]="[400, 300]"
+
+    [results]="driverStatusData"
+    [legend]="true"
+    [labels]="true">
+  </ngx-charts-pie-chart>
+</mat-card-content>
+
+            </mat-card>
+
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Vehicle Distribution</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="placeholder-chart">
+                  <mat-icon>pie_chart</mat-icon>
+                  <p>Vehicle type distribution chart</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="analytics-card">
+              <mat-card-header>
+                <mat-card-title>Activity Timeline</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="placeholder-chart">
+                  <mat-icon>timeline</mat-icon>
+                  <p>Recent activity timeline</p>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Documents">
+        <div class="tab-content">
+          <div *ngIf="fleetOwner.uploadedDocuments?.length; else noDocuments" class="documents-grid">
+            <mat-card *ngFor="let doc of fleetOwner.uploadedDocuments" class="document-card">
+              <div class="document-icon">
+                <mat-icon>description</mat-icon>
+              </div>
+              <div class="document-info">
+                <h3 class="document-name">{{ doc.name || 'Unnamed Document' }}</h3>
+                <p class="document-type">{{ doc.type || 'Unknown type' }}</p>
+                <p class="document-date">Uploaded: {{ doc.uploadDate | date }}</p>
+              </div>
+              <div class="document-actions">
+                <button mat-icon-button (click)="downloadDocument(doc.id)">
+                  <mat-icon>cloud_download</mat-icon>
+                </button>
+                <button mat-icon-button>
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </mat-card>
+          </div>
+
+          <ng-template #noDocuments>
+            <div class="empty-state">
+              <mat-icon class="empty-icon">folder_open</mat-icon>
+              <h3>No documents uploaded</h3>
+              <p>This fleet owner hasn't uploaded any documents yet</p>
+            </div>
+          </ng-template>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

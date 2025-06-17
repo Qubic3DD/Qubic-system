@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Role, ROLE_CONFIGS } from '../../services/role.enum';
 
 @Component({
-  selector: 'app-admin-portal',
+  selector: 'login-component',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
@@ -48,88 +48,13 @@ export class LoginComponent {
     this.applicationData = null;
   }
 
-  fetchApplication() {
-    if (!this.email) {
-      this.errorMessage = 'Please enter an email address';
-      return;
-    }
-
-    if (!this.isValidEmail(this.email)) {
-      this.errorMessage = 'Please enter a valid email address';
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = '';
-    
-const apiUrl = `http://196.168.8.29:8443/api/applications/by-email/`;
-
-    this.http.get(`${apiUrl}?email=${encodeURIComponent(this.email)}`).subscribe({
-      next: (response: any) => {
-        this.isLoading = false;
-        if (response && response.data) {
-          this.applicationData = this.transformApplicationData(response.data);
-        } else {
-          this.errorMessage = 'No application found for this email';
-        }
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = error.error?.message || 'Failed to fetch application. Please try again later.';
-        console.error('Error fetching application:', error);
-      }
-    });
-  }
-
-  private transformApplicationData(data: any): any {
-    return {
-      ...data,
-      fullName: `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'Not provided',
-      applicationDate: data.applicationDate ? new Date(data.applicationDate) : new Date(),
-      status: data.status || 'Pending'
-    };
+  navigateToDashboard() {
+    this.router.navigate(['/application-dashboard']);
   }
 
   private isValidEmail(email: string): boolean {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-  }
-
-  downloadDocuments() {
-    if (!this.applicationData?.documentsUrl) {
-      this.errorMessage = 'No documents available for download';
-      return;
-    }
-
-    this.isLoading = true;
-    const link = document.createElement('a');
-    link.href = this.applicationData.documentsUrl;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.click();
-    this.isLoading = false;
-  }
-
-  processApplication() {
-    if (!this.applicationData) {
-      this.errorMessage = 'No application selected';
-      return;
-    }
-
-    this.isLoading = true;
-    
-    // In a real app, you would call an API endpoint here
-    setTimeout(() => {
-      this.isLoading = false;
-      this.applicationData.status = 'Processed';
-      
-      // Show success message
-      this.errorMessage = '';
-      setTimeout(() => {
-        this.applicationData = null;
-        this.email = '';
-      }, 2000);
-    }, 1500);
   }
 
   onLogin() {
@@ -138,84 +63,114 @@ const apiUrl = `http://196.168.8.29:8443/api/applications/by-email/`;
       return;
     }
 
-    const roleConfig = ROLE_CONFIGS[this.selectedRole];
-    
     if (!this.email) {
       this.errorMessage = 'Please enter your email address';
       return;
     }
 
-    if (roleConfig.requiresPassword && !this.password) {
+    if (!this.isValidEmail(this.email)) {
+      this.errorMessage = 'Please enter a valid email address';
+      return;
+    }
+
+    if (!this.password) {
       this.errorMessage = 'Please enter your password';
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
+
+    // Call the login API
+    this.http.post('http://192.168.8.100:8443/api/login/simple', {
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: (response: any) => {
+        if (response.data) {
+          // After successful login, fetch the profile to verify roles
+          this.fetchProfile(response.data.email);
+        } else {
+          this.isLoading = false;
+          this.errorMessage = response.message || 'Login failed';
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = error.error?.message || 'Login failed. Please try again.';
+      }
+    });
+  }
+
+  private fetchProfile(email: string) {
+    this.http.get(`http://localhost:8443/profile/retrieve/${encodeURIComponent(email)}`)
+      .subscribe({
+        next: (profileResponse: any) => {
+          this.isLoading = false;
+          if (profileResponse.data) {
+            this.verifyRoleAndLogin(profileResponse.data);
+          } else {
+            this.errorMessage = 'Failed to fetch user profile';
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.errorMessage = error.error?.message || 'Failed to fetch profile';
+        }
+      });
+  }
+
+  private verifyRoleAndLogin(profileData: any) {
+    // Extract roles from profile data (adjust according to your API response structure)
+    const userRoles = profileData.roles || [];
     
-    // In a real app, you would call your authentication API here
-    setTimeout(() => {
-      this.authenticateUser();
-    }, 1000);
-  }
-
-private authenticateUser() {
-  this.isLoading = false;
-  
-  // Demo authentication logic
-  const isAdmin = this.email === 'admin@qubic3d.co.za' && this.password === 'admin123';
-  const isValidLogin = isAdmin || 
-                     (this.email.endsWith('@qubic3d.co.za') && this.password === 'demo123');
-  
-  if (isValidLogin) {
-    this.handleSuccessfulLogin(isAdmin);
-  } else {
-    this.handleFailedLogin();
-  }
-}
-
-private handleSuccessfulLogin(isAdmin: boolean) {
-  this.userFirstName = isAdmin ? 'Admin' : this.email.split('@')[0];
-  this.loginSuccess = true;
-  
-  // Store user session
-  this.storeUserSession();
-  
-  // Remember credentials if requested
-  if (this.rememberMe) {
-    localStorage.setItem('rememberedEmail', this.email);
-    localStorage.setItem('rememberedRole', this.selectedRole!);
-  } else {
-    localStorage.removeItem('rememberedEmail');
-    localStorage.removeItem('rememberedRole');
-  }
-  
-  // Redirect based on role
-  setTimeout(() => {
-    if (this.selectedRole === Role.APPLICANT) {
-      // For APPLICANT role, navigate to application dashboard with email parameter
-      this.router.navigate(['/application', this.email]);
+    // Check if the selected role matches any of the user's roles
+    if (userRoles.includes(this.selectedRole)) {
+      this.handleSuccessfulLogin(profileData);
     } else {
-      // For other roles, use the configured route
-      this.router.navigate([ROLE_CONFIGS[this.selectedRole!].route]);
+      this.isLoading = false;
+      this.errorMessage = `You don't have access to the ${this.getRoleLabel(this.selectedRole!)} portal.`;
     }
-  }, 1500); // Reduced delay for better UX
-}
-getRoleLabel(role: Role): string {
-  return ROLE_CONFIGS[role]?.label || role;
-}
-
-
-  private handleFailedLogin() {
-    this.errorMessage = 'Invalid credentials for selected portal';
-    this.password = '';
   }
 
-  private storeUserSession() {
+  private handleSuccessfulLogin(profileData: any) {
+    this.userFirstName = profileData.firstName || profileData.email.split('@')[0];
+    this.loginSuccess = true;
+    
+    // Store user session
+    this.storeUserSession(profileData);
+    
+    // Remember credentials if requested
+    if (this.rememberMe) {
+      localStorage.setItem('rememberedEmail', this.email);
+      localStorage.setItem('rememberedRole', this.selectedRole!);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+      localStorage.removeItem('rememberedRole');
+    }
+    
+    // Redirect based on role after a short delay
+    setTimeout(() => {
+      const roleConfig = ROLE_CONFIGS[this.selectedRole!];
+      if (roleConfig?.route) {
+        this.router.navigate([roleConfig.route]);
+      } else {
+        console.error('No route defined for role:', this.selectedRole);
+        this.router.navigate(['/']); // Fallback navigation
+      }
+    }, 1500);
+  }
+
+  getRoleLabel(role: Role): string {
+    return ROLE_CONFIGS[role]?.label || role;
+  }
+
+  private storeUserSession(profileData: any) {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('userRole', this.selectedRole!);
     localStorage.setItem('userEmail', this.email);
     localStorage.setItem('userName', this.userFirstName);
+    localStorage.setItem('userProfile', JSON.stringify(profileData));
     sessionStorage.setItem('sessionToken', this.generateSessionToken());
   }
 

@@ -1,0 +1,64 @@
+/* Add to dashboard.component.css or create separate CSS files for each component */
+
+/* User Breakdown */
+.user-breakdown .progress-bar {
+  transition: width 0.6s ease;
+}
+
+/* Campaign Performance */
+.campaign-performance .metric-value {
+  transition: all 0.3s ease;
+}
+
+.campaign-performance .metric-value:hover {
+  transform: scale(1.05);
+}
+
+/* Ride Statistics */
+.ride-statistics .metric-title {
+  color: #6b7280;
+}
+
+.dark .ride-statistics .metric-title {
+  color: #9ca3af;
+}
+
+/* Vehicle Statistics */
+.vehicle-statistics .stat-card {
+  transition: all 0.2s ease;
+}
+
+.vehicle-statistics .stat-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Table styles */
+.table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb #f3f4f6;
+}
+
+.dark .table-container {
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.dark .table-container::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #e5e7eb;
+  border-radius: 3px;
+}
+
+.dark .table-container::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}

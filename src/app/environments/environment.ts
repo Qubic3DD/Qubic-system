@@ -1,3 +1,3 @@
 export const environment = {
-    api:"http://41.76.110.219:8443/"
+    api:"http://192.168.8.100:8443/"
 };

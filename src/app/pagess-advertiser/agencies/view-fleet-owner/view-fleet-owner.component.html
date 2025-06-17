@@ -1,0 +1,448 @@
+<div class="agency-profile-container">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading agency data...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3 class="error-title">Error Loading Agency Data</h3>
+      <p class="error-message">{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Back to Agencies List
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="agency && !isLoading" class="agency-profile-content">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-background" [style.background-image]="'url(' + (agency.logo || 'assets/images/default-banner.jpg') + ')'"></div>
+      <div class="hero-content">
+        <div class="profile-display">
+          <div class="avatar-container">
+            <ng-container *ngIf="!imageLoadFailed[agency.email]; else initialsFallback">
+              <img
+                [src]="getDocumentUrlByUsernameAndPurpose(agency.email, 'PROFILE_PICTURE') || 'assets/images/default-avatar.png'"
+                alt="{{ agency.companyName || 'Agency Logo' }}"
+                class="profile-image"
+                (error)="onImageError(agency.email)"
+              />
+            </ng-container>
+
+            <ng-template #initialsFallback>
+              <div class="initials-fallback" aria-label="agency initials">
+                {{ getInitials(agency.companyName || agency.email) }}
+              </div>
+            </ng-template>
+          </div>
+          
+          <div class="status-indicator" [ngClass]="getStatusClass('active')">
+            {{ agency.status || 'Unknown' }}
+          </div>
+        </div>
+        
+        <div class="agency-headline">
+          <h1 class="agency-name">{{ agency.companyName || agency.firstName + ' ' + agency.lastName }}</h1>
+          <div class="agency-meta">
+            <span class="meta-item">
+              <mat-icon>star</mat-icon>
+              {{ agency.rating || 'N/A' }} ({{ agency.reviewsCount || 0 }} reviews)
+            </span>
+            <span class="meta-item">
+              <mat-icon>business</mat-icon>
+              {{ agency.fleetCount || 0 }} vehicles
+            </span>
+            <span class="meta-item">
+              <mat-icon>location_on</mat-icon>
+              {{ agency.city || 'Location not set' }}
+            </span>
+            <span class="meta-item" *ngIf="agency.verified">
+              <mat-icon class="verified-icon">verified</mat-icon>
+              Verified
+            </span>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="editAgency(agency)">
+            <mat-icon>edit</mat-icon> Edit Profile
+          </button>
+          <button mat-stroked-button class="ml-2" (click)="toggleAdvertisers()">
+            <mat-icon>{{ showAdvertisers ? 'visibility_off' : 'visibility' }}</mat-icon>
+            {{ showAdvertisers ? 'Hide Advertisers' : 'View Advertisers' }}
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="more-actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="viewDocuments()">
+              <mat-icon>folder_open</mat-icon>
+              <span>View Documents</span>
+            </button>
+            <button mat-menu-item (click)="viewActivity()">
+              <mat-icon>timeline</mat-icon>
+              <span>View Activity</span>
+            </button>
+            <button mat-menu-item (click)="downloadProfile()">
+              <mat-icon>file_download</mat-icon>
+              <span>Export Profile</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advertisers Section -->
+    <div *ngIf="showAdvertisers" class="advertisers-section">
+      <div class="section-header">
+        <h2>Associated Advertisers</h2>
+        <button mat-icon-button (click)="toggleAdvertisers()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div *ngIf="advertisersLoading" class="loading-advertisers">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Loading advertisers...</span>
+      </div>
+      
+      <div *ngIf="!advertisersLoading && advertisers.length === 0" class="no-advertisers">
+        <mat-icon>info</mat-icon>
+        <p>No advertisers found for this agency</p>
+      </div>
+      
+      <div *ngIf="!advertisersLoading && advertisers.length > 0" class="advertisers-grid">
+        <div *ngFor="let advertiser of advertisers" class="advertiser-card">
+          <div class="advertiser-header">
+            <div class="advertiser-avatar">
+              <img [src]="advertiser.logo || 'assets/images/default-avatar.png'" alt="{{ advertiser.name }}">
+            </div>
+            <div class="advertiser-title">
+              <h3>{{ advertiser.name }}</h3>
+              <span class="advertiser-status" [ngClass]="advertiser.active ? 'active' : 'inactive'">
+                {{ advertiser.active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+          <div class="advertiser-content">
+            <div class="advertiser-meta">
+              <span><mat-icon>email</mat-icon> {{ advertiser.email || 'No email' }}</span>
+              <span><mat-icon>phone</mat-icon> {{ advertiser.phone || 'No phone' }}</span>
+            </div>
+            <div class="advertiser-stats">
+              <div class="stat-item">
+                <div class="stat-value">{{ advertiser.campaigns || 0 }}</div>
+                <div class="stat-label">Campaigns</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">{{ advertiser.budget || 0 | currency }}</div>
+                <div class="stat-label">Budget</div>
+              </div>
+            </div>
+          </div>
+          <div class="advertiser-actions">
+            <button mat-icon-button [matTooltip]="'View ' + advertiser.name">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button [matTooltip]="'Message ' + advertiser.name">
+              <mat-icon>message</mat-icon>
+            </button>
+            <button mat-icon-button [matTooltip]="'Edit ' + advertiser.name">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Business Info Card -->
+        <mat-card class="info-card futuristic-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">business</mat-icon>
+              Business Information
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Company Name:</span>
+                <span class="info-value">{{ agency.companyName || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Registration Number:</span>
+                <span class="info-value">{{ agency.companyRegistrationNumber || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Tax Number:</span>
+                <span class="info-value">{{ agency.taxNumber || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Company Type:</span>
+                <span class="info-value">{{ agency.company ? 'Registered Company' : 'Individual' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Website:</span>
+                <span class="info-value">
+                  <a *ngIf="agency.website" [href]="agency.website" target="_blank">{{ agency.website }}</a>
+                  <span *ngIf="!agency.website">Not provided</span>
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fleet Size:</span>
+                <span class="info-value">{{ agency.fleetCount || 0 }} vehicles</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Services Offered:</span>
+                <span class="info-value">
+                  <span *ngIf="agency.servicesOffered?.length; else noServices">
+                    <mat-chip-listbox>
+                      <mat-chip *ngFor="let service of agency.servicesOffered">{{ service }}</mat-chip>
+                    </mat-chip-listbox>
+                  </span>
+                  <ng-template #noServices>Not specified</ng-template>
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Coverage Areas:</span>
+                <span class="info-value">
+                  <span *ngIf="agency.coverageAreas?.length; else noAreas">
+                    <mat-chip-listbox>
+                      <mat-chip *ngFor="let area of agency.coverageAreas">{{ area }}</mat-chip>
+                    </mat-chip-listbox>
+                  </span>
+                  <ng-template #noAreas>Not specified</ng-template>
+                </span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Contact & Social Card -->
+        <mat-card class="info-card futuristic-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">contacts</mat-icon>
+              Contact & Social
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Contact Person:</span>
+                <span class="info-value">{{ agency.contactPerson || agency.firstName + ' ' + agency.lastName }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Contact Title:</span>
+                <span class="info-value">{{ agency.contactTitle || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Company Email:</span>
+                <span class="info-value">{{ agency.companyEmail || agency.email }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Company Phone:</span>
+                <span class="info-value">{{ agency.companyPhone || agency.phoneNo || 'Not provided' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Social Links:</span>
+                <span class="info-value">
+                  <div class="social-links">
+                    <a *ngIf="agency.socialLinks?.facebook" [href]="agency.socialLinks.facebook" target="_blank" mat-icon-button>
+                      <mat-icon svgIcon="facebook"></mat-icon>
+                    </a>
+                    <a *ngIf="agency.socialLinks?.twitter" [href]="agency.socialLinks.twitter" target="_blank" mat-icon-button>
+                      <mat-icon svgIcon="twitter"></mat-icon>
+                    </a>
+                    <a *ngIf="agency.socialLinks?.linkedin" [href]="agency.socialLinks.linkedin" target="_blank" mat-icon-button>
+                      <mat-icon svgIcon="linkedin"></mat-icon>
+                    </a>
+                    <a *ngIf="agency.socialLinks?.instagram" [href]="agency.socialLinks.instagram" target="_blank" mat-icon-button>
+                      <mat-icon svgIcon="instagram"></mat-icon>
+                    </a>
+                    <span *ngIf="!agency.socialLinks || (!agency.socialLinks.facebook && !agency.socialLinks.twitter && !agency.socialLinks.linkedin && !agency.socialLinks.instagram)">
+                      No social links provided
+                    </span>
+                  </div>
+                </span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Operating Hours Card -->
+        <mat-card class="info-card futuristic-card" *ngIf="agency.operatingHours">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">schedule</mat-icon>
+              Operating Hours
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="operating-hours">
+              <div class="hours-display">
+                <div class="hours-item">
+                  <span class="hours-label">Open:</span>
+                  <span class="hours-value">{{ agency.operatingHours.open }}</span>
+                </div>
+                <div class="hours-item">
+                  <span class="hours-label">Close:</span>
+                  <span class="hours-value">{{ agency.operatingHours.close }}</span>
+                </div>
+              </div>
+              <div class="hours-visual">
+                <div class="hours-bar">
+                  <div class="open-time" [style.width.%]="calculateHoursPercentage(agency.operatingHours.open, agency.operatingHours.close)"></div>
+                </div>
+                <div class="hours-legend">
+                  <span>12AM</span>
+                  <span>6AM</span>
+                  <span>12PM</span>
+                  <span>6PM</span>
+                  <span>12AM</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Performance Stats Card -->
+        <mat-card class="stats-card futuristic-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">trending_up</mat-icon>
+              Performance Metrics
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>attach_money</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ agency.revenue | currency }}</div>
+                  <div class="stat-label">Total Revenue</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>done_all</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ agency.completedJobs || 0 }}</div>
+                  <div class="stat-label">Completed Jobs</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>campaign</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ agency.activeCampaigns || 0 }}</div>
+                  <div class="stat-label">Active Campaigns</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <mat-icon>star</mat-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ agency.rating || 'N/A' }}</div>
+                  <div class="stat-label">Average Rating</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Revenue Chart Card -->
+        <mat-card class="chart-card futuristic-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">bar_chart</mat-icon>
+              Revenue Overview
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ngx-charts-bar-vertical
+             [results]="revenueData"
+              [xAxis]="true"
+              [yAxis]="true"
+              [legend]="false"
+              [showXAxisLabel]="true"
+              [showYAxisLabel]="true"
+              xAxisLabel="Month"
+              yAxisLabel="Revenue">
+            </ngx-charts-bar-vertical>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Fleet Status Card -->
+        <mat-card class="chart-card futuristic-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">pie_chart</mat-icon>
+              Fleet Status
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ngx-charts-pie-chart
+       
+              [results]="agencyStatusData"
+              [legend]="true"
+              [labels]="true">
+            </ngx-charts-pie-chart>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Location Card -->
+        <mat-card class="info-card futuristic-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="card-icon">place</mat-icon>
+              Location
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="location-content">
+              <div class="location-details">
+                <div class="info-item">
+                  <span class="info-label">Address:</span>
+                  <span class="info-value">{{ agency.address || 'Not provided' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">City:</span>
+                  <span class="info-value">{{ agency.city || 'Not provided' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Postal Code:</span>
+                  <span class="info-value">{{ agency.postalCode || 'Not provided' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Country:</span>
+                  <span class="info-value">{{ agency.country || 'Not provided' }}</span>
+                </div>
+              </div>
+              <div class="location-map">
+                <img [src]="'https://maps.googleapis.com/maps/api/staticmap?center=' + agency.location.lat + ',' + agency.location.lng + '&zoom=12&size=300x150&maptype=roadmap&markers=color:red%7C' + agency.location.lat + ',' + agency.location.lng + '&key=YOUR_API_KEY'" alt="Location Map">
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
