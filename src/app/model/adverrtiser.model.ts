@@ -1,4 +1,5 @@
 export interface Advertiser {
+  id:number;
 accountId: number;
   username: string;
   email: string;

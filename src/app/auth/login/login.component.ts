@@ -82,7 +82,7 @@ export class LoginComponent {
     this.errorMessage = '';
 
     // Call the login API
-    this.http.post('http://192.168.8.100:8443/api/login/simple', {
+    this.http.post('http://196.168.8.29:8443/api/login/simple', {
       email: this.email,
       password: this.password
     }).subscribe({
@@ -171,6 +171,7 @@ export class LoginComponent {
     localStorage.setItem('userEmail', this.email);
     localStorage.setItem('userName', this.userFirstName);
     localStorage.setItem('userProfile', JSON.stringify(profileData));
+      localStorage.setItem('userId', profileData.id); // <- Save user ID here
     sessionStorage.setItem('sessionToken', this.generateSessionToken());
   }
 

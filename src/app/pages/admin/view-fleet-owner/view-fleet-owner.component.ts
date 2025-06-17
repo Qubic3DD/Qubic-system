@@ -112,7 +112,7 @@ Math = Math;
 
   fetchAdmin(username: string): void {
     this.isLoading = true;
-    this.http.get(`http://192.168.8.100:8443/admin/retrieve/${encodeURIComponent(username)}`)
+    this.http.get(`http://196.168.8.29:8443/admin/retrieve/${encodeURIComponent(username)}`)
       .pipe(catchError(() => {
         this.error = 'Failed to load admin profile';
         this.isLoading = false;
@@ -140,7 +140,7 @@ Math = Math;
 
 
 fetchRecentActivity(adminId: string): void {
-  this.http.get<any[]>(`http://192.168.8.100:8443/activity/${adminId}`)
+  this.http.get<any[]>(`http://196.168.8.29:8443/activity/${adminId}`)
     .pipe(
       catchError(() => of([]))
     )
@@ -154,7 +154,7 @@ fetchRecentActivity(adminId: string): void {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://192.168.8.100:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://196.168.8.29:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   getInitials(name: string): string {

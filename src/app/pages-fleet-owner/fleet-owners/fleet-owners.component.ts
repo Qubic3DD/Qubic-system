@@ -57,7 +57,7 @@ openAddDriverDialog(): void {
     this.isLoading = true;
     this.http
       .get<any>(
-        'http://192.168.8.100:8443/profile/get-users-by-role/fleet_owner'
+        'http://196.168.8.29:8443/profile/get-users-by-role/fleet_owner'
       )
       .subscribe({
         next: (response) => {
@@ -121,7 +121,7 @@ viewFleetOwnerDetails(userName: string): void {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://192.168.8.100:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://196.168.8.29:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
     getInitials(name: string): string {
   if (!name) return '';
