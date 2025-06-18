@@ -16,7 +16,7 @@ interface ApiResponse<T> {
 })
 export class CityService {
   private apiUrl = `${environment.api}cities`;
-  private apCity = 'http://196.168.8.29:8443/api/campaigns/campaigs/getAllCities'
+  private apCity = 'http://192.168.8.100:8443/api/campaigns/campaigs/getAllCities'
   constructor(private http: HttpClient) { }
 
   // Get all cities (for initial load)

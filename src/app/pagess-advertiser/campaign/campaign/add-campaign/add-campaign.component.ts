@@ -10,14 +10,12 @@ import { ProvinceService } from '../../../../services/profile.service';
 import { Advertiser } from '../../../../model/adverrtiser.model';
 import { CommonModule } from '@angular/common';
 import { FileSizePipe } from './file-size.pipe';
-import { forkJoin } from 'rxjs';
-import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-add-campaign',
   templateUrl: './add-campaign.component.html',
   styleUrls: ['./add-campaign.component.css'],
-  imports: [FormsModule, CommonModule, FileSizePipe, ReactiveFormsModule, NgSelectModule],
+  imports: [FormsModule, CommonModule, FileSizePipe, ReactiveFormsModule,],
   standalone: true,
 })
 export class AddCampaignComponent implements OnInit {

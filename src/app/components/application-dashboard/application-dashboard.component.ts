@@ -3,12 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
-import { ApplicationDto, } from '../../model/application.dto';
+import { ApplicationDto } from '../../model/application.dto';
 import { ApplicationStatus } from '../../services/application-status';
 import { Role, ROLE_CONFIGS } from '../../services/role.enum';
-import { environment } from '../../environments/environment';
+import { environmentApplication } from '../../environments/environment';
 import { DocumentPurpose } from '../../services/document-purpose';
+import { TransportType } from '../../services/transport-type.enum';
+import { VehicleType } from '../../services/vehicle-type.enum';
+
 type AppTab = 'overview' | 'new' | 'details';
+
 enum FileType {
   IMAGE = 'IMAGE',
   VIDEO = 'VIDEO',
@@ -34,9 +38,6 @@ enum FileType {
   standalone: true
 })
 export class ApplicationDashboardComponent implements OnInit {
-getImagePreview(arg0: File) {
-throw new Error('Method not implemented.');
-}
   applications: ApplicationDto[] = [];
   selectedApplication: ApplicationDto | null = null;
   isLoading = false;
@@ -47,8 +48,15 @@ throw new Error('Method not implemented.');
   searchPerformed: boolean = false;
   errorMessage: string = '';
   missingDocuments: string[] = [];
-   activeTab: AppTab = 'overview';
+  activeTab: AppTab = 'overview';
   
+ 
+   vehicleTypes = Object.values(VehicleType).filter(value => typeof value === 'string') as string[];
+transportTypes = Object.values(TransportType).filter(value => typeof value === 'string') as string[];
+
+// Make enums available to template
+VehicleType = VehicleType;
+TransportType = TransportType;
   availableApplicationRoles: Role[] = [
     Role.DRIVER, 
     Role.FLEET_OWNER, 
@@ -63,10 +71,6 @@ throw new Error('Method not implemented.');
   documentPurposes = Object.values(DocumentPurpose);
   DocumentPurpose = DocumentPurpose;
   
-  vehicleTypes = [
-    'Sedan', 'SUV', 'Truck', 'Van', 'Motorcycle', 'Bus', 
-    'Taxi', 'Delivery Van', 'Heavy Duty Truck', 'Trailer'
-  ];
 
   licenseTypes = [
     'Learner', 'Code 8', 'Code 10', 'Code 14', 
@@ -90,6 +94,15 @@ throw new Error('Method not implemented.');
     dateOfBirth: '',
     address: '',
     city: '',
+      vehicles: [] as Array<{
+    vehicleType: VehicleType;
+    licensePlate: string;
+    capacity: string;
+    color: string;
+    year: string;
+    vehicleImage: File | null;
+    transportType?: TransportType; // Optional if needed
+  }>,
     postalCode: '',
     country: '',
     licenseType: '',
@@ -103,14 +116,7 @@ throw new Error('Method not implemented.');
     contactPerson: '',
     contactTitle: '',
     fleetSize: 0,
-    vehicles: [] as Array<{
-      vehicleType: string;
-      licensePlate: string;
-      capacity: string;
-      color: string;
-      year: string;
-      vehicleImage: File | null;
-    }>,
+   
     documents: [] as { type: DocumentPurpose; file: File }[],
     submissionDate: '' as string,
     approvalDate: '' as string
@@ -125,19 +131,18 @@ throw new Error('Method not implemented.');
     this.submissionForm.vehicles.push(this.createEmptyVehicle());
   }
 
-  createEmptyVehicle() {
-    return {
-      vehicleType: '',
-      licensePlate: '',
-      capacity: '',
-      color: '',
-      year: '',
-      vehicleImage: null
-    };
-  }
+createEmptyVehicle() {
+  return {
+    vehicleType: '' as VehicleType | '', // Initialize with empty string but allow VehicleType
+    licensePlate: '',
+    capacity: '',
+    color: '',
+    year: '',
+    vehicleImage: null,
+    transportType: '' as TransportType | '' // Optional field for transport type
+  };
+}
 
-
- 
   showTab(tab: AppTab): boolean {
     const conditions: Record<AppTab, boolean> = {
       overview: true,
@@ -147,16 +152,14 @@ throw new Error('Method not implemented.');
     return conditions[tab];
   }
 
-  // Tab activation
   setActiveTab(tab: AppTab): void {
     this.activeTab = tab;
   }
 
-  // Current tab check (for content display)
   isActiveTab(tab: AppTab): boolean {
     return this.activeTab === tab;
   }
-  // Returns CSS classes based on active state
+
   getTabClasses(tab: AppTab): string {
     const baseClasses = 'border-b-2 font-medium text-sm py-4 px-1';
     return this.activeTab === tab
@@ -344,7 +347,7 @@ throw new Error('Method not implemented.');
     this.errorMessage = '';
     const encodedEmail = encodeURIComponent(this.searchQuery.trim().toLowerCase());
 
-    this.http.get<ApplicationDto[]>(`http://localhost:8443/api/applications/application-by-email?email=jane.doe%40example.com`).subscribe({
+    this.http.get<ApplicationDto[]>(`${environmentApplication.api}applications/application-by-email?email=${encodedEmail}`).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.searchPerformed = true;
@@ -386,92 +389,278 @@ throw new Error('Method not implemented.');
     const input = event.target as HTMLInputElement;
     this.selectedFile = input.files?.[0] || null;
   }
+  
+async submitApplication(): Promise<void> {
+  if (!this.submissionForm.applicationRole) return;
 
-  async submitApplication(): Promise<void> {
-    if (!this.submissionForm.applicationRole) return;
+  this.missingDocuments = [];
+  if (!this.validateDocuments()) {
+    this.errorMessage = `Missing required items: ${this.missingDocuments.join(', ')}`;
+    return;
+  }
 
-    this.missingDocuments = [];
-    if (!this.validateDocuments()) {
-      this.errorMessage = `Missing required items: ${this.missingDocuments.join(', ')}`;
-      return;
+  this.isLoading = true;
+  this.errorMessage = '';
+  this.submissionForm.submissionDate = new Date().toISOString();
+  
+  try {
+    // Format date of birth to ISO string (YYYY-MM-DD)
+const formattedDateOfBirth = this.formatDate(this.submissionForm.dateOfBirth);
+
+const vehicles = this.submissionForm.vehicles.map(vehicle => ({
+      ...vehicle,
+      // Convert string enum values to proper enum types
+      vehicleType: vehicle.vehicleType as VehicleType,
+      transportType: vehicle.transportType as TransportType
+    }));
+
+    // Determine roles based on application role
+    const roles = this.getRolesForApplication(this.submissionForm.applicationRole);
+
+    // 1. First submit only the basic application data without any files
+    const applicationData = {
+      ...this.submissionForm,
+      dateOfBirth: formattedDateOfBirth, // Use formatted date
+       vehicles: vehicles,
+      roles: roles,
+      // Remove all file-related fields
+      profileImage: undefined,
+     
+      documents: undefined
+    };
+
+    // Submit the application
+    const newApp = await this.http.post<ApplicationDto>(
+      `${environmentApplication.api}applications`, 
+      applicationData,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    ).toPromise();
+
+    if (!newApp) throw new Error('Failed to create application');
+
+    // 2. Upload all documents separately
+    await this.uploadAllDocumentss(newApp.id);
+
+    // 3. Fetch the complete application
+    const completeApp = await this.http.get<ApplicationDto>(
+      `${environmentApplication.api}application-by-email?email=${newApp.email}`
+    ).toPromise();
+
+    if (completeApp) {
+      this.applications = [...this.applications, completeApp];
+      this.selectedApplication = completeApp;
+      this.activeTab = 'details';
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.submissionForm.submissionDate = new Date().toISOString();
-    
-    try {
-      const formData = new FormData();
-      
-      Object.keys(this.submissionForm).forEach(key => {
-        if (key === 'vehicles' || key === 'documents' || key === 'profileImage') return;
-        const value = (this.submissionForm as any)[key];
-        if (value !== null && value !== undefined) {
-          formData.append(key, value);
-        }
-      });
-
-      if (this.submissionForm.profileImage) {
-        formData.append('profileImage', this.submissionForm.profileImage);
-      }
-
-      if (this.submissionForm.vehicles.length > 0) {
-        const vehiclesData = this.submissionForm.vehicles.map(v => ({
-          vehicleType: v.vehicleType,
-          licensePlate: v.licensePlate,
-          capacity: v.capacity,
-          color: v.color,
-          year: v.year
-        }));
-        formData.append('vehicles', JSON.stringify(vehiclesData));
-        
-        this.submissionForm.vehicles.forEach((vehicle, index) => {
-          if (vehicle.vehicleImage) {
-            formData.append(`vehicleImage_${index}`, vehicle.vehicleImage);
-          }
-        });
-      }
-
-      const newApp = await this.http.post<ApplicationDto>(
-        `${environment.api}/applications`, 
-        formData
-      ).toPromise();
-
-      if (!newApp) throw new Error('Failed to create application');
-
-      if (this.submissionForm.documents.length > 0) {
-        await this.uploadAllDocuments(newApp.id);
-      }
-
-      this.applications = [...this.applications, newApp];
-      this.activeTab = 'overview';
+    this.errorMessage = 'Application submitted successfully!';
+    setTimeout(() => {
       this.resetForm();
-    } catch (error) {
-      console.error('Error submitting application:', error);
-      this.errorMessage = 'Failed to submit application. Please try again.';
-    } finally {
-      this.isLoading = false;
+      this.errorMessage = '';
+    }, 3000);
+
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    this.errorMessage = 'Failed to submit application. Please try again.';
+  } finally {
+    this.isLoading = false;
+  }
+}
+private formatDate(dateString: string): string {
+  if (!dateString) return '';
+
+  try {
+    // If already in correct format (ISO with 'T'), return as-is
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/.test(dateString)) {
+      return dateString;
+    }
+
+    // Parse the date and format it with 'T' separator
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date format');
+    }
+
+    // Format as ISO-8601 (Java-compatible)
+    const isoString = date.toISOString(); // "2025-06-30T02:00:00.000Z"
+    return isoString.replace('Z', ''); // Remove 'Z' if timezone is not needed
+  } catch (e) {
+    console.error('Error formatting date:', e);
+    return '';
+  }
+}
+private getRolesForApplication(applicationRole: Role): string[] {
+  switch(applicationRole) {
+    case Role.DRIVER:
+      return ['DRIVER'];
+    case Role.FLEET_OWNER:
+      return ['FLEET_OWNER'];
+    case Role.AGENCY:
+      return ['AGENCY'];
+    case Role.ADVERTISER:
+      return ['ADVERTISER'];
+    default:
+      return ['PASSENGER'];
+  }
+}
+
+private async uploadAllDocumentss(applicationId: number): Promise<void> {
+  // 1. Upload profile image if exists
+  if (this.submissionForm.profileImage) {
+    await this.uploadDocuments(
+      applicationId,
+      this.submissionForm.profileImage,
+      DocumentPurpose.PROFILE_PICTURE
+    );
+  }
+  // Upload vehicle images and information
+  for (const [index, vehicle] of this.submissionForm.vehicles.entries()) {
+    // First upload vehicle data
+    const vehicleRequest: VehicleInformationRequest = {
+      capacity: vehicle.capacity,
+      colour: vehicle.color,
+      licenseRegistrationNo: vehicle.licensePlate,
+      isPublic: true, // or your logic
+      creationDate: new Date(),
+      transportType: vehicle.transportType as TransportType,
+      vehicleType: vehicle.vehicleType as VehicleType,
+      userInformationId: applicationId
+    };
+
+    const vehicleResponse = await this.http.post(
+      `${environmentApplication.api}vehicles`,
+      vehicleRequest
+    ).toPromise();
+
+    // Then upload vehicle image if exists
+    if (vehicle.vehicleImage) {
+      await this.uploadDocuments(
+        applicationId,
+        vehicle.vehicleImage,
+        DocumentPurpose.VEHICLE_PHOTO,
+        {
+          vehicleId: vehicleResponse.id, // Assuming backend returns vehicle ID
+          licensePlate: vehicle.licensePlate
+        }
+      );
     }
   }
 
-  private async uploadAllDocuments(applicationId: number): Promise<void> {
-    for (const doc of this.submissionForm.documents) {
+  // 3. Upload other documents
+  const uploadPromises = this.submissionForm.documents.map(doc => 
+    this.uploadDocuments(applicationId, doc.file, doc.type)
+  );
+
+  await Promise.all(uploadPromises);
+}
+
+private async uploadDocuments(
+  applicationId: number,
+  file: File,
+  purpose: DocumentPurpose,
+  additionalData?: Record<string, string>
+): Promise<void> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('documentPurpose', purpose);
+  formData.append('fileType', this.getFileType(file));
+
+  if (additionalData) {
+    Object.entries(additionalData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+  }
+
+  try {
+    await this.http.post(
+      `${environmentApplication.api}applications/${applicationId}/documents/upload`, 
+      formData
+    ).toPromise();
+  } catch (error) {
+    console.error(`Error uploading ${purpose} document:`, error);
+    // Continue even if some documents fail to upload
+  }
+}
+
+  getDocumentIcon(docPurpose: DocumentPurpose): string {
+    const icons: Record<DocumentPurpose, string> = {
+      // Personal Documents
+      [DocumentPurpose.PROFILE_PICTURE]: '🖼️',
+      [DocumentPurpose.ID_DOCUMENT]: '🆔',
+      [DocumentPurpose.PROOF_OF_ADDRESS]: '🏠',
+      [DocumentPurpose.LICENSE]: '📜',
+
+      // Vehicle-related Documents
+      [DocumentPurpose.VEHICLE_REGISTRATION]: '🚗',
+      [DocumentPurpose.VEHICLE_INSURANCE]: '🛡️',
+      [DocumentPurpose.VEHICLE_INSPECTION_REPORT]: '🔍',
+      [DocumentPurpose.VEHICLE_PHOTO]: '📷',
+      [DocumentPurpose.ROADWORTHY_CERTIFICATE]: '✅',
+
+      // Business-related Documents
+      [DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE]: '🏢',
+      [DocumentPurpose.BUSINESS_LICENSE]: '📋',
+      [DocumentPurpose.TAX_CLEARANCE_CERTIFICATE]: '💰',
+      [DocumentPurpose.COMPANY_PROFILE]: '🏛️',
+      [DocumentPurpose.COMPANY_LOGO]: '🔷',
+      [DocumentPurpose.BUSINESS_ADDRESS_PROOF]: '🏢📍',
+
+      // Campaign-related Media
+      [DocumentPurpose.CAMPAIGN_VIDEO]: '🎥',
+      [DocumentPurpose.CAMPAIGN_PICTURE]: '📸',
+
+      // Miscellaneous
+      [DocumentPurpose.OTHER]: '📄'
+    };
+
+    return icons[docPurpose] || '📄';
+  }
+
+  getDocumentName(docPurpose: DocumentPurpose): string {
+    return docPurpose.toString().split('_').map(word => 
+      word.charAt(0) + word.slice(1).toLowerCase()
+    ).join(' ');
+  }
+
+  isImageDocument(purpose: DocumentPurpose): boolean {
+    return [
+      DocumentPurpose.PROFILE_PICTURE,
+      DocumentPurpose.ID_DOCUMENT,
+      DocumentPurpose.VEHICLE_PHOTO,
+      DocumentPurpose.COMPANY_LOGO
+    ].includes(purpose);
+  }
+
+  getDocumentUrl(doc: any): string {
+    if (this.isImageDocument(doc.purpose)) {
+      return `${environmentApplication.api}applications/${doc.id}/documents/view?purpose=${doc.purpose}`;
+    } else {
+      return `${environmentApplication.api}applications/${doc.id}/documents/download?purpose=${doc.purpose}`;
+    }
+  }
+
+  private async uploadAllDocument(applicationId: number): Promise<void> {
+    const uploadPromises = this.submissionForm.documents.map(doc => {
       const formData = new FormData();
       formData.append('file', doc.file);
       formData.append('documentPurpose', doc.type);
       formData.append('fileType', this.getFileType(doc.file));
 
-      try {
-        await this.http.post(
-          `${environment.api}/applications/${applicationId}/documents/upload`, 
-          formData
-        ).toPromise();
-      } catch (error) {
-        console.error(`Failed to upload document ${doc.type}:`, error);
-      }
+      return this.http.post(
+        `${environmentApplication.api}/applications/${applicationId}/documents/upload`, 
+        formData
+      ).toPromise();
+    });
+
+    try {
+      await Promise.all(uploadPromises);
+    } catch (error) {
+      console.error('Error uploading documents:', error);
+      // Continue even if some documents fail to upload
     }
   }
-
+  
   private getFileType(file: File): FileType {
     const type = file.type.split('/')[0];
     const extension = file.name.split('.').pop()?.toLowerCase();
@@ -508,7 +697,7 @@ throw new Error('Method not implemented.');
     formData.append('documentPurpose', this.documentPurpose);
     formData.append('fileType', this.getFileType(this.selectedFile));
 
-    this.http.post(`${environment.api}/applications/${this.selectedApplication.id}/documents/upload`, formData)
+    this.http.post(`${environmentApplication.api}applications/${this.selectedApplication.id}/documents/upload`, formData)
       .subscribe({
         next: () => {
           this.selectedFile = null;
@@ -522,7 +711,7 @@ throw new Error('Method not implemented.');
     if (!this.selectedApplication) return;
     
     if (confirm('Are you sure you want to delete this document?')) {
-      this.http.delete(`${environment.api}/applications/${this.selectedApplication.id}/documents/${documentId}`)
+      this.http.delete(`${environmentApplication.api}applications/${this.selectedApplication.id}/documents/${documentId}`)
         .subscribe({
           error: (error) => console.error('Error deleting document:', error)
         });
@@ -533,8 +722,8 @@ throw new Error('Method not implemented.');
     if (!this.selectedApplication) return;
 
     const endpoint = action === 'approve' 
-      ? `${environment.api}/applications/${this.selectedApplication.id}/approve`
-      : `${environment.api}/applications/${this.selectedApplication.id}/reject`;
+      ? `${environmentApplication.api}applications/${this.selectedApplication.id}/approve`
+      : `${environmentApplication.api}applications/${this.selectedApplication.id}/reject`;
 
     const body = action === 'reject' 
       ? { rejectionReason: prompt('Please enter rejection reason:') || 'No reason provided' }
@@ -670,5 +859,9 @@ throw new Error('Method not implemented.');
 
   getRoleLabel(role: Role | undefined): string {
     return role ? ROLE_CONFIGS[role]?.label || 'N/A' : 'N/A';
+  }
+
+  getImagePreview(file: File): string {
+    return URL.createObjectURL(file);
   }
 }

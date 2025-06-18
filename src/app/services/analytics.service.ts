@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AnalyticsService {
-  private apiUrl = 'http://196.168.8.29:8443/api/analytics';
+  private apiUrl = 'http://192.168.8.100:8443/api/analytics';
 
   constructor(private http: HttpClient) {}
 
