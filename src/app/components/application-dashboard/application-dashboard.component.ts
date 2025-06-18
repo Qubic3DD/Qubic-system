@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
@@ -10,6 +10,9 @@ import { environmentApplication } from '../../environments/environment';
 import { DocumentPurpose } from '../../services/document-purpose';
 import { TransportType } from '../../services/transport-type.enum';
 import { VehicleType } from '../../services/vehicle-type.enum';
+import { VehicleResponse } from './vehicle-response.model';
+import { VehicleFormModel, VehicleService } from '../../services/vehicle.service';
+import { VehicleInformation } from '../../model/adverrtiser.model';
 
 type AppTab = 'overview' | 'new' | 'details';
 
@@ -49,6 +52,8 @@ export class ApplicationDashboardComponent implements OnInit {
   errorMessage: string = '';
   missingDocuments: string[] = [];
   activeTab: AppTab = 'overview';
+    currentYear = new Date().getFullYear();
+    completeApp: ApplicationDto | null = null;
   
  
    vehicleTypes = Object.values(VehicleType).filter(value => typeof value === 'string') as string[];
@@ -102,6 +107,9 @@ TransportType = TransportType;
     year: string;
     vehicleImage: File | null;
     transportType?: TransportType; // Optional if needed
+    make?: string;
+    model?:string;
+    id?:number
   }>,
     postalCode: '',
     country: '',
@@ -117,32 +125,117 @@ TransportType = TransportType;
     contactTitle: '',
     fleetSize: 0,
    
-    documents: [] as { type: DocumentPurpose; file: File }[],
+    documents: [] as { type: DocumentPurpose; file: File,filetype:FileType }[],
     submissionDate: '' as string,
     approvalDate: '' as string
   };
 
-  constructor(
+ constructor(
     private http: HttpClient,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private vehicleService: VehicleService // Add vehicle service
   ) {}
 
   ngOnInit(): void {
     this.submissionForm.vehicles.push(this.createEmptyVehicle());
   }
-
-createEmptyVehicle() {
+createEmptyVehicle(): VehicleFormModel {
   return {
-    vehicleType: '' as VehicleType | '', // Initialize with empty string but allow VehicleType
+    vehicleType: '' as VehicleType,
     licensePlate: '',
     capacity: '',
     color: '',
     year: '',
     vehicleImage: null,
-    transportType: '' as TransportType | '' // Optional field for transport type
+    transportType: undefined,
+    make: '',
+    model: ''
   };
 }
+countUploadedDocuments(app: ApplicationDto): number {
+  return app.uploadedDocuments?.length || 0;
+}
 
+// Count missing documents for an application
+countMissingDocuments(app: ApplicationDto): number {
+  if (!app.applicationRole) return 0;
+  
+  const requiredDocs = this.getRequiredDocumentsForRole(app.applicationRole);
+  const uploadedDocTypes = app.uploadedDocuments?.map(d => d.purpose) || [];
+  
+  return requiredDocs.filter(docType => !uploadedDocTypes.includes(docType)).length;
+}
+
+// Get required document types based on role
+private getRequiredDocumentsForRole(role: Role): DocumentPurpose[] {
+  const baseDocs = [
+    DocumentPurpose.ID_DOCUMENT,
+    DocumentPurpose.PROOF_OF_ADDRESS,
+    DocumentPurpose.PROFILE_PICTURE
+  ];
+
+  switch (role) {
+    case Role.DRIVER:
+      return [...baseDocs, DocumentPurpose.LICENSE, DocumentPurpose.VEHICLE_REGISTRATION];
+    case Role.FLEET_OWNER:
+      return [...baseDocs, 
+        DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
+        DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
+        DocumentPurpose.BUSINESS_LICENSE,
+        DocumentPurpose.VEHICLE_REGISTRATION
+      ];
+    case Role.AGENCY:
+      return [...baseDocs,
+        DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
+        DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
+        DocumentPurpose.BUSINESS_LICENSE
+      ];
+    case Role.ADVERTISER:
+      return [...baseDocs,
+        DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE
+      ];
+    default:
+      return baseDocs;
+  }
+}
+async loadCompleteApplication(email: string): Promise<void> {
+  try {
+    const response = await this.http.get<ApplicationDto>(
+      `${environmentApplication.api}applications/application-by-email?email=${email}`
+    ).toPromise();
+
+    if (response) {
+      this.completeApp = response;
+      this.selectedApplication = response;
+      
+      // Map vehicles if they exist
+      if (response.vehicleInformation) {
+        this.submissionForm.vehicles = response.vehicleInformation.map(v => 
+          this.mapVehicleResponseToForm(v)
+        );
+      }
+      
+      // Load vehicle images
+      await this.loadVehicleImages();
+    }
+  } catch (error) {
+    console.error('Error loading complete application:', error);
+  }
+}
+private mapVehicleResponseToForm(vehicle: any): VehicleFormModel {
+  return {
+    vehicleType: vehicle.vehicleType || '',
+    licensePlate: vehicle.licenseRegistrationNo || '',
+    capacity: vehicle.capacity || '',
+    color: vehicle.color || '',
+    year: vehicle.year || '',
+    vehicleImage: null, // Will be loaded separately
+    transportType: vehicle.transportType,
+    make: vehicle.make,
+    model: vehicle.model,
+    id: vehicle.id
+  };
+}
   showTab(tab: AppTab): boolean {
     const conditions: Record<AppTab, boolean> = {
       overview: true,
@@ -151,7 +244,28 @@ createEmptyVehicle() {
     };
     return conditions[tab];
   }
-
+ async loadVehicleImages(): Promise<void> {
+    try {
+      // If we have vehicles in the selected application
+      if (this.selectedApplication?.vehicleInformation) {
+        for (const vehicle of this.selectedApplication.vehicleInformation) {
+          if (vehicle.id) { // Make sure vehicle has an ID
+            const images = await this.vehicleService.getVehicleImages(vehicle.id).toPromise();
+            if (images && images.length > 0) {
+              // Find the main vehicle photo (you might need to adjust this logic)
+              const mainImage = images.find(img => img.purpose === DocumentPurpose.VEHICLE_PHOTO);
+              if (mainImage) {
+                // Add the image URL to the vehicle object
+                vehicle.vehicleImageUrl = this.vehicleService.getVehicleImageUrl(mainImage.id).toString();
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error loading vehicle images:', error);
+    }
+  }
   setActiveTab(tab: AppTab): void {
     this.activeTab = tab;
   }
@@ -167,15 +281,15 @@ createEmptyVehicle() {
       : `${baseClasses} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300`;
   }
 
-  addVehicle() {
-    this.submissionForm.vehicles.push(this.createEmptyVehicle());
-  }
+addVehicle(): void {
+  this.submissionForm.vehicles.push(this.createEmptyVehicle());
+}
 
-  removeVehicle(index: number) {
-    if (this.submissionForm.vehicles.length > 1) {
-      this.submissionForm.vehicles.splice(index, 1);
-    }
+removeVehicle(index: number): void {
+  if (this.submissionForm.vehicles.length > 1) {
+    this.submissionForm.vehicles.splice(index, 1);
   }
+}
 
   onVehicleImageSelected(event: Event, index: number) {
     const input = event.target as HTMLInputElement;
@@ -374,22 +488,26 @@ createEmptyVehicle() {
     return emailRegex.test(email);
   }
 
-  onDocumentSelected(event: Event, docType: DocumentPurpose): void {
+onDocumentSelected(event: Event, docType: DocumentPurpose): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
+      const file = input.files[0];
+      const fileType = this.getFileType(file);
+      
       this.submissionForm.documents = this.submissionForm.documents.filter(d => d.type !== docType);
       this.submissionForm.documents.push({
         type: docType,
-        file: input.files[0]
+        file: file,
+        filetype: fileType
       });
     }
-  }
+}
+
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFile = input.files?.[0] || null;
   }
-  
 async submitApplication(): Promise<void> {
   if (!this.submissionForm.applicationRole) return;
 
@@ -404,54 +522,46 @@ async submitApplication(): Promise<void> {
   this.submissionForm.submissionDate = new Date().toISOString();
   
   try {
-    // Format date of birth to ISO string (YYYY-MM-DD)
-const formattedDateOfBirth = this.formatDate(this.submissionForm.dateOfBirth);
-
-const vehicles = this.submissionForm.vehicles.map(vehicle => ({
-      ...vehicle,
-      // Convert string enum values to proper enum types
-      vehicleType: vehicle.vehicleType as VehicleType,
-      transportType: vehicle.transportType as TransportType
-    }));
-
-    // Determine roles based on application role
+    const formattedDateOfBirth = this.formatDate(this.submissionForm.dateOfBirth);
     const roles = this.getRolesForApplication(this.submissionForm.applicationRole);
 
     // 1. First submit only the basic application data without any files
     const applicationData = {
       ...this.submissionForm,
-      dateOfBirth: formattedDateOfBirth, // Use formatted date
-       vehicles: vehicles,
+      dateOfBirth: formattedDateOfBirth,
+      vehicles: [], // We'll handle vehicles separately
       roles: roles,
-      // Remove all file-related fields
       profileImage: undefined,
-     
       documents: undefined
     };
 
     // Submit the application
     const newApp = await this.http.post<ApplicationDto>(
       `${environmentApplication.api}applications`, 
-      applicationData,
-      {
-        headers: { 'Content-Type': 'application/json' }
-      }
+      applicationData
     ).toPromise();
 
     if (!newApp) throw new Error('Failed to create application');
 
-    // 2. Upload all documents separately
+    // 2. Create vehicles and upload their images
+    const vehicleIds = await this.createVehiclesAndUploadImages(newApp.id);
+
+    // 3. Upload other documents (profile + additional docs)
     await this.uploadAllDocumentss(newApp.id);
 
-    // 3. Fetch the complete application
+    // 4. Fetch the complete application with all relationships
     const completeApp = await this.http.get<ApplicationDto>(
-      `${environmentApplication.api}application-by-email?email=${newApp.email}`
+      `${environmentApplication.api}applications/${newApp.id}?includeVehicles=true&includeDocuments=true`
     ).toPromise();
 
     if (completeApp) {
+      this.completeApp = completeApp;
       this.applications = [...this.applications, completeApp];
       this.selectedApplication = completeApp;
       this.activeTab = 'details';
+      
+      // Load vehicle images after we have the complete application
+      await this.loadVehicleImages();
     }
 
     this.errorMessage = 'Application submitted successfully!';
@@ -463,10 +573,71 @@ const vehicles = this.submissionForm.vehicles.map(vehicle => ({
   } catch (error) {
     console.error('Error submitting application:', error);
     this.errorMessage = 'Failed to submit application. Please try again.';
+    // Consider adding more specific error messages based on error type
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 400) {
+        this.errorMessage = 'Validation error: ' + (error.error?.message || 'Please check your inputs');
+      } else if (error.status === 500) {
+        this.errorMessage = 'Server error: Please try again later';
+      }
+    }
   } finally {
     this.isLoading = false;
   }
 }
+private async createVehiclesAndUploadImages(applicationId: number): Promise<number[]> {
+    const vehicleIds: number[] = [];
+    
+    try {
+      for (const vehicle of this.submissionForm.vehicles) {
+const vehicleRequest: VehicleInformation = {
+  capacity: vehicle.capacity,
+  color: vehicle.color,
+  licenseRegistrationNo: vehicle.licensePlate,
+  isPublic: true,
+  creationDate: new Date().toISOString(),
+  transportType: vehicle.transportType as TransportType,
+  vehicleType: vehicle.vehicleType as VehicleType,
+  userInformationId: applicationId,
+  year: vehicle.year,
+  make: vehicle.make,
+  model: vehicle.model,
+  id: vehicle?.id,
+};
+
+        // Create vehicle using vehicle service
+        const vehicleResponse = await this.vehicleService.createVehicle(vehicleRequest).toPromise();
+
+        if (!vehicleResponse) {
+          console.error('Failed to create vehicle');
+          continue;
+        }
+
+        vehicleIds.push(vehicleResponse.id!);
+
+        // Upload vehicle image if exists
+ await this.uploadDocuments(
+  applicationId,
+
+  vehicle.vehicleImage!,
+
+ 
+  DocumentPurpose.VEHICLE_PHOTO,
+   FileType.IMAGE,
+  {
+    vehicleId: vehicleResponse.id,
+    licensePlate: vehicle.licensePlate
+  }
+);
+
+      }
+    } catch (error) {
+      console.error('Error creating vehicles:', error);
+      throw error;
+    }
+
+    return vehicleIds;
+  }
 private formatDate(dateString: string): string {
   if (!dateString) return '';
 
@@ -505,81 +676,60 @@ private getRolesForApplication(applicationRole: Role): string[] {
   }
 }
 
-private async uploadAllDocumentss(applicationId: number): Promise<void> {
-  // 1. Upload profile image if exists
-  if (this.submissionForm.profileImage) {
-    await this.uploadDocuments(
-      applicationId,
-      this.submissionForm.profileImage,
-      DocumentPurpose.PROFILE_PICTURE
-    );
-  }
-  // Upload vehicle images and information
-  for (const [index, vehicle] of this.submissionForm.vehicles.entries()) {
-    // First upload vehicle data
-    const vehicleRequest: VehicleInformationRequest = {
-      capacity: vehicle.capacity,
-      colour: vehicle.color,
-      licenseRegistrationNo: vehicle.licensePlate,
-      isPublic: true, // or your logic
-      creationDate: new Date(),
-      transportType: vehicle.transportType as TransportType,
-      vehicleType: vehicle.vehicleType as VehicleType,
-      userInformationId: applicationId
-    };
+  private async uploadAllDocumentss(applicationId: number): Promise<void> {
+    try {
+      // 1. Upload profile image if exists
+      if (this.submissionForm.profileImage) {
+        await this.uploadDocuments(
+          applicationId,
+          this.submissionForm.profileImage,
+          DocumentPurpose.PROFILE_PICTURE,
+          FileType.IMAGE,
+        );
+      }
 
-    const vehicleResponse = await this.http.post(
-      `${environmentApplication.api}vehicles`,
-      vehicleRequest
-    ).toPromise();
-
-    // Then upload vehicle image if exists
-    if (vehicle.vehicleImage) {
-      await this.uploadDocuments(
-        applicationId,
-        vehicle.vehicleImage,
-        DocumentPurpose.VEHICLE_PHOTO,
-        {
-          vehicleId: vehicleResponse.id, // Assuming backend returns vehicle ID
-          licensePlate: vehicle.licensePlate
-        }
+      // 2. Upload other documents
+      const docUploads = this.submissionForm.documents.map(doc => 
+        this.uploadDocuments(applicationId, doc.file, doc.type,doc.filetype)
       );
+      await Promise.all(docUploads);
+    } catch (error) {
+      console.error('Error uploading documents:', error);
+      throw error;
     }
   }
-
-  // 3. Upload other documents
-  const uploadPromises = this.submissionForm.documents.map(doc => 
-    this.uploadDocuments(applicationId, doc.file, doc.type)
-  );
-
-  await Promise.all(uploadPromises);
-}
-
 private async uploadDocuments(
   applicationId: number,
   file: File,
   purpose: DocumentPurpose,
-  additionalData?: Record<string, string>
+  fileType: FileType,
+  additionalData?: { vehicleId?: number; licensePlate?: string }
 ): Promise<void> {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('documentPurpose', purpose);
-  formData.append('fileType', this.getFileType(file));
 
-  if (additionalData) {
-    Object.entries(additionalData).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+  const params: any = {
+    documentPurpose: purpose,
+    fileType: fileType
+  };
+
+  if (additionalData?.vehicleId) {
+    params.vehicleId = additionalData.vehicleId;
+  }
+
+  if (additionalData?.licensePlate) {
+    params.licensePlate = additionalData.licensePlate;
   }
 
   try {
     await this.http.post(
-      `${environmentApplication.api}applications/${applicationId}/documents/upload`, 
-      formData
+      `${environmentApplication.api}applications/${applicationId}/documents/upload`,
+      formData,
+      { params } // attach query params
     ).toPromise();
   } catch (error) {
     console.error(`Error uploading ${purpose} document:`, error);
-    // Continue even if some documents fail to upload
+    throw error;
   }
 }
 
@@ -617,11 +767,30 @@ private async uploadDocuments(
     return icons[docPurpose] || '📄';
   }
 
-  getDocumentName(docPurpose: DocumentPurpose): string {
-    return docPurpose.toString().split('_').map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(' ');
-  }
+getDocumentName(purpose: DocumentPurpose): string {
+  const docMap: Record<DocumentPurpose, string> = {
+    [DocumentPurpose.PROFILE_PICTURE]: 'Profile Picture',
+    [DocumentPurpose.ID_DOCUMENT]: 'ID Document',
+    [DocumentPurpose.PROOF_OF_ADDRESS]: 'Proof of Address',
+    [DocumentPurpose.LICENSE]: 'Driver License',
+    [DocumentPurpose.VEHICLE_REGISTRATION]: 'Vehicle Registration',
+    [DocumentPurpose.VEHICLE_INSURANCE]: 'Vehicle Insurance',
+    [DocumentPurpose.VEHICLE_INSPECTION_REPORT]: 'Inspection Report',
+    [DocumentPurpose.VEHICLE_PHOTO]: 'Vehicle Photo',
+    [DocumentPurpose.ROADWORTHY_CERTIFICATE]: 'Roadworthy Certificate',
+    [DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE]: 'Business Registration',
+    [DocumentPurpose.BUSINESS_LICENSE]: 'Business License',
+    [DocumentPurpose.TAX_CLEARANCE_CERTIFICATE]: 'Tax Clearance',
+    [DocumentPurpose.COMPANY_PROFILE]: 'Company Profile',
+    [DocumentPurpose.COMPANY_LOGO]: 'Company Logo',
+    [DocumentPurpose.BUSINESS_ADDRESS_PROOF]: 'Business Address Proof',
+    [DocumentPurpose.CAMPAIGN_VIDEO]: 'Campaign Video',
+    [DocumentPurpose.CAMPAIGN_PICTURE]: 'Campaign Picture',
+    [DocumentPurpose.OTHER]: 'Other Document'
+  };
+
+  return docMap[purpose] || purpose.toString();
+}
 
   isImageDocument(purpose: DocumentPurpose): boolean {
     return [
@@ -640,26 +809,7 @@ private async uploadDocuments(
     }
   }
 
-  private async uploadAllDocument(applicationId: number): Promise<void> {
-    const uploadPromises = this.submissionForm.documents.map(doc => {
-      const formData = new FormData();
-      formData.append('file', doc.file);
-      formData.append('documentPurpose', doc.type);
-      formData.append('fileType', this.getFileType(doc.file));
 
-      return this.http.post(
-        `${environmentApplication.api}/applications/${applicationId}/documents/upload`, 
-        formData
-      ).toPromise();
-    });
-
-    try {
-      await Promise.all(uploadPromises);
-    } catch (error) {
-      console.error('Error uploading documents:', error);
-      // Continue even if some documents fail to upload
-    }
-  }
   
   private getFileType(file: File): FileType {
     const type = file.type.split('/')[0];
@@ -741,13 +891,33 @@ private async uploadDocuments(
     });
   }
 
-  isDocumentUploaded(docType: DocumentPurpose): boolean {
-    return this.submissionForm.documents.some(d => d.type === docType);
+isDocumentUploaded(docType: DocumentPurpose): boolean {
+  // Check both local submission and complete app documents
+  const localUpload = this.submissionForm.documents.some(d => d.type === docType);
+  const serverUpload = this.completeApp?.uploadedDocuments?.some(d => d.purpose === docType);
+  
+  return localUpload || serverUpload || false;
+}
+
+// Helper method to get uploaded document
+getUploadedDocument(docType: DocumentPurpose): any {
+  // First check local submission
+  const localDoc = this.submissionForm.documents.find(d => d.type === docType);
+  if (localDoc) return localDoc;
+
+  // Then check server documents
+  if (this.completeApp?.uploadedDocuments) {
+    const serverDoc = this.completeApp.uploadedDocuments.find(d => d.purpose === docType);
+    if (serverDoc) {
+      return {
+        type: serverDoc.purpose,
+        file: { name: this.getDocumentName(serverDoc.purpose) }
+      };
+    }
   }
 
-  getUploadedDocument(docType: DocumentPurpose): { type: DocumentPurpose; file: File } | undefined {
-    return this.submissionForm.documents.find(d => d.type === docType);
-  }
+  return null;
+}
 
   removeDocument(docType: DocumentPurpose): void {
     this.submissionForm.documents = this.submissionForm.documents.filter(d => d.type !== docType);
@@ -863,5 +1033,21 @@ private async uploadDocuments(
 
   getImagePreview(file: File): string {
     return URL.createObjectURL(file);
+  }
+}export class DateUtils {
+  static parseVehicleResponseDates(vehicle: VehicleResponse): VehicleResponse {
+    return {
+      ...vehicle,
+      creationDate: new Date(vehicle.creationDate)
+    };
+  }
+
+  static prepareVehicleForRequest(vehicle: Partial<VehicleResponse>): any {
+    return {
+      ...vehicle,
+      creationDate: vehicle.creationDate instanceof Date ? 
+                   vehicle.creationDate.toISOString() : 
+                   vehicle.creationDate
+    };
   }
 }

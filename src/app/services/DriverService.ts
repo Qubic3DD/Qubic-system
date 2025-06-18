@@ -10,7 +10,7 @@ import { DriverProfile } from '../api/Response/interfaces';
 })
 export class DriverService {
 
-  private apiUrl = 'http://192.168.8.100:8443/profile/drivers';
+  private apiUrl = 'http://41.76.110.219:8443/profile/drivers';
 
   constructor(private http: HttpClient) {}
 

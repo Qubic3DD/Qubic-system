@@ -4,29 +4,31 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { VehicleInfo2, VehicleInfo } from '../../api/Response/interfaces';
 import { ConfirmDialogComponent } from '../../pages/campaign/confirm-dialog/confirm-dialog.component';
 import { VehicleService } from '../../services/vehicle.service';
 import { CommonModule } from '@angular/common';
-
+import { VehicleInformation } from '../../model/adverrtiser.model';
 @Component({
   selector: 'app-vehicles',
+  standalone: true,
   templateUrl: './vehicles.component.component.html',
   styleUrls: ['./vehicles.component.component.css'],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule], // Add ReactiveFormsModule here
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class VehiclesComponentFleet implements OnInit {
-  vehicles: VehicleInfo2[] = [];
+  vehicles: VehicleInformation[] = [];
   isLoading = false;
+  isSaving = false;
+  isDeleting = false;
   error: string | null = null;
   searchEmail = '';
   isAddingVehicle = false;
-  vehicleForm: FormGroup;
-  currentVehicle: VehicleInfo2 | null = null;
+  currentVehicle: VehicleInformation | null = null;
 
-  // Vehicle types for dropdown
-  vehicleTypes = ['Sedan', 'SUV', 'Truck', 'Van', 'Motorcycle', 'Bus', 'Other'];
-  transportTypes = ['Personal', 'Commercial', 'Rental', 'Public', 'Other'];
+  vehicleForm: FormGroup;
+
+  vehicleTypes = ['Sedan', 'SUV', 'Truck', 'Van', 'Motorcycle', 'Bus', 'Other'] as const;
+  transportTypes = ['Personal', 'Commercial', 'Rental', 'Public', 'Other'] as const;
 
   constructor(
     private vehicleService: VehicleService,
@@ -35,32 +37,31 @@ export class VehiclesComponentFleet implements OnInit {
     private dialog: MatDialog
   ) {
     this.vehicleForm = this.fb.group({
-      capacity: ['', Validators.required],
+      capacity: ['', [Validators.required, Validators.min(1)]],
       colour: ['', Validators.required],
-      licenseRegistrationNo: ['', Validators.required],
+      licenseRegistrationNo: ['', [Validators.required, Validators.pattern(/^[A-Z0-9-]+$/)]],
       transportType: ['', Validators.required],
       vehicleType: ['', Validators.required],
       make: [''],
       model: [''],
-      year: [null],
+      year: [null, [Validators.min(1900), Validators.max(new Date().getFullYear())]],
       plateNumber: [''],
       public: [false]
     });
   }
 
-  ngOnInit(): void {
-    // Optionally load vehicles for current user on init
-  }
+  ngOnInit(): void {}
 
   fetchVehiclesByEmail(): void {
-    if (!this.searchEmail) {
+    if (!this.searchEmail.trim()) {
       this.error = 'Please enter a valid email address';
       return;
     }
 
     this.isLoading = true;
     this.error = null;
-    this.vehicleService.getVehiclesByUserEmail(this.searchEmail).subscribe({
+    
+    this.vehicleService.getVehiclesByUserEmail(this.searchEmail.trim()).subscribe({
       next: (vehicles) => {
         this.vehicles = vehicles;
         this.isLoading = false;
@@ -78,7 +79,7 @@ export class VehiclesComponentFleet implements OnInit {
     this.isAddingVehicle = true;
   }
 
-  startEditVehicle(vehicle: VehicleInfo2): void {
+  startEditVehicle(vehicle: VehicleInformation): void {
     this.currentVehicle = vehicle;
     this.vehicleForm.patchValue(vehicle);
     this.isAddingVehicle = true;
@@ -87,46 +88,49 @@ export class VehiclesComponentFleet implements OnInit {
   cancelEdit(): void {
     this.isAddingVehicle = false;
     this.currentVehicle = null;
-    this.vehicleForm.reset();
+    this.vehicleForm.reset({ public: false });
   }
 
   submitVehicle(): void {
     if (this.vehicleForm.invalid) {
+      this.vehicleForm.markAllAsTouched();
       return;
     }
 
-    const vehicleData = this.vehicleForm.value;
-    const request = this.currentVehicle
-      ? this.vehicleService.updateVehicle(this.currentVehicle.id!, { ...this.currentVehicle, ...vehicleData })
-      : this.vehicleService.addVehicle({ ...vehicleData, userInformationId: null, creationDate: new Date().toISOString() });
+    this.isSaving = true;
+    const vehicleData = this.vehicleForm.value as VehicleInformation;
 
-    request.subscribe({
-      next: (vehicle) => {
-        this.snackBar.open(`Vehicle ${this.currentVehicle ? 'updated' : 'added'} successfully!`, 'Close', {
-          duration: 3000,
-          panelClass: ['bg-green-500', 'text-white', 'dark:bg-green-700']
-        });
-        if (this.searchEmail) {
-          this.fetchVehiclesByEmail();
-        }
-        this.isAddingVehicle = false;
-        this.currentVehicle = null;
+    if (this.currentVehicle) {
+      vehicleData.id = this.currentVehicle.id;
+    }
+
+    this.vehicleService.saveVehicle(vehicleData).subscribe({
+      next: () => {
+        this.showSuccess(`Vehicle ${this.currentVehicle ? 'updated' : 'added'} successfully!`);
+        this.resetAfterSave();
       },
       error: (err) => {
-        this.snackBar.open(err.message || 'Failed to save vehicle', 'Close', {
-          duration: 3000,
-          panelClass: ['bg-red-500', 'text-white', 'dark:bg-red-700']
-        });
+        this.showError(err.message || 'Failed to save vehicle');
+        this.isSaving = false;
       }
     });
   }
 
-  confirmDelete(vehicle: VehicleInfo2): void {
+  private resetAfterSave(): void {
+    this.isSaving = false;
+    this.isAddingVehicle = false;
+    this.currentVehicle = null;
+    if (this.searchEmail) {
+      this.fetchVehiclesByEmail();
+    }
+  }
+
+  confirmDelete(vehicle: VehicleInformation): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
         title: 'Confirm Delete',
-        message: `Are you sure you want to delete this vehicle (${vehicle.licenseRegistrationNo})?`,
+        message: `Are you sure you want to delete ${vehicle.licenseRegistrationNo}?`,
         confirmText: 'Delete',
         cancelText: 'Cancel'
       }
@@ -140,26 +144,37 @@ export class VehiclesComponentFleet implements OnInit {
   }
 
   deleteVehicle(id: number): void {
+    this.isDeleting = true;
     this.vehicleService.deleteVehicle(id).subscribe({
       next: () => {
-        this.snackBar.open('Vehicle deleted successfully!', 'Close', {
-          duration: 3000,
-          panelClass: ['bg-green-500', 'text-white', 'dark:bg-green-700']
-        });
+        this.showSuccess('Vehicle deleted successfully!');
         if (this.searchEmail) {
           this.fetchVehiclesByEmail();
         }
+        this.isDeleting = false;
       },
       error: (err) => {
-        this.snackBar.open(err.message || 'Failed to delete vehicle', 'Close', {
-          duration: 3000,
-          panelClass: ['bg-red-500', 'text-white', 'dark:bg-red-700']
-        });
+        this.showError(err.message || 'Failed to delete vehicle');
+        this.isDeleting = false;
       }
     });
   }
 
-  trackByVehicleId(index: number, vehicle: VehicleInfo2): number {
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: ['bg-green-500', 'text-white', 'dark:bg-green-700']
+    });
+  }
+
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: ['bg-red-500', 'text-white', 'dark:bg-red-700']
+    });
+  }
+
+  trackByVehicleId(index: number, vehicle: VehicleInformation): number {
     return vehicle.id!;
   }
 }

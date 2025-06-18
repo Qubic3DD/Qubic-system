@@ -126,7 +126,7 @@ Math = Math;
   fetchDriver(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<ApiResponse<DriverProfile>>(`http://192.168.8.100:8443/profile/retrieve/${encodedEmail}`).pipe(
+    this.http.get<ApiResponse<DriverProfile>>(`http://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching fleet owner:', error);
         this.error = `Failed to load fleet owner profile ${email}`;
@@ -162,7 +162,7 @@ Math = Math;
 
 
 fetchRecentActivity(driverId: string): void {
-  this.http.get<any[]>(`http://192.168.8.100:8443/activity/${driverId}`)
+  this.http.get<any[]>(`http://41.76.110.219:8443/activity/${driverId}`)
     .pipe(
       catchError(() => of([]))
     )
@@ -176,7 +176,7 @@ fetchRecentActivity(driverId: string): void {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://192.168.8.100:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   getInitials(name: string): string {

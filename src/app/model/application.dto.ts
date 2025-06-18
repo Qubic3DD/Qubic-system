@@ -14,6 +14,7 @@ gender: any;
   firstName: string;
   lastName: string;
   fleetSize: number;
+  yearsOfExperience: number | 0;
   
   roles: Role[];
  submissionDate: string | Date;  // Allow both string and Date types
@@ -83,7 +84,7 @@ gender: any;
   subscriptionExpiry?: string;
 
   // Documents
-  documents?: ApplicationDocument[];
+  uploadedDocuments?: UploadedDocuments[];
   vehicleInformation?: VehicleInformation[];
 }
 
@@ -95,4 +96,15 @@ export interface ApplicationDocument {
   purpose: DocumentPurpose;
   uploadedDate: Date;
 }
+export interface UploadedDocuments {
+  id: number;
+  name?: string;
+  fileType?: string;
+  filePath?:string;
+  url?: string;
+  userInformationId?:number;
+  purpose: DocumentPurpose;
+  creationDate: Date;
+}
+
 

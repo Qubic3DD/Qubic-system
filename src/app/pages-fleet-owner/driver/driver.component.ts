@@ -52,14 +52,14 @@ export class DriverComponentFleet implements OnInit {
   }
 
   fetchDriversd(): Observable<DriverProfile[]> {
-  return this.http.get<any>('http://192.168.8.100:8443/profile/fleet-owners/3/drivers').pipe(
+  return this.http.get<any>('http://41.76.110.219:8443/profile/fleet-owners/3/drivers').pipe(
     map((response: { data: any; }) => response.data) // extract data here
   );
 }
 
 fetchDrivers(): void {
   this.isLoading = true;
-  this.http.get<any>('http://192.168.8.100:8443/profile/fleet-owners/3/drivers').subscribe({
+  this.http.get<any>('http://41.76.110.219:8443/profile/fleet-owners/3/drivers').subscribe({
     next: (response) => {
       this.drivers = response.data;
       this.filteredDrivers = [...this.drivers];
@@ -85,7 +85,7 @@ fetchDrivers(): void {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://192.168.8.100:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
     getInitials(name: string): string {
   if (!name) return '';
@@ -151,7 +151,7 @@ openAddDriverModal(): void {
   addDriver(): void {
     this.isLoading = true;
     this.http
-      .post<any>('http://192.168.8.100:8443/profile/drivers', this.newDriver)
+      .post<any>('http://41.76.110.219:8443/profile/drivers', this.newDriver)
       .subscribe({
         next: () => {
           this.fetchDrivers();
@@ -174,7 +174,7 @@ openAddDriverModal(): void {
     if (confirm('Are you sure you want to delete this driver?')) {
       this.isLoading = true;
       this.http
-        .delete(`http://192.168.8.100:8443/profile/drivers/${id}`)
+        .delete(`http://41.76.110.219:8443/profile/drivers/${id}`)
         .subscribe({
           next: () => {
             this.fetchDrivers();

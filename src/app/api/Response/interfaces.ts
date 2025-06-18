@@ -1,3 +1,5 @@
+import { VehicleInformation } from "../../model/adverrtiser.model";
+
 // interfaces.ts
 export interface ApiResponse<T> {
   token: string | null;
@@ -35,23 +37,13 @@ export interface DriverProfile {
   bio: string;
   rating: number | null;
   languages: string[];
-  vehicleInformation: VehicleInfo[];
+  vehicleInformation: VehicleInformation[];
   uploadedDocuments: UserDocument[]; // Consider creating a specific interface for documents
   uploadedMediaFiles: UserDocument[]; // Consider creating a specific interface for media files
   idno: string | null;
   company: boolean;
 }
 
-export interface VehicleInfo {
-  capacity: string;
-  colour: string;
-  licenseRegistrationNo: string;
-  creationDate: string | null;
-  transportType: string;
-  vehicleType: string;
-  userInformationId: number | null;
-  public: boolean;
-}
 
 
 export interface UserDocument {
@@ -65,22 +57,7 @@ export interface UserDocument {
   documentPurpose: string;
   downloadUrl?: string;
 }
-// vehicle.model.ts
-export interface VehicleInfo2 {
-  id?: number;
-  capacity: string;
-  colour: string;
-  licenseRegistrationNo: string;
-  creationDate: string | null;
-  transportType: string;
-  vehicleType: string;
-  userInformationId: number | null;
-  public: boolean;
-  make?: string;
-  model?: string;
-  year?: number;
-  plateNumber?: string;
-}
+
 export interface UserDocument {
   id: number;
   name: string;

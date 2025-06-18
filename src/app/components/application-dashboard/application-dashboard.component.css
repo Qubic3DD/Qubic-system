@@ -53,3 +53,28 @@ input[type="file"] + label {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
+
+.document-item {
+  transition: all 0.2s ease;
+}
+
+.document-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.document-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background-color: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+}
+
+.dark .document-icon {
+  background-color: rgba(165, 180, 252, 0.1);
+  color: #a5b4fc;
+}

@@ -1,8 +1,8 @@
 export enum TransportType {
-  TAXI = 'Taxi',
-  BUS = 'Bus',
-  BOLT = 'Bolt',
-  UBER = 'Uber',
-  InDRIVE = 'InDrive',
-  OTHER = 'Other'
+  TAXI = 'TAXI',
+  BUS = 'BUS',
+  BOLT = 'BOLT',
+  UBER = 'UBER',
+  INDRIVE = 'INDRIVE',
+  OTHER = 'OTHER'
 }

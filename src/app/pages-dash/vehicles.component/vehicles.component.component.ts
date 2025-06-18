@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { VehicleInfo2, VehicleInfo } from '../../api/Response/interfaces';
+
 import { ConfirmDialogComponent } from '../../pages/campaign/confirm-dialog/confirm-dialog.component';
 import { VehicleService } from '../../services/vehicle.service';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs/operators';
+import { VehicleInformation } from '../../model/adverrtiser.model';
 
 @Component({
   selector: 'app-vehicles',
@@ -16,13 +17,13 @@ import { finalize } from 'rxjs/operators';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class VehiclesComponent implements OnInit {
-  vehicles: VehicleInfo2[] = [];
+  vehicles: VehicleInformation[] = [];
   isLoading = false;
   error: string | null = null;
   searchEmail = '';
   isAddingVehicle = false;
   vehicleForm: FormGroup;
-  currentVehicle: VehicleInfo2 | null = null;
+  currentVehicle: VehicleInformation | null = null;
 
   // Vehicle types for dropdown
   vehicleTypes = ['Sedan', 'SUV', 'Truck', 'Van', 'Motorcycle', 'Bus', 'Other'];
@@ -79,7 +80,7 @@ export class VehiclesComponent implements OnInit {
     this.isAddingVehicle = true;
   }
 
-  startEditVehicle(vehicle: VehicleInfo2): void {
+  startEditVehicle(vehicle: VehicleInformation): void {
     this.currentVehicle = vehicle;
     this.vehicleForm.patchValue({
       ...vehicle,
@@ -126,14 +127,14 @@ export class VehiclesComponent implements OnInit {
           this.isAddingVehicle = false;
           this.currentVehicle = null;
         },
-        error: (err) => {
+        error: (err: { error: { message: any; }; message: any; }) => {
           const errorMsg = err.error?.message || err.message || 'Failed to save vehicle';
           this.showSnackbar(errorMsg, 'error');
         }
       });
   }
 
-  confirmDelete(vehicle: VehicleInfo2): void {
+  confirmDelete(vehicle: VehicleInformation): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
@@ -188,7 +189,7 @@ export class VehiclesComponent implements OnInit {
     });
   }
 
-  trackByVehicleId(index: number, vehicle: VehicleInfo2): number {
+  trackByVehicleId(index: number, vehicle: VehicleInformation): number {
     return vehicle.id!;
   }
 

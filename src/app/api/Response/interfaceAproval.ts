@@ -1,3 +1,6 @@
+import { TransportType } from "../../services/transport-type.enum";
+import { VehicleType } from "../../services/vehicle-type.enum";
+
 export interface ApiResponse<T> {
   token: string | null;
   data: T;
@@ -124,14 +127,17 @@ export interface UserDocuments {
   downloadUrl?: string;
 }
 
-
-export interface VehicleInformationRequest {
+interface VehicleInformationRequest {
   capacity: string;
   colour: string;
   licenseRegistrationNo: string;
-  creationDate: string | null;
-  transportType: string;
-  vehicleType: string;
-  userInformationId: number | null;
-  public: boolean;
+  isPublic: boolean;
+  creationDate: string;
+  transportType: TransportType;
+  vehicleType: VehicleType;
+  userInformationId: number;
+  make?: string;
+  model?: string;
+  year?: string;
+  plateNumber?: string;
 }

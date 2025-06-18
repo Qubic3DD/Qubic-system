@@ -57,6 +57,6 @@ export class CampaignDetailsComponent implements OnInit {
     );
   }
   getCampaignVideoUrl(id: number): string {
-    return `http://192.168.8.100:8443/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
+    return `http://41.76.110.219:8443/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
   }
 }

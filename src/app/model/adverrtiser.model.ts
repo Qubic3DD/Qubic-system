@@ -1,3 +1,7 @@
+import { TransportType } from "../services/transport-type.enum";
+import { VehicleType } from "../services/vehicle-type.enum";
+import { VehicleImageResponse } from "../services/vehicle.service";
+
 export interface Advertiser {
   id:number;
 accountId: number;
@@ -34,15 +38,23 @@ accountId: number;
   company: boolean;
 }
 export interface VehicleInformation {
-  capacity: string;
-  colour: string;
-  licenseRegistrationNo: string;
-  creationDate: string | null;
-  transportType: string | null;
-  vehicleType: string | null;
-  userInformationId: number | null;
-  public: boolean;
+  id?: number;
+  licensePlate?: string;
+  color?: string;
+  capacity?: string;
+  isPublic?: boolean;
+  vehicleType?: VehicleType;
+  transportType?: TransportType;
+  userInformationId?: number;
+  year?: string;
+  make?: string ;
+  model?: string;
+  creationDate?: string;
+  vehicleImages?: VehicleImageResponse[];
+  licenseRegistrationNo?:string;
+  vehicleImageUrl?:string | null;
 }
+
 export interface UploadedDocument {
   id: number;
   name: string;

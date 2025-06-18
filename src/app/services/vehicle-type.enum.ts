@@ -1,8 +1,8 @@
 export enum VehicleType {
-  HATCH = 'Hatchback',
-  SEDAN = 'Sedan',
+  HATCH = 'HATCHBACK',
+  SEDAN = 'SEDAN',
   SUV = 'SUV',
-  TAXI = 'Taxi',
-  BUS = 'Bus',
-  MINI_BUS = 'Mini Bus'
+  TAXI = 'TAXI',
+  BUS = 'BUS',
+  MINI_BUS = 'MINI BUS'
 }
