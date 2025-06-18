@@ -158,7 +158,7 @@ onImageError(email: string) {
   }
 
   editDriver(driver: any) {
-    this.router.navigate(['/drivers/edit', driver.email]);
+    this.router.navigate(['/driver-dashboard/edit', driver.email]);
   }
 
 

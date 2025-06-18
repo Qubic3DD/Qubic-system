@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -25,6 +25,7 @@ import { CampaignComponentAdvertiser } from '../../campaign/campaign.component';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Pipe, PipeTransform } from '@angular/core';
 import { TruncatePipe } from './truncate.pipe';
+import { DriverProfile } from '../../../api/Response/interfaces';
 @Component({
   selector: 'app-view-advertiser',
   standalone: true,
@@ -61,7 +62,9 @@ export class ViewAdvertiserComponentDetatils implements OnInit {
   revenueChart: any;
   campaignStatusChart: any;
   activeTabIndex = 0;
-
+  driver: DriverProfile | null = null;
+  recentActivity: any[] = [];
+  asvertiserId: number | null =null;
   // Analytics data
   view: [number, number] = [700, 400];
   showXAxis = true;
@@ -107,21 +110,67 @@ export class ViewAdvertiserComponentDetatils implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const username = params['username'];
-      if (username) {
-        this.fetchAdvertiser(username);
+ const email = localStorage.getItem('userEmail');
+    if (email) {
+      if (email) {
+         this.fetchDriver(email);
+        this.fetchAdvertiser(email);
         this.fetchCampaigns();
-      } else {
-        this.error = 'No username provided';
-        this.isLoading = false;
+} else {
+      this.error = 'No user email found in storage';
+      this.isLoading = false;
       }
-    });
-  }
+      }  }
 
   hasValidImageUrl(email: string): boolean {
     const url = this.getDocumentUrlByUsernameAndPurpose(email, 'PROFILE_PICTURE');
     return !!url && url.trim() !== '';
+  }
+
+fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
+    // Remove encodeURIComponent here - we'll do it in fetchDriver
+    return this.http.get<ApiResponse<DriverProfile>>(
+      `http://41.76.110.219:8443/profile/retrieve/${email}`
+    );
+}
+
+
+  fetchDriver(email: string): void {
+      this.isLoading = true;
+      const encodedEmail = encodeURIComponent(email); // Encode only once here
+      this.fetchpro(encodedEmail).pipe(
+        catchError(error => {
+          console.error('Error fetching driver:', error);
+          this.error = `Failed to load driver profile ${email}`;
+          this.isLoading = false;
+          return of(null);
+        })
+      ).subscribe((response: ApiResponse<DriverProfile> | null) => {
+        if (response && response.data) {
+          this.driver = response.data;
+          this.asvertiserId = response.data.id;
+          console.log('Advertiser ID:', this.asvertiserId); // Debug print
+          this.loadCampaigns();
+          this.isLoading = false;
+        } else {
+          this.error = 'No data received from server';
+          this.isLoading = false;
+        }
+      });
+  }
+  loadCampaigns(): void {
+    this.isLoading = true;
+    this.campaignService.getCampaignsByAdvertiserId(this.asvertiserId!).subscribe({
+      next: (response) => {
+        this.campaigns = response.data;
+        this.filterCampaigns();
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching campaigns:', err);
+        this.isLoading = false;
+      },
+    });
   }
 
   getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
@@ -265,9 +314,6 @@ export class ViewAdvertiserComponentDetatils implements OnInit {
     });
   }
 
-  editAdvertiser(advertiser: any) {
-    this.router.navigate(['/advertisers/edit', advertiser.email]);
-  }
 
   downloadDocument(documentId: string): void {
     this.snackBar.open('Downloading document...', 'Close', {

@@ -46,27 +46,17 @@
     </div>
 
     <!-- Date Range Fields -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
-        <input type="date" formControlName="startDate" required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
-        <p *ngIf="campaignForm.get('startDate')?.hasError('required') && formSubmitted" 
-           class="mt-1 text-sm text-red-600">
-          Start date is required
-        </p>
-      </div>
+  <div class="space-y-2">
+  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
+  <input type="date" formControlName="startDate" required
+    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+</div>
 
-      <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
-        <input type="date" formControlName="endDate" required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
-        <p *ngIf="campaignForm.get('endDate')?.hasError('required') && formSubmitted" 
-           class="mt-1 text-sm text-red-600">
-          End date is required
-        </p>
-      </div>
-    </div>
+<div class="space-y-2">
+  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
+  <input type="date" formControlName="endDate" required
+    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+</div>
 <div class="space-y-6">
   <!-- Province Selector -->
   <div class="space-y-2">

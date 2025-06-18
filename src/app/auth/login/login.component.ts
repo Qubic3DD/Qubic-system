@@ -103,7 +103,7 @@ export class LoginComponent {
   }
 
   private fetchProfile(email: string) {
-    this.http.get(`http://localhost:8443/profile/retrieve/${encodeURIComponent(email)}`)
+    this.http.get(`http://41.76.110.219:8443/profile/retrieve/${encodeURIComponent(email)}`)
       .subscribe({
         next: (profileResponse: any) => {
           this.isLoading = false;

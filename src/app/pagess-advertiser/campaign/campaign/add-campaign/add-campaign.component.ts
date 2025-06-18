@@ -15,15 +15,14 @@ import { FileSizePipe } from './file-size.pipe';
   selector: 'app-add-campaign',
   templateUrl: './add-campaign.component.html',
   styleUrls: ['./add-campaign.component.css'],
-  imports: [FormsModule, CommonModule, FileSizePipe, ReactiveFormsModule,],
+  imports: [FormsModule, CommonModule, FileSizePipe, ReactiveFormsModule],
   standalone: true,
 })
 export class AddCampaignComponent implements OnInit {
   campaignForm: FormGroup;
   advertisers: Advertiser[] = [];
-  provinces: any[] = [];
-  cities: any[] = [];
-  allCities: any[] = []; // Store all cities for filtering
+  provinces: Province[] = [];
+  allCities: City[] = []; // Store all cities for filtering
   selectedFile: File | null = null;
   isLoading = false;
   loadingAdvertisers = false;
@@ -35,14 +34,16 @@ export class AddCampaignComponent implements OnInit {
   fileTypes = Object.values(FileType);
   documentPurposes = Object.values(DocumentPurpose);
   loggedInAdvertiserEmail: string | null = null;
+  
+  // Dropdown controls
   showProvinceDropdown = false;
-showCityDropdown = false;
-provinceSearch = '';
-citySearch = '';
-filteredProvinces: Province[] = [];
-filteredCities: City[] = [];
-selectedProvinces: number[] = [];
-selectedCities: number[] = [];
+  showCityDropdown = false;
+  provinceSearch = '';
+  citySearch = '';
+  filteredProvinces: Province[] = [];
+  filteredCities: City[] = [];
+  selectedProvinces: number[] = [];
+  selectedCities: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -59,8 +60,8 @@ selectedCities: number[] = [];
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       requiredImpressions: [1000, [Validators.required, Validators.min(1000)]],
-      provinceId: [[], Validators.required],
-      cityId: [[], Validators.required],
+      provinceId: [[]], // Made optional by removing Validators.required
+      cityId: [[]],     // Made optional by removing Validators.required
       mediaFileType: [FileType.VIDEO, Validators.required],
       documentPurpose: [DocumentPurpose.CAMPAIGN_VIDEO, Validators.required]
     });
@@ -69,9 +70,8 @@ selectedCities: number[] = [];
   ngOnInit(): void {
     this.loadAdvertisers();
     this.loadAllProvinces();
-    this.loadAllCities(); // Load all cities upfront
-    this.filteredProvinces = [...this.provinces];
-this.filteredCities = [...this.cities];
+    this.loadAllCities();
+    
     this.campaignForm.get('requiredImpressions')?.valueChanges.subscribe(val => {
       this.calculatePrice(val);
     });
@@ -83,13 +83,9 @@ this.filteredCities = [...this.cities];
       this.campaignForm.get('advertiserId')?.setValue(storedUserId);
     }
     this.loggedInAdvertiserEmail = storedUserEmail;
-
-    // Watch for province changes to filter cities
-    this.campaignForm.get('provinceId')?.valueChanges.subscribe(provinceIds => {
-      this.filterCitiesByProvinces(provinceIds);
-    });
   }
 
+  // Load all advertisers
   loadAdvertisers(): void {
     this.loadingAdvertisers = true;
     this.advertiserService.getAllAdvertisers().subscribe({
@@ -103,120 +99,14 @@ this.filteredCities = [...this.cities];
       }
     });
   }
-toggleProvinceDropdown(): void {
-  this.showProvinceDropdown = !this.showProvinceDropdown;
-  if (this.showProvinceDropdown) {
-    this.showCityDropdown = false;
-  }
-}
 
-toggleCityDropdown(): void {
-  this.showCityDropdown = !this.showCityDropdown;
-  if (this.showCityDropdown) {
-    this.showProvinceDropdown = false;
-  }
-}
-
-filterProvinces(): void {
-  if (!this.provinceSearch) {
-    this.filteredProvinces = [...this.provinces];
-    return;
-  }
-  this.filteredProvinces = this.provinces.filter(province =>
-    province.name.toLowerCase().includes(this.provinceSearch.toLowerCase())
-  );
-}
-
-filterCities(): void {
-  if (!this.citySearch) {
-    this.filteredCities = this.getCitiesForSelectedProvinces();
-    return;
-  }
-  this.filteredCities = this.getCitiesForSelectedProvinces().filter(city =>
-    city.name.toLowerCase().includes(this.citySearch.toLowerCase())
-  );
-}
-
-getCitiesForSelectedProvinces(): City[] {
-  return this.allCities.filter(city => 
-    this.selectedProvinces.includes(city.province.id)
-  );
-}
-
-isProvinceSelected(provinceId: number): boolean {
-  return this.selectedProvinces.includes(provinceId);
-}
-
-isCitySelected(cityId: number): boolean {
-  return this.selectedCities.includes(cityId);
-}
-
-toggleProvinceSelection(provinceId: number): void {
-  if (this.isProvinceSelected(provinceId)) {
-    this.selectedProvinces = this.selectedProvinces.filter(id => id !== provinceId);
-    // Remove cities from deselected province
-    this.selectedCities = this.selectedCities.filter(cityId => {
-      const city = this.allCities.find(c => c.id === cityId);
-      return city?.province.id !== provinceId;
-    });
-  } else {
-    this.selectedProvinces = [...this.selectedProvinces, provinceId];
-  }
-  this.filteredCities = this.getCitiesForSelectedProvinces();
-  this.updateFormValues();
-}
-
-toggleCitySelection(cityId: number): void {
-  if (this.isCitySelected(cityId)) {
-    this.selectedCities = this.selectedCities.filter(id => id !== cityId);
-  } else {
-    this.selectedCities = [...this.selectedCities, cityId];
-  }
-  this.updateFormValues();
-}
-
-getSelectedProvinceLabels(): string {
-  if (this.selectedProvinces.length === 0) return '';
-  if (this.selectedProvinces.length === this.provinces.length) return 'All provinces selected';
-  if (this.selectedProvinces.length > 3) return `${this.selectedProvinces.length} provinces selected`;
-  
-  return this.selectedProvinces
-    .map(id => this.provinces.find(p => p.id === id)?.name)
-    .filter(Boolean)
-    .join(', ');
-}
-
-getSelectedCityLabels(): string {
-  if (this.selectedCities.length === 0) return '';
-  if (this.selectedCities.length > 3) return `${this.selectedCities.length} cities selected`;
-  
-  return this.selectedCities
-    .map(id => {
-      const city = this.allCities.find(c => c.id === id);
-      return city ? `${city.name} (${city.province.name})` : '';
-    })
-    .filter(Boolean)
-    .join(', ');
-}
-
-getProvinceName(provinceId: number): string {
-  return this.provinces.find(p => p.id === provinceId)?.name || '';
-}
-
-updateFormValues(): void {
-  this.campaignForm.patchValue({
-    provinceId: this.selectedProvinces,
-    cityId: this.selectedCities
-  });
-}
-
-// Close dropdowns when clicking outside
-
+  // Load all provinces
   loadAllProvinces(): void {
     this.loadingProvinces = true;
     this.provinceService.getAllProvinces().subscribe(
       (data) => {
         this.provinces = data.data;
+        this.filteredProvinces = [...this.provinces];
         this.loadingProvinces = false;
       },
       (error) => {
@@ -226,11 +116,13 @@ updateFormValues(): void {
     );
   }
 
+  // Load all cities
   loadAllCities(): void {
     this.loadingCities = true;
     this.cityService.getAllCities().subscribe(
       (data) => {
         this.allCities = data.data;
+        this.filteredCities = this.getCitiesForSelectedProvinces();
         this.loadingCities = false;
       },
       (error) => {
@@ -240,22 +132,141 @@ updateFormValues(): void {
     );
   }
 
-  filterCitiesByProvinces(provinceIds: number[]): void {
-    if (!provinceIds || provinceIds.length === 0) {
-      this.cities = [];
-      this.campaignForm.get('cityId')?.setValue([]);
+  // Toggle province dropdown
+  toggleProvinceDropdown(): void {
+    this.showProvinceDropdown = !this.showProvinceDropdown;
+    if (this.showProvinceDropdown) {
+      this.showCityDropdown = false;
+      this.provinceSearch = '';
+      this.filterProvinces();
+    }
+  }
+
+  // Toggle city dropdown
+  toggleCityDropdown(): void {
+    this.showCityDropdown = !this.showCityDropdown;
+    if (this.showCityDropdown) {
+      this.showProvinceDropdown = false;
+      this.citySearch = '';
+      this.filterCities();
+    }
+  }
+
+  // Filter provinces based on search term
+  filterProvinces(): void {
+    if (!this.provinceSearch) {
+      this.filteredProvinces = [...this.provinces];
       return;
     }
-
-    this.cities = this.allCities.filter(city => 
-      provinceIds.includes(city.province.id)
+    this.filteredProvinces = this.provinces.filter(province =>
+      province.name.toLowerCase().includes(this.provinceSearch.toLowerCase())
     );
   }
 
+  // Filter cities based on search term and selected provinces
+  filterCities(): void {
+    let cities = this.getCitiesForSelectedProvinces();
+    
+    if (this.citySearch) {
+      cities = cities.filter(city =>
+        city.name.toLowerCase().includes(this.citySearch.toLowerCase())
+      );
+    }
+    
+    this.filteredCities = cities;
+  }
+
+  // Get cities for currently selected provinces
+  getCitiesForSelectedProvinces(): City[] {
+    if (this.selectedProvinces.length === 0) {
+      return [...this.allCities];
+    }
+    return this.allCities.filter(city => 
+      this.selectedProvinces.includes(city.province.id)
+    );
+  }
+
+  // Check if province is selected
+  isProvinceSelected(provinceId: number): boolean {
+    return this.selectedProvinces.includes(provinceId);
+  }
+
+  // Check if city is selected
+  isCitySelected(cityId: number): boolean {
+    return this.selectedCities.includes(cityId);
+  }
+
+  // Toggle province selection
+  toggleProvinceSelection(provinceId: number): void {
+    if (this.isProvinceSelected(provinceId)) {
+      this.selectedProvinces = this.selectedProvinces.filter(id => id !== provinceId);
+      // Remove cities from deselected province
+      this.selectedCities = this.selectedCities.filter(cityId => {
+        const city = this.allCities.find(c => c.id === cityId);
+        return city?.province.id !== provinceId;
+      });
+    } else {
+      this.selectedProvinces = [...this.selectedProvinces, provinceId];
+    }
+    this.filteredCities = this.getCitiesForSelectedProvinces();
+    this.updateFormValues();
+  }
+
+  // Toggle city selection
+  toggleCitySelection(cityId: number): void {
+    if (this.isCitySelected(cityId)) {
+      this.selectedCities = this.selectedCities.filter(id => id !== cityId);
+    } else {
+      this.selectedCities = [...this.selectedCities, cityId];
+    }
+    this.updateFormValues();
+  }
+
+  // Update form values with current selections
+  updateFormValues(): void {
+    this.campaignForm.patchValue({
+      provinceId: this.selectedProvinces,
+      cityId: this.selectedCities
+    });
+  }
+
+  // Get labels for selected provinces
+  getSelectedProvinceLabels(): string {
+    if (this.selectedProvinces.length === 0) return 'All provinces (optional)';
+    if (this.selectedProvinces.length === this.provinces.length) return 'All provinces selected';
+    if (this.selectedProvinces.length > 3) return `${this.selectedProvinces.length} provinces selected`;
+    
+    return this.selectedProvinces
+      .map(id => this.provinces.find(p => p.id === id)?.name)
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  // Get labels for selected cities
+  getSelectedCityLabels(): string {
+    if (this.selectedCities.length === 0) return 'All cities in selected provinces (optional)';
+    if (this.selectedCities.length > 3) return `${this.selectedCities.length} cities selected`;
+    
+    return this.selectedCities
+      .map(id => {
+        const city = this.allCities.find(c => c.id === id);
+        return city ? `${city.name} (${city.province.name})` : '';
+      })
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  // Get province name by ID
+  getProvinceName(provinceId: number): string {
+    return this.provinces.find(p => p.id === provinceId)?.name || '';
+  }
+
+  // Calculate campaign price
   calculatePrice(impressions: number): void {
     this.calculatedPrice = (impressions / 1000) * this.pricePer1000;
   }
 
+  // Handle file selection
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -267,62 +278,83 @@ updateFormValues(): void {
     }
   }
 
+  // Remove selected file
   removeFile(): void {
     this.selectedFile = null;
   }
+private formatDateForBackend(date: Date): string {
+  const pad = (n: number) => (n < 10 ? '0' + n : n);
+  const ms = (n: number) => n.toString().padStart(3, '0');
 
-  onSubmit(): void {
-    this.formSubmitted = true;
-    
-    if (this.campaignForm.invalid || !this.selectedFile) {
-      return;
-    }
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+         `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.` +
+         `${ms(date.getMilliseconds())}`;
+}
 
-    this.isLoading = true;
+  // Submit form
+onSubmit(): void {
+  this.formSubmitted = true;
+  
+  if (this.campaignForm.invalid || !this.selectedFile) {
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append('file', this.selectedFile);
-    formData.append('name', this.campaignForm.value.name);
-    formData.append('description', this.campaignForm.value.description);
-    formData.append('startDate', this.campaignForm.value.startDate);
-    formData.append('endDate', this.campaignForm.value.endDate);
-    formData.append('requiredImpressions', this.campaignForm.value.requiredImpressions);
-    formData.append('advertiserId', localStorage.getItem('userId')!);
-    
-    // Append each city ID separately
-    this.campaignForm.value.cityId.forEach((cityId: number) => {
+  this.isLoading = true;
+
+  const startDate = new Date(this.campaignForm.value.startDate);
+  const endDate = new Date(this.campaignForm.value.endDate);
+
+  // Format dates exactly as backend expects
+  const formattedStartDate = this.formatDateForBackend(startDate);
+  const formattedEndDate = this.formatDateForBackend(endDate);
+
+  const formData = new FormData();
+  formData.append('file', this.selectedFile);
+  formData.append('name', this.campaignForm.value.name);
+  formData.append('description', this.campaignForm.value.description);
+  formData.append('startDate', formattedStartDate);
+  formData.append('endDate', formattedEndDate);
+  formData.append('requiredImpressions', this.campaignForm.value.requiredImpressions.toString());
+  formData.append('advertiserId', this.campaignForm.value.advertiserId);
+  // Append each city ID if any are selected
+  if (this.selectedCities.length > 0) {
+    this.selectedCities.forEach(cityId => {
       formData.append('cityId', cityId.toString());
     });
-    
-    // Append each province ID separately
-    this.campaignForm.value.provinceId.forEach((provinceId: number) => {
+  }
+  
+  // Append each province ID if any are selected
+  if (this.selectedProvinces.length > 0) {
+    this.selectedProvinces.forEach(provinceId => {
       formData.append('provinceId', provinceId.toString());
     });
-    
-    formData.append('price', this.calculatedPrice.toString());
-    formData.append('mediaFileType', this.campaignForm.value.mediaFileType);
-    formData.append('documentPurpose', this.campaignForm.value.documentPurpose);
-
-    this.campaignService.createCampaign(formData).subscribe(
-      (response) => {
-        this.isLoading = false;
-        this.router.navigate(['/campaigns']);
-      },
-      (error) => {
-        console.error('Error creating campaign', error);
-        this.isLoading = false;
-      }
-    );
   }
+  
+  formData.append('price', this.calculatedPrice.toString());
+  formData.append('mediaFileType', this.campaignForm.value.mediaFileType);
+  formData.append('documentPurpose', this.campaignForm.value.documentPurpose);
 
-  @HostListener('document:click', ['$event'])
-onClickOutside(event: Event): void {
-  const target = event.target as HTMLElement;
-  if (!target.closest('.relative')) {
-    this.showProvinceDropdown = false;
-    this.showCityDropdown = false;
-  }
+  this.campaignService.createCampaign(formData).subscribe(
+    (response) => {
+      this.isLoading = false;
+      this.router.navigate(['/campaigns']);
+    },
+    (error) => {
+      console.error('Error creating campaign', error);
+      this.isLoading = false;
+    }
+  );
 }
+
+  // Close dropdowns when clicking outside
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative')) {
+      this.showProvinceDropdown = false;
+      this.showCityDropdown = false;
+    }
+  }
 }
 
 export interface City {
@@ -335,4 +367,3 @@ export interface Province {
   id: number;
   name: string;
 }
-

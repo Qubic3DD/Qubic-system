@@ -4,7 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse, DriverProfile, VehicleInfo, UserDocument } from '../../../api/Response/interfaces';
+import { ApiResponse, DriverProfile, UserDocument } from '../../../api/Response/interfaces';
+import { VehicleInformation } from '../../../model/adverrtiser.model';
 
 @Component({
   selector: 'app-edit-profile',
@@ -13,42 +14,43 @@ import { ApiResponse, DriverProfile, VehicleInfo, UserDocument } from '../../../
   templateUrl: './edit-profile.component.component.html',
   styleUrl: './edit-profile.component.component.css',
 })
-export class EditProfileComponentComponent implements OnInit {
+export class EditProfileComponentDrive implements OnInit {
   
  driver: DriverProfile = {
-    accountId: 0,
-    username: '',
-    email: '',
-    fullName: '',
-    profile: '',
-    phoneNo: '',
-    roles: [],
-    userHandle: '',
-    creationDate: '',
-    userInfoId: 0,
-    firstName: '',
-    lastName: '',
-    gender: '',
-    idNumber: '',
-    licenseType: '',
-    dateOfBirth: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
-    serviceInformation: '',
-    companyName: '',
-    website: '',
-    disability: '',
-    bio: '',
-    rating: null,
-    languages: [],
-    vehicleInformation: [],
-    uploadedDocuments: [],
-    uploadedMediaFiles: [],
-    idno: null,
-    company: false
-  };
+   accountId: 0,
+   username: '',
+   email: '',
+   fullName: '',
+   profile: '',
+   phoneNo: '',
+   roles: [],
+   userHandle: '',
+   creationDate: '',
+   userInfoId: 0,
+   firstName: '',
+   lastName: '',
+   gender: '',
+   idNumber: '',
+   licenseType: '',
+   dateOfBirth: '',
+   address: '',
+   city: '',
+   postalCode: '',
+   country: '',
+   serviceInformation: '',
+   companyName: '',
+   website: '',
+   disability: '',
+   bio: '',
+   rating: null,
+   languages: [],
+   vehicleInformation: [],
+   uploadedDocuments: [],
+   uploadedMediaFiles: [],
+   idno: null,
+   company: false,
+   id: 0
+ };
 
   isLoading = false;
   selectedFile: File | null = null;
@@ -295,19 +297,20 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
     return doc ? `http://41.76.110.219:8443/api/v1/files/stream?id=${doc.id}` : '';
   }
 
-  addVehicle(): void {
-    const newVehicle: VehicleInfo = {
-      capacity: '',
-      colour: '',
-      licenseRegistrationNo: '',
-      creationDate: null,
-      transportType: '',
-      vehicleType: '',
-      userInformationId: null,
-      public: true
-    };
-    this.driver.vehicleInformation.push(newVehicle);
-  }
+addVehicle(): void {
+  const newVehicle: VehicleInformation = {
+    capacity: '',
+    color: '',
+    licenseRegistrationNo: '',
+    creationDate: '',
+    transportType: undefined,
+    vehicleType: undefined,
+    userInformationId: 0,
+    isPublic: true
+  };
+  this.driver.vehicleInformation.push(newVehicle);
+}
+
 
   removeVehicle(index: number): void {
     this.driver.vehicleInformation.splice(index, 1);

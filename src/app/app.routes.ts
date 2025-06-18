@@ -25,6 +25,7 @@ import { AddDriverComponent } from './pages-fleet-owner/driver/add-driver/add-dr
 import { AddCampaignComponent } from './pagess-advertiser/campaign/campaign/add-campaign/add-campaign.component';
 import { CampaignComponentAdvertiser } from './pagess-advertiser/campaign/campaign.component';
 import { CampaignDetailsComponent } from './pagess-advertiser/campaign-details/campaign-details.component';
+import { EditProfileComponentDrive } from './pages-dash/driver/edit-profile.component/edit-profile.component.component';
 
 
 export const routes: Routes = [
@@ -50,9 +51,17 @@ export const routes: Routes = [
     data: { role: 'DRIVER' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponentDriver },
+        {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('../app/pages-dash/driver/view-fleet-owner/view-fleet-owner.component').then(
+            (m) => m.ViewDriverProfile
+          ),
+      },
        { path: 'vehicles', component: VehiclesComponent }, // Route for viewing single vehicle
               { path: 'messages', component: MessagesComponentDriver }, // Route for viewing single vehicle
+            { path: 'edit/:email', component: EditProfileComponentDrive },
+
               
        
 
@@ -121,7 +130,13 @@ export const routes: Routes = [
     data: { role: 'ADVERTISER' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponentAdvertiser },
+ {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('../app/pagess-advertiser/advertiser/view-advertiser-owner/view-advertiser-owner.component').then(
+            (m) => m.ViewAdvertiserComponentDetatils
+          ),
+      },
        { path: 'campaigns', component: CampaignComponentAdvertiser }, // Route for viewing single vehicle
         { path: 'messages', component: MessagesComponentAdvertiser }, // Route for viewing single vehicle
           { path: 'add', component: AddCampaignComponent }, 

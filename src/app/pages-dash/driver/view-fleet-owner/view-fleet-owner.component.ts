@@ -69,17 +69,18 @@ export class ViewDriverProfile implements OnInit {
     }
   }
 
-  ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const username = params['username'];
-      if (username) {
-        this.fetchDriver(username);
-        this.initializeCharts();
-      } else {
-        this.error = 'No username provided';
-        this.isLoading = false;
-      }
-    });
+ ngOnInit(): void {
+    // Get email from localStorage instead of route params
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+      this.fetchDriver(email);
+      this.initializeCharts();
+    } else {
+      this.error = 'No user email found in storage';
+      this.isLoading = false;
+      // Optionally redirect to login if no email is found
+      this.router.navigate(['/login']);
+    }
   }
   revenueData = [
     {
@@ -209,9 +210,7 @@ fetchRecentActivity(driverId: string): void {
     }
   }
 
-  editDriver(driver: any): void {
-    this.router.navigate(['/drivers/edit', driver.id]);
-  }
+
 
   downloadDocument(documentId: string): void {
     this.snackBar.open('Downloading document...', 'Close', { duration: 2000 });
