@@ -1,185 +1,221 @@
-.driver-profile-container {
-  position: relative;
-  min-height: 100vh;
-  background-color: #f5f7fa;
-  color: #333;
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* ==================== */
+/* CSS Variables System */
+/* ==================== */
 
-  /* Dark mode styles */
-  &.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-
-    /* Apply dark mode to all child components */
-    .hero-section {
-      background: linear-gradient(135deg, #1a237e, #0d47a1);
-      color: white;
-    }
-
-    mat-card {
-      background-color: #1e1e1e;
-      color: #e0e0e0;
-    }
-
-    .info-card {
-      mat-card-header {
-        background: linear-gradient(to right, #2d2d2d, #1a1a2e);
-      }
-
-      mat-card-title {
-        color: #9fa8da;
-      }
-
-      .card-icon {
-        color: #9fa8da;
-      }
-
-      .info-label {
-        color: #b0b0b0;
-      }
-
-      .info-value {
-        color: #e0e0e0;
-      }
-    }
-
-    .stats-card .stats-grid .stat-item {
-      background-color: #1e1e1e;
-
-      .stat-content {
-        .stat-value {
-          color: #e0e0e0;
-        }
-
-        .stat-label {
-          color: #b0b0b0;
-        }
-      }
-    }
-
-    .language-tag {
-      background: #0d47a1;
-      color: #bbdefb;
-    }
-
-    .documents-list .document-item,
-    .activity-timeline .activity-item {
-      border-bottom-color: #333;
-    }
-
-    .empty-state {
-      color: #757575;
-    }
-
-    /* Add any other dark mode specific styles */
-  }
-}
-
-/* Make sure to update these classes to match your template */
-.loading-overlay {
-  /* ... existing light styles ... */
-
-  .dark-mode & {
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #e0e0e0;
-  }
-}
-
-.error-container {
-  /* ... existing light styles ... */
-
-  .dark-mode & {
-    .error-card {
-      background: #1e1e1e;
-      color: #e0e0e0;
-      
-      .error-title {
-        color: #e0e0e0;
-      }
-      
-      .error-message {
-        color: #b0b0b0;
-      }
-    }
-  }
-}
-.driver-profile-container {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-mat-card {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-.driver-profile-container {
-  position: relative;
-  min-height: 100vh;
-  background-color: #f5f7fa;
+/* Light mode variables */
+:root {
+  /* Base colors */
+  --background-color: #f5f7fa;
+  --card-background: #ffffff;
+  --text-color: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #e0e0e0;
+  --divider-color: #eeeeee;
   
-  /* Dark mode */
-  &.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
+  /* Theme colors */
+  --primary-color: #3f51b5;
+  --primary-light: #757de8;
+  --primary-dark: #002984;
+  --primary-contrast: #ffffff;
+  
+  --accent-color: #ff4081;
+  --accent-light: #ff79b0;
+  --accent-dark: #c60055;
+  --accent-contrast: #ffffff;
+  
+  /* Status colors */
+  --success-color: #4caf50;
+  --success-light: #81c784;
+  --success-dark: #388e3c;
+  
+  --warning-color: #ff9800;
+  --warning-light: #ffb74d;
+  --warning-dark: #f57c00;
+  
+  --error-color: #f44336;
+  --error-light: #e57373;
+  --error-dark: #d32f2f;
+  
+  --info-color: #2196f3;
+  --info-light: #64b5f6;
+  --info-dark: #1976d2;
+  
+  /* UI colors */
+  --hover-color: rgba(0, 0, 0, 0.04);
+  --focus-color: rgba(63, 81, 181, 0.12);
+  --selected-color: rgba(63, 81, 181, 0.08);
+  --disabled-color: rgba(0, 0, 0, 0.26);
+  --disabled-bg: rgba(0, 0, 0, 0.04);
+  
+  /* Elevation */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 5px 15px rgba(0, 0, 0, 0.15);
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  
+  /* Chart colors */
+  --chart-grid: #e0e0e0;
+  --chart-text: #666666;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-text: #333333;
+  
+  /* Status indicators */
+  --status-online: var(--success-color);
+  --status-offline: var(--error-color);
+  --status-pending: var(--warning-color);
+  --status-away: #ffc107;
+  
+  /* Z-index */
+  --z-index-tooltip: 1000;
+  --z-index-dialog: 1100;
+  --z-index-snackbar: 1200;
+}
+
+/* Dark mode variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Base colors */
+    --background-color: #121212;
+    --card-background: #1e1e1e;
+    --text-color: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #757575;
+    --border-color: #333333;
+    --divider-color: #252525;
     
-    .hero-section {
-      background: linear-gradient(135deg, #1a237e, #0d47a1);
-    }
+    /* Theme colors */
+    --primary-color: #7986cb;
+    --primary-light: #aab6fe;
+    --primary-dark: #49599a;
+    --primary-contrast: #121212;
     
-    .info-card {
-      background-color: #1e1e1e;
-      color: #e0e0e0;
-      
-      mat-card-header {
-        background: linear-gradient(to right, #2d2d2d, #1a1a2e);
-      }
-      
-      mat-card-title {
-        color: #9fa8da;
-      }
-      
-      .card-icon {
-        color: #9fa8da;
-      }
-    }
+    --accent-color: #ff80ab;
+    --accent-light: #ffb2d5;
+    --accent-dark: #c94f7c;
+    --accent-contrast: #121212;
     
-    .stats-card .stats-grid .stat-item {
-      background-color: #1e1e1e;
-      
-      .stat-content {
-        .stat-value {
-          color: #e0e0e0;
-        }
-        
-        .stat-label {
-          color: #b0b0b0;
-        }
-      }
-    }
+    /* Status colors */
+    --success-color: #81c784;
+    --success-light: #a5d6a7;
+    --success-dark: #66bb6a;
     
-    .info-grid {
-      .info-label {
-        color: #b0b0b0;
-      }
-      
-      .info-value {
-        color: #e0e0e0;
-      }
-    }
+    --warning-color: #ffb74d;
+    --warning-light: #ffcc80;
+    --warning-dark: #ffa726;
     
-    .language-tag {
-      background: #0d47a1;
-      color: #bbdefb;
-    }
+    --error-color: #e57373;
+    --error-light: #ef9a9a;
+    --error-dark: #ef5350;
     
-    .documents-list .document-item,
-    .activity-timeline .activity-item {
-      border-bottom-color: #333;
-    }
+    --info-color: #64b5f6;
+    --info-light: #90caf9;
+    --info-dark: #42a5f5;
     
-    .empty-state {
-      color: #757575;
-    }
+    /* UI colors */
+    --hover-color: rgba(255, 255, 255, 0.04);
+    --focus-color: rgba(121, 134, 203, 0.24);
+    --selected-color: rgba(121, 134, 203, 0.16);
+    --disabled-color: rgba(255, 255, 255, 0.3);
+    --disabled-bg: rgba(255, 255, 255, 0.04);
+    
+    /* Elevation */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 5px 15px rgba(0, 0, 0, 0.4);
+    --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    
+    /* Chart colors */
+    --chart-grid: #333333;
+    --chart-text: #a0a0a0;
+    --chart-tooltip-bg: #2d2d2d;
+    --chart-tooltip-text: #e0e0e0;
   }
 }
+
+/* ==================== */
+/* Base Styles */
+/* ==================== */
+
+.driver-profile-container {
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+}
+
+/* ==================== */
+/* Utility Classes */
+/* ==================== */
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+
+.text-success {
+  color: var(--success-color);
+}
+
+.text-warning {
+  color: var(--warning-color);
+}
+
+.text-error {
+  color: var(--error-color);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+  color: var(--primary-contrast);
+}
+
+.bg-accent {
+  background-color: var(--accent-color);
+  color: var(--accent-contrast);
+}
+
+.bg-card {
+  background-color: var(--card-background);
+}
+
+.shadow-card {
+  box-shadow: var(--shadow-md);
+}
+
+.rounded-sm {
+  border-radius: 4px;
+}
+
+.rounded-md {
+  border-radius: 8px;
+}
+
+.rounded-lg {
+  border-radius: 12px;
+}
+
+.border {
+  border: 1px solid var(--border-color);
+}
+
+.divider {
+  border-bottom: 1px solid var(--divider-color);
+}
+
+/* ==================== */
+/* Loading & Error States */
+/* ==================== */
 
 .loading-overlay {
   position: absolute;
@@ -191,68 +227,68 @@ mat-card {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 1000;
+  background-color: rgba(var(--background-color), 0.8);
+  z-index: var(--z-index-tooltip);
   
-  .dark-mode & {
-    background-color: rgba(0, 0, 0, 0.7);
+  .loading-spinner {
+    color: var(--primary-color);
+  }
+  
+  .loading-text {
+    margin-top: 16px;
+    color: var(--text-color);
   }
 }
 
 .error-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 2rem;
   
   .error-card {
     max-width: 500px;
     width: 100%;
     padding: 2rem;
-    text-align: center;
-    background: white;
+    background-color: var(--card-background);
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    
-    .dark-mode & {
-      background: #1e1e1e;
-      color: #e0e0e0;
-    }
+    box-shadow: var(--shadow-md);
+    text-align: center;
     
     .error-icon {
       font-size: 48px;
       width: 48px;
       height: 48px;
-      color: #f44336;
+      color: var(--error-color);
+      margin-bottom: 1rem;
     }
     
     .error-title {
-      margin: 1rem 0 0.5rem;
-      color: #333;
-      
-      .dark-mode & {
-        color: #e0e0e0;
-      }
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
     }
     
     .error-message {
-      color: #666;
+      color: var(--text-secondary);
       margin-bottom: 1.5rem;
-      
-      .dark-mode & {
-        color: #b0b0b0;
-      }
     }
   }
 }
 
+/* ==================== */
+/* Hero Section */
+/* ==================== */
+
 .hero-section {
   position: relative;
   margin-bottom: 2rem;
-  background: linear-gradient(135deg, #3f51b5, #2196f3);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
   color: white;
   border-radius: 0 0 20px 20px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   
   .hero-background {
     position: absolute;
@@ -261,6 +297,8 @@ mat-card {
     right: 0;
     bottom: 0;
     opacity: 0.1;
+    background-size: cover;
+    background-position: center;
   }
   
   .hero-content {
@@ -294,8 +332,8 @@ mat-card {
     border-radius: 50%;
     border: 4px solid rgba(255, 255, 255, 0.3);
     overflow: hidden;
-    background: #e0e0e0;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background: var(--divider-color);
+    box-shadow: var(--shadow-md);
     
     @media (min-width: 600px) {
       width: 150px;
@@ -316,8 +354,8 @@ mat-card {
       justify-content: center;
       font-size: 2.5rem;
       font-weight: bold;
-      color: #555;
-      background: linear-gradient(135deg, #e0e0e0, #bdbdbd);
+      color: var(--text-secondary);
+      background: linear-gradient(135deg, var(--divider-color), var(--border-color));
       
       @media (min-width: 600px) {
         font-size: 3rem;
@@ -334,29 +372,29 @@ mat-card {
     font-size: 0.7rem;
     font-weight: bold;
     text-transform: uppercase;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-sm);
     
     @media (min-width: 600px) {
       font-size: 0.75rem;
     }
     
     &.status-active {
-      background: #4caf50;
+      background: var(--status-online);
       color: white;
     }
     
     &.status-inactive {
-      background: #f44336;
+      background: var(--status-offline);
       color: white;
     }
     
-    &.status-on-leave {
-      background: #ff9800;
+    &.status-pending {
+      background: var(--status-pending);
       color: white;
     }
     
     &.status-unknown {
-      background: #9e9e9e;
+      background: var(--text-tertiary);
       color: white;
     }
   }
@@ -442,6 +480,10 @@ mat-card {
   }
 }
 
+/* ==================== */
+/* Main Content Layout */
+/* ==================== */
+
 .main-content {
   display: flex;
   flex-direction: column;
@@ -473,30 +515,37 @@ mat-card {
   }
 }
 
+/* ==================== */
+/* Card Components */
+/* ==================== */
+
 .info-card {
   margin-bottom: 1.5rem;
+  background-color: var(--card-background);
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s, box-shadow 0.2s;
   
-  .dark-mode & {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
   }
   
   mat-card-header {
     padding: 1rem 1rem 0;
-    background: linear-gradient(to right, #f5f7fa, #e8eaf6);
+    background: linear-gradient(to right, var(--background-color), var(--primary-light));
     
     mat-card-title {
       display: flex;
       align-items: center;
       font-size: 1.1rem;
       font-weight: 500;
-      color: #3f51b5;
+      color: var(--primary-dark);
       
       .card-icon {
         margin-right: 8px;
-        color: #3f51b5;
+        color: var(--primary-dark);
       }
     }
   }
@@ -515,23 +564,19 @@ mat-card {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1px;
-    background: #e0e0e0;
-    
-    .dark-mode & {
-      background: #333;
-    }
+    background: var(--border-color);
     
     .stat-item {
       display: flex;
       align-items: center;
       padding: 1rem;
-      background: white;
+      background: var(--card-background);
       
       .stat-icon {
         margin-right: 1rem;
         
         mat-icon {
-          color: #3f51b5;
+          color: var(--primary-color);
           font-size: 1.8rem;
           width: auto;
           height: auto;
@@ -542,12 +587,12 @@ mat-card {
         .stat-value {
           font-size: 1.2rem;
           font-weight: 600;
-          color: #333;
+          color: var(--text-color);
         }
         
         .stat-label {
           font-size: 0.8rem;
-          color: #666;
+          color: var(--text-secondary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -555,6 +600,10 @@ mat-card {
     }
   }
 }
+
+/* ==================== */
+/* Info Grid & Lists */
+/* ==================== */
 
 .info-grid {
   display: grid;
@@ -571,13 +620,13 @@ mat-card {
     
     .info-label {
       font-size: 0.8rem;
-      color: #666;
+      color: var(--text-secondary);
       margin-bottom: 2px;
     }
     
     .info-value {
       font-size: 0.95rem;
-      color: #333;
+      color: var(--text-color);
       word-break: break-word;
     }
   }
@@ -588,18 +637,22 @@ mat-card {
   padding: 2px 8px;
   margin-right: 5px;
   margin-bottom: 5px;
-  background: #e3f2fd;
-  color: #1976d2;
+  background: var(--primary-light);
+  color: var(--primary-dark);
   border-radius: 12px;
   font-size: 0.75rem;
 }
+
+/* ==================== */
+/* Document List */
+/* ==================== */
 
 .documents-list {
   .document-item {
     display: flex;
     align-items: center;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--divider-color);
     
     &:last-child {
       border-bottom: none;
@@ -607,7 +660,7 @@ mat-card {
     
     .document-icon {
       margin-right: 1rem;
-      color: #757575;
+      color: var(--text-secondary);
     }
     
     .document-info {
@@ -616,6 +669,7 @@ mat-card {
       .document-name {
         font-weight: 500;
         margin-bottom: 2px;
+        color: var(--text-color);
       }
       
       .document-meta {
@@ -623,17 +677,32 @@ mat-card {
         flex-wrap: wrap;
         gap: 0.5rem;
         font-size: 0.75rem;
-        color: #757575;
+        color: var(--text-secondary);
+      }
+    }
+    
+    .document-actions {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    &:hover {
+      .document-actions {
+        opacity: 1;
       }
     }
   }
 }
 
+/* ==================== */
+/* Activity Timeline */
+/* ==================== */
+
 .activity-timeline {
   .activity-item {
     display: flex;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--divider-color);
     
     &:last-child {
       border-bottom: none;
@@ -643,7 +712,7 @@ mat-card {
       margin-right: 1rem;
       
       mat-icon {
-        color: #3f51b5;
+        color: var(--primary-color);
       }
     }
     
@@ -653,15 +722,20 @@ mat-card {
       .activity-message {
         font-weight: 500;
         margin-bottom: 2px;
+        color: var(--text-color);
       }
       
       .activity-time {
         font-size: 0.75rem;
-        color: #757575;
+        color: var(--text-secondary);
       }
     }
   }
 }
+
+/* ==================== */
+/* Empty States */
+/* ==================== */
 
 .empty-state {
   display: flex;
@@ -669,7 +743,7 @@ mat-card {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  color: #757575;
+  color: var(--text-secondary);
   text-align: center;
   
   mat-icon {
@@ -685,7 +759,65 @@ mat-card {
   }
 }
 
-/* Responsive adjustments */
+/* ==================== */
+/* Material Overrides */
+/* ==================== */
+
+.mat-form-field {
+  width: 100%;
+  
+  .mat-form-field-label {
+    color: var(--text-secondary);
+  }
+  
+  .mat-form-field-underline {
+    background-color: var(--border-color);
+  }
+  
+  .mat-input-element {
+    color: var(--text-color);
+  }
+  
+  &.mat-focused {
+    .mat-form-field-label {
+      color: var(--primary-color);
+    }
+    
+    .mat-form-field-ripple {
+      background-color: var(--primary-color);
+    }
+  }
+}
+
+.mat-button, .mat-raised-button, .mat-stroked-button {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.mat-menu-panel {
+  background-color: var(--card-background);
+  box-shadow: var(--shadow-lg);
+  
+  .mat-menu-item {
+    color: var(--text-color);
+    
+    &:hover {
+      background-color: var(--hover-color);
+    }
+  }
+}
+
+/* ==================== */
+/* Responsive Adjustments */
+/* ==================== */
+
 @media (max-width: 767px) {
   .hero-section .hero-content {
     text-align: center;
@@ -735,4 +867,76 @@ mat-card {
       }
     }
   }
+}
+
+/* ==================== */
+/* Chart Overrides */
+/* ==================== */
+
+ngx-charts-bar-vertical,
+ngx-charts-line-chart,
+ngx-charts-pie-chart {
+  text {
+    fill: var(--chart-text) !important;
+  }
+  
+  .gridline-path {
+    stroke: var(--chart-grid) !important;
+  }
+  
+  .tick {
+    line {
+      stroke: var(--chart-grid) !important;
+    }
+  }
+  
+  .legend-labels {
+    background-color: var(--card-background) !important;
+  }
+  
+  .chart-legend {
+    .legend-label {
+      color: var(--text-color) !important;
+    }
+    
+    .legend-label:hover {
+      color: var(--primary-color) !important;
+    }
+  }
+}
+
+.ngx-charts-tooltip-content {
+  background-color: var(--chart-tooltip-bg) !important;
+  border-color: var(--border-color) !important;
+  color: var(--chart-tooltip-text) !important;
+  
+  .tooltip-label {
+    color: var(--chart-tooltip-text) !important;
+  }
+  
+  .tooltip-val {
+    color: var(--primary-color) !important;
+  }
+}
+
+/* ==================== */
+/* Animation Classes */
+/* ==================== */
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

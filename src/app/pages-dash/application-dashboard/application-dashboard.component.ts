@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { ApplicationDocument, ApplicationDto } from '../../model/application.dto';
+import {  ApplicationDto, UploadedDocuments } from '../../model/application.dto';
 import { environment } from '../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -146,7 +146,7 @@ export class ApplicationDashboardComponent implements OnInit {
     });
   }
 
-  downloadDocument(document: ApplicationDocument): void {
+  downloadDocument(document: UploadedDocuments): void {
     if (document.url) {
       window.open(document.url, '_blank');
     }

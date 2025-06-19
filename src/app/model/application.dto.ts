@@ -88,14 +88,7 @@ gender: any;
   vehicleInformation?: VehicleInformation[];
 }
 
-export interface ApplicationDocument {
-  id: number;
-  name: string;
-  type: string;
-  url: string;
-  purpose: DocumentPurpose;
-  uploadedDate: Date;
-}
+
 export interface UploadedDocuments {
   id: number;
   name?: string;
@@ -103,8 +96,10 @@ export interface UploadedDocuments {
   filePath?:string;
   url?: string;
   userInformationId?:number;
-  purpose: DocumentPurpose;
+  documentPurpose: DocumentPurpose;
   creationDate: Date;
+  campaignId: number;
+
 }
 
 
