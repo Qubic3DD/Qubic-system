@@ -26,6 +26,9 @@ import { AddCampaignComponent } from './pagess-advertiser/campaign/campaign/add-
 import { CampaignComponentAdvertiser } from './pagess-advertiser/campaign/campaign.component';
 import { CampaignDetailsComponent } from './pagess-advertiser/campaign-details/campaign-details.component';
 import { EditProfileComponentDrive } from './pages-dash/driver/edit-profile.component/edit-profile.component.component';
+import { EditFleetProfileComponentComponent } from './pages-fleet-owner/fleet-owners/edit-profile.component/edit-profile.component.component';
+import { EditProfileComponentComponent } from './pages-fleet-owner/driver/edit-profile.component/edit-profile.component.component';
+import { CampaignEditComponent } from './pagess-advertiser/camapign-edit/camapign-edit.component';
 
 
 export const routes: Routes = [
@@ -85,11 +88,21 @@ export const routes: Routes = [
     data: { role: 'FLEET_OWNER' },
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponentFleet },
+     
        { path: 'drivers', component: DriverComponentFleet }, // Route for viewing single vehicle
         { path: 'vehicles', component: VehiclesComponentFleet }, // Route for viewing single vehicle
          { path: 'tablets', component: TabletComponentFleet }, // Route for viewing single vehicle
+           { path: 'messages', component: MessagesComponentFleet}, // Route for viewing single vehicle
+       
+              { path: 'edit/:email', component: EditProfileComponentComponent },
 
+ {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('../app/pages-fleet-owner/fleet-owners/view-fleet-owner/view-fleet-owner.component').then(
+            (m) => m.ViewFleetOwnerComponent
+          ),
+      },
       { path: 'add', component: AddDriverComponent }, // Route for viewing single vehicle
 
         {
@@ -140,12 +153,13 @@ export const routes: Routes = [
        { path: 'campaigns', component: CampaignComponentAdvertiser }, // Route for viewing single vehicle
         { path: 'messages', component: MessagesComponentAdvertiser }, // Route for viewing single vehicle
           { path: 'add', component: AddCampaignComponent }, 
-       
+          { path: 'edit/:id', component: CampaignEditComponent },
+
     {
         path: 'view-campaign/:id',
 
         loadComponent: () =>
-          import('./pages/campaign-details/campaign-details.component').then(
+          import('./pagess-advertiser/campaign-details/campaign-details.component').then(
             (m) => m.CampaignDetailsComponent
           )
       },

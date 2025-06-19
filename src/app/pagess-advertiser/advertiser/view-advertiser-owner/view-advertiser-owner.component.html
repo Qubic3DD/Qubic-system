@@ -72,7 +72,6 @@
           </div>
         </div>
         <div class="header-actions">
-  
           <button mat-stroked-button class="ml-2">
             <mat-icon>message</mat-icon> Contact
           </button>
@@ -187,11 +186,11 @@
                 <mat-card-content>
                   <div class="stats-grid">
                     <div class="stat-item">
-                      <div class="stat-value">{{ campaigns.length }}</div>
+                      <div class="stat-value">0</div>
                       <div class="stat-label">Total Campaigns</div>
                     </div>
                     <div class="stat-item">
-                      <div class="stat-value">{{ campaignStatusData[0].value }}</div>
+                      <div class="stat-value">0</div>
                       <div class="stat-label">Active Campaigns</div>
                     </div>
                     <div class="stat-item">
@@ -242,82 +241,6 @@
         </div>
       </mat-tab>
 
-      <mat-tab label="Campaigns">
-        <div class="tab-content">
-          <div class="campaigns-header">
-            <h2 class="campaigns-title">Advertising Campaigns ({{ campaigns.length }})</h2>
-            <div class="campaigns-search">
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Search campaigns</mat-label>
-                <input matInput [(ngModel)]="searchQuery" (input)="filterCampaigns()">
-                <mat-icon matPrefix>search</mat-icon>
-              </mat-form-field>
-              <button mat-raised-button color="primary" (click)="openAddCampaignDialog(advertiser.id)" *ngIf="advertiser">
-                <mat-icon>add</mat-icon> New Campaign
-              </button>
-            </div>
-          </div>
-
-          <div *ngIf="filteredCampaigns.length === 0" class="empty-state">
-            <mat-icon class="empty-icon">campaign</mat-icon>
-            <h3>No campaigns found</h3>
-            <p *ngIf="searchQuery">Try adjusting your search query</p>
-            <p *ngIf="!searchQuery">This advertiser has no campaigns yet</p>
-          </div>
-
-          <div *ngIf="filteredCampaigns.length > 0" class="campaigns-grid">
-            <mat-card *ngFor="let campaign of filteredCampaigns" class="campaign-card">
-              <div class="campaign-header">
-                <div class="campaign-media" *ngIf="campaign.mediaFile">
-                  <img [src]="campaign.mediaFile.downloadUrl" 
-                       [alt]="campaign.name" 
-                       class="media-preview"
-                       (error)="campaign.mediaFile">
-                </div>
-                <div class="campaign-info">
-                  <h3 class="campaign-name">{{ campaign.name }}</h3>
-                  <div class="campaign-status">
-                    <span class="status-badge" [ngClass]="getStatusColor(isCampaignActive(campaign) ? 'Active' : 'Inactive')">
-                      {{ isCampaignActive(campaign) ? 'Active' : 'Inactive' }}
-                    </span>
-                    <span class="campaign-dates">
-                      {{ campaign.startDate | date }} - {{ campaign.endDate | date }}
-                    </span>
-                  </div>
-                  <p class="campaign-description" *ngIf="campaign.description">
-                    {{ campaign.description | truncate:100 }}
-                  </p>
-                </div>
-              </div>s
-              
-              <div class="campaign-progress">
-                <div class="progress-info">
-                  <span>Impressions: {{ campaign.accumulatedImpressions || 0 }} / {{ campaign.requiredImpressions || 0 }}</span>
-                  <span>{{ getCampaignProgress(campaign) | number:'1.0-0' }}%</span>
-                </div>
-                <mat-progress-bar 
-                  mode="determinate" 
-                  [value]="getCampaignProgress(campaign)"
-                  [color]="isCampaignActive(campaign) ? 'primary' : 'warn'">
-                </mat-progress-bar>
-              </div>
-              
-              <div class="campaign-actions">
-                <button mat-stroked-button (click)="viewCampaign(campaign)" class="action-button">
-                  <mat-icon>visibility</mat-icon> View
-                </button>
-                <button mat-stroked-button class="action-button">
-                  <mat-icon>analytics</mat-icon> Stats
-                </button>
-                <button mat-stroked-button class="action-button">
-                  <mat-icon>edit</mat-icon> Edit
-                </button>
-              </div>
-            </mat-card>
-          </div>
-        </div>
-      </mat-tab>
-
       <mat-tab label="Analytics">
         <div class="tab-content">
           <div class="analytics-grid">
@@ -338,32 +261,6 @@
                   [xAxisLabel]="xAxisLabel"
                   [yAxisLabel]="yAxisLabel">
                 </ngx-charts-bar-vertical>
-              </mat-card-content>
-            </mat-card>
-
-            <mat-card class="analytics-card">
-              <mat-card-header>
-                <mat-card-title>Campaign Status</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <ngx-charts-pie-chart
-                  [view]="[400, 300]"
-                  [results]="campaignStatusData"
-                  [legend]="true"
-                  [labels]="true">
-                </ngx-charts-pie-chart>
-              </mat-card-content>
-            </mat-card>
-
-            <mat-card class="analytics-card">
-              <mat-card-header>
-                <mat-card-title>Top Performing Campaigns</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="placeholder-chart">
-                  <mat-icon>bar_chart</mat-icon>
-                  <p>Performance comparison chart</p>
-                </div>
               </mat-card-content>
             </mat-card>
 

@@ -1,0 +1,129 @@
+<div class="max-w-4xl mx-auto p-6">
+  <div *ngIf="isLoading" class="text-center py-8">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p class="mt-4 text-gray-600">Loading campaign details...</p>
+  </div>
+
+  <form *ngIf="!isLoading" [formGroup]="campaignForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Edit Campaign</h2>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Basic Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Name -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Campaign Name*</label>
+            <input type="text" id="name" formControlName="name" 
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white">
+            <div *ngIf="campaignForm.get('name')?.invalid && campaignForm.get('name')?.touched" class="text-red-500 text-xs mt-1">
+              Campaign name is required (max 100 characters)
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+            <mat-slide-toggle formControlName="active" color="primary">Active Campaign</mat-slide-toggle>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description*</label>
+          <textarea id="description" formControlName="description" rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white"></textarea>
+          <div *ngIf="campaignForm.get('description')?.invalid && campaignForm.get('description')?.touched" class="text-red-500 text-xs mt-1">
+            Description is required (max 500 characters)
+          </div>
+        </div>
+
+        <!-- Dates -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Start Date -->
+          <div>
+            <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date*</label>
+            <input type="datetime-local" id="startDate" formControlName="startDate" 
+                   [min]="minDate | date:'yyyy-MM-ddTHH:mm'"
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white">
+            <div *ngIf="campaignForm.get('startDate')?.invalid && campaignForm.get('startDate')?.touched" class="text-red-500 text-xs mt-1">
+              Start date is required
+            </div>
+          </div>
+
+          <!-- End Date -->
+          <div>
+            <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date*</label>
+            <input type="datetime-local" id="endDate" formControlName="endDate" 
+                   [min]="campaignForm.get('startDate')?.value || minDate | date:'yyyy-MM-ddTHH:mm'"
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white">
+            <div *ngIf="campaignForm.get('endDate')?.invalid && campaignForm.get('endDate')?.touched" class="text-red-500 text-xs mt-1">
+              End date is required and must be after start date
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget and Impressions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Required Impressions -->
+          <div>
+            <label for="requiredImpressions" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Required Impressions*</label>
+            <input type="number" id="requiredImpressions" formControlName="requiredImpressions" min="1000"
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white">
+            <div *ngIf="campaignForm.get('requiredImpressions')?.invalid && campaignForm.get('requiredImpressions')?.touched" class="text-red-500 text-xs mt-1">
+              Minimum 1000 impressions required
+            </div>
+          </div>
+
+          <!-- Price -->
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Budget (ZAR)*</label>
+            <input type="number" id="price" formControlName="price" min="1000" step="100"
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white">
+            <div *ngIf="campaignForm.get('price')?.invalid && campaignForm.get('price')?.touched" class="text-red-500 text-xs mt-1">
+              Minimum R1000 required
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Locations -->
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Provinces</label>
+            <mat-selection-list formControlName="targetProvinceIds" class="border border-gray-300 dark:border-gray-600 rounded-md p-2">
+              <mat-list-option *ngFor="let province of provinces" [value]="province.id">
+                {{ province.name }}
+              </mat-list-option>
+            </mat-selection-list>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Cities</label>
+            <mat-selection-list formControlName="targetCityIds" class="border border-gray-300 dark:border-gray-600 rounded-md p-2">
+              <mat-list-option *ngFor="let city of cities" [value]="city.id">
+                {{ city.name }}
+              </mat-list-option>
+            </mat-selection-list>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
+        <button type="button" (click)="navigateToEditCampaign(campaignId)" 
+        class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500">
+  Edit Campaign
+</button>
+        <button type="submit" [disabled]="isSubmitting || campaignForm.invalid"
+                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!isSubmitting">Save Changes</span>
+          <span *ngIf="isSubmitting" class="flex items-center">
+            <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+            Saving...
+          </span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -8,7 +8,7 @@ import { environment } from '../environments/environment.development';
   providedIn: 'root',
 })
 export class CampaignService {
-private baseUrl = `${environment.api}api/campaigns`;
+  private baseUrl = `${environment.api}api/campaigns`;
 
   constructor(private http: HttpClient) {}
 
@@ -36,5 +36,9 @@ private baseUrl = `${environment.api}api/campaigns`;
     return this.http.get<{ data: Campaign[] }>(
       `${this.baseUrl}/getByAdvertiserId/${advertiserId}`
     );
+  }
+
+  updateCampaign(id: number, campaignData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/update/${id}`, campaignData);
   }
 }

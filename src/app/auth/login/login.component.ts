@@ -171,7 +171,7 @@ export class LoginComponent {
     localStorage.setItem('userEmail', this.email);
     localStorage.setItem('userName', this.userFirstName);
     localStorage.setItem('userProfile', JSON.stringify(profileData));
-      localStorage.setItem('userId', profileData.id); // <- Save user ID here
+    localStorage.setItem('userId', profileData.id); // <- Save user ID here
     sessionStorage.setItem('sessionToken', this.generateSessionToken());
   }
 

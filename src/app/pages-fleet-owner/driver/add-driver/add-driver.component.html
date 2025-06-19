@@ -3,114 +3,103 @@
     <div class="text-center mb-6">
       <h2 class="text-2xl font-bold">Add Driver</h2>
       <p class="text-gray-500 dark:text-gray-400 mt-2">Fill in the details to register a new Driver</p>
-      <p *ngIf="fleetOwnerEmail" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        Fleet Owner: {{ fleetOwnerEmail }}
+      <p *ngIf="userEmail" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Fleet Owner: {{ userEmail }}
       </p>
     </div>
 
-    <form class="space-y-4" [formGroup]="addDriverForm">
-      <!-- Username -->
-      <div>
-        <input type="text" id="userName" name="userName" formControlName="userName" required placeholder="Username"
-          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-          [class.border-red-500]="addDriverForm.get('userName')?.invalid && (addDriverForm.get('userName')?.dirty || addDriverForm.get('userName')?.touched)">
-        <div
-          *ngIf="addDriverForm.get('userName')?.invalid && (addDriverForm.get('userName')?.dirty || addDriverForm.get('userName')?.touched)"
-          class="text-red-500 text-sm mt-1">
-          <span *ngIf="addDriverForm.get('userName')?.errors?.['required']">Username is required</span>
-          <span *ngIf="addDriverForm.get('userName')?.errors?.['minlength']">Username must be at least 3
-            characters</span>
-        </div>
-      </div>
-
-      <!-- Password -->
-      <div>
-        <input type="password" id="password" name="password" formControlName="password" required placeholder="Password"
-          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-          [class.border-red-500]="addDriverForm.get('password')?.invalid && (addDriverForm.get('password')?.dirty || addDriverForm.get('password')?.touched)">
-        <div
-          *ngIf="addDriverForm.get('password')?.invalid && (addDriverForm.get('password')?.dirty || addDriverForm.get('password')?.touched)"
-          class="text-red-500 text-sm mt-1">
-          <span *ngIf="addDriverForm.get('password')?.errors?.['required']">Password is required</span>
-          <span *ngIf="addDriverForm.get('password')?.errors?.['minlength']">Password must be at least 6
-            characters</span>
-        </div>
-      </div>
-
+    <form class="space-y-4" [formGroup]="addDriverForm" (ngSubmit)="onSubmit()">
       <!-- First Name & Last Name -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- First Name -->
         <div>
-          <input type="text" id="firstName" name="firstName" formControlName="firstName" required
-            placeholder="First Name"
+          <label for="firstName" class="block text-sm font-medium mb-1">First Name</label>
+          <input type="text" id="firstName" formControlName="firstName" required
             class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-            [class.border-red-500]="addDriverForm.get('firstName')?.invalid && (addDriverForm.get('firstName')?.dirty || addDriverForm.get('firstName')?.touched)">
-          <div
-            *ngIf="addDriverForm.get('firstName')?.invalid && (addDriverForm.get('firstName')?.dirty || addDriverForm.get('firstName')?.touched)"
+            [class.border-red-500]="firstName?.invalid && (firstName?.dirty || firstName?.touched)">
+          <div *ngIf="firstName?.invalid && (firstName?.dirty || firstName?.touched)"
             class="text-red-500 text-sm mt-1">
-            First name is required
+            <span *ngIf="firstName?.errors?.['required']">First name is required</span>
+            <span *ngIf="firstName?.errors?.['maxlength']">Maximum 50 characters allowed</span>
           </div>
         </div>
+
+        <!-- Last Name -->
         <div>
-          <input type="text" id="lastName" name="lastName" formControlName="lastName" required placeholder="Last Name"
+          <label for="lastName" class="block text-sm font-medium mb-1">Last Name</label>
+          <input type="text" id="lastName" formControlName="lastName" required
             class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-            [class.border-red-500]="addDriverForm.get('lastName')?.invalid && (addDriverForm.get('lastName')?.dirty || addDriverForm.get('lastName')?.touched)">
-          <div
-            *ngIf="addDriverForm.get('lastName')?.invalid && (addDriverForm.get('lastName')?.dirty || addDriverForm.get('lastName')?.touched)"
+            [class.border-red-500]="lastName?.invalid && (lastName?.dirty || lastName?.touched)">
+          <div *ngIf="lastName?.invalid && (lastName?.dirty || lastName?.touched)"
             class="text-red-500 text-sm mt-1">
-            Last name is required
+            <span *ngIf="lastName?.errors?.['required']">Last name is required</span>
+            <span *ngIf="lastName?.errors?.['maxlength']">Maximum 50 characters allowed</span>
           </div>
         </div>
       </div>
 
       <!-- Email -->
       <div>
-        <input type="email" id="email" name="email" formControlName="email" required placeholder="Email"
+        <label for="email" class="block text-sm font-medium mb-1">Email</label>
+        <input type="email" id="email" formControlName="email" required
           class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-          [class.border-red-500]="addDriverForm.get('email')?.invalid && (addDriverForm.get('email')?.dirty || addDriverForm.get('email')?.touched)">
-        <div
-          *ngIf="addDriverForm.get('email')?.invalid && (addDriverForm.get('email')?.dirty || addDriverForm.get('email')?.touched)"
+          [class.border-red-500]="email?.invalid && (email?.dirty || email?.touched)">
+        <div *ngIf="email?.invalid && (email?.dirty || email?.touched)"
           class="text-red-500 text-sm mt-1">
-          <span *ngIf="addDriverForm.get('email')?.errors?.['required']">Email is required</span>
-          <span *ngIf="addDriverForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+          <span *ngIf="email?.errors?.['required']">Email is required</span>
+          <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="block text-sm font-medium mb-1">Password</label>
+        <div class="relative">
+          <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" required
+            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+            [class.border-red-500]="password?.invalid && (password?.dirty || password?.touched)">
+          <button type="button" (click)="showPassword = !showPassword" 
+                  class="absolute right-3 top-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+            <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+        <div *ngIf="password?.invalid && (password?.dirty || password?.touched)"
+          class="text-red-500 text-sm mt-1">
+          <span *ngIf="password?.errors?.['required']">Password is required</span>
+          <span *ngIf="password?.errors?.['minlength']">Minimum 8 characters required</span>
+          <span *ngIf="password?.errors?.['pattern']">
+            Must include uppercase, lowercase, number, and special character
+          </span>
         </div>
       </div>
 
       <!-- Phone Number -->
       <div>
-        <input type="tel" id="phoneNo" name="phoneNo" formControlName="phoneNo" required placeholder="Phone Number"
+        <label for="phoneNumber" class="block text-sm font-medium mb-1">Phone Number</label>
+        <input type="tel" id="phoneNumber" formControlName="phoneNumber" required
           class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-          [class.border-red-500]="addDriverForm.get('phoneNo')?.invalid && (addDriverForm.get('phoneNo')?.dirty || addDriverForm.get('phoneNo')?.touched)">
-        <div
-          *ngIf="addDriverForm.get('phoneNo')?.invalid && (addDriverForm.get('phoneNo')?.dirty || addDriverForm.get('phoneNo')?.touched)"
+          [class.border-red-500]="phoneNumber?.invalid && (phoneNumber?.dirty || phoneNumber?.touched)">
+        <div *ngIf="phoneNumber?.invalid && (phoneNumber?.dirty || phoneNumber?.touched)"
           class="text-red-500 text-sm mt-1">
-          <span *ngIf="addDriverForm.get('phoneNo')?.errors?.['required']">Phone number is required</span>
-          <span *ngIf="addDriverForm.get('phoneNo')?.errors?.['pattern']">Please enter a valid phone number (10-15
-            digits)</span>
-        </div>
-      </div>
-
-      <!-- User Handle -->
-      <div>
-        <div class="flex">
-          <span
-            class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400"></span>
-          <input type="text" id="userHandle" name="userHandle" formControlName="userHandle" required
-            placeholder="User Handle"
-            class="flex-1 px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-            [class.border-red-500]="addDriverForm.get('userHandle')?.invalid && (addDriverForm.get('userHandle')?.dirty || addDriverForm.get('userHandle')?.touched)">
-        </div>
-        <div
-          *ngIf="addDriverForm.get('userHandle')?.invalid && (addDriverForm.get('userHandle')?.dirty || addDriverForm.get('userHandle')?.touched)"
-          class="text-red-500 text-sm mt-1">
-          User handle is required
+          <span *ngIf="phoneNumber?.errors?.['required']">Phone number is required</span>
+          <span *ngIf="phoneNumber?.errors?.['pattern']">
+            Please enter 10-15 digits only
+          </span>
         </div>
       </div>
 
       <!-- Submit Button -->
       <div class="pt-4">
-        <button type="submit" (click)="onSubmit()"
-          class="w-full cursor-pointer bg-pink-600 hover:bg-pink-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-          Add Driver
+        <button type="submit" [disabled]="addDriverForm.invalid || isLoading"
+          class="w-full cursor-pointer bg-pink-600 hover:bg-pink-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!isLoading">Add Driver</span>
+          <span *ngIf="isLoading" class="flex items-center justify-center">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Processing...
+          </span>
         </button>
       </div>
     </form>

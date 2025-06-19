@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-add-driver-dialog',
@@ -28,6 +29,10 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class AddDriverDialogComponent implements OnInit {
+  
+  userEmail: string | null = null;
+  userName: string | null = null;
+  userId: number | null = null;
   selectedDriverEmail = new FormControl('');
   drivers: DriverProfile[] = [];
   filteredDrivers: DriverProfile[] = [];
@@ -40,23 +45,31 @@ export class AddDriverDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<AddDriverDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { fleetOwnerEmail: string },
     private http: HttpClient
-  ) {}
+  ) {  this.userEmail = localStorage.getItem('userEmail');
+    this.userId = Number(localStorage.getItem('userId'));
+    this.userName = localStorage.getItem('userName');}
 
   ngOnInit(): void {
     this.fetchDrivers();
   }
 
   fetchDrivers(): void {
+    if (!this.userId) {
+      console.error('User ID is not available');
+      return;
+    }
+
     this.isLoading = true;
-    this.loadError = false;
-    this.http.get<any>('http://41.76.110.219:8443/profile/drivers').subscribe({
-      next: (res) => {
-        this.drivers = res.data || [];
+    this.http.get<{ data: DriverProfile[] }>(
+      `${environment.api}profile/fleet-owners/${this.userId}/drivers`
+    ).subscribe({
+      next: (response) => {
+        this.drivers = response.data || [];
         this.filteredDrivers = [...this.drivers];
         this.isLoading = false;
       },
-      error: () => {
-        this.loadError = true;
+      error: (error) => {
+        console.error('Error fetching drivers:', error);
         this.isLoading = false;
       },
     });

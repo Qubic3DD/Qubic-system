@@ -110,6 +110,8 @@ export class FleetDriverProfileComponent implements OnInit {
     }
   ];
 Math = Math;
+
+
   fetchDriver(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);

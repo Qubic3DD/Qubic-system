@@ -1,90 +1,110 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RequestSenderService } from '../../../core/request-sender.service';
-import { Services } from '../../../core/services';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-driver',
-    imports: [FormsModule, CommonModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule, ReactiveFormsModule],
   templateUrl: './add-driver.component.html',
-  styleUrls: ['./add-driver.component.css']
+  styleUrls: ['./add-driver.component.css'],
 })
 export class AddDriverComponent implements OnInit {
-      @Input() isCollapsed = false;
+  @Input() isCollapsed = false;
   userEmail: string | null = null;
-  userName: string | null = null;
+  showPassword = false; // Added this property
+  isLoading = false;
 
   addDriverForm!: FormGroup;
-  fleetOwnerEmail: string = '';
 
   constructor(
     private fb: FormBuilder,
     private _http: RequestSenderService,
-    private route: ActivatedRoute
-  ) {    // Get user info from localStorage when component initializes
+    private route: ActivatedRoute,
+   private router: Router // Add Router to constructor
+  ) {
     this.userEmail = localStorage.getItem('userEmail');
-    this.userName = localStorage.getItem('userName');
   }
 
   ngOnInit(): void {
-    // Get fleet owner email from query parameters
-    this.route.queryParams.subscribe(params => {
-      this.fleetOwnerEmail = params['username'];
-      console.log('Fleet Owner Email:', this.fleetOwnerEmail);
-    });
-
     this.createForm();
   }
 
   createForm() {
     this.addDriverForm = this.fb.group({
-      userName: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      firstName: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
+      firstName: ['', [Validators.required, Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
-      phoneNo: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      userHandle: ['', [Validators.required]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+      ]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]]
     });
   }
 
   onSubmit() {
-    if (this.addDriverForm.valid) {
-      const formValue = this.addDriverForm.value;
-      const requestPayload = {
-        ...formValue,
-        roles: ['DRIVER'],
-        fleetOwnerEmail: this.userEmail
-      };
-
-      console.log('Final request payload:', requestPayload);
-
-      this._http.sendPostRequest(Services.REGISTER_DRIVER, requestPayload)
-        .subscribe({
-          next: (response) => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Driver Added Successfully',
-              showConfirmButton: false,
-              timer: 1500,
-            });
-            // Optionally reset form or navigate away
-            this.addDriverForm.reset();
-          },
-          error: (err) => {
-            console.error('Error adding Driver', err);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error Adding Driver',
-              text: err.error?.message || 'An error occurred',
-            });
-          },
-        });
-    } else {
+    if (this.addDriverForm.invalid || this.isLoading) {
       this.addDriverForm.markAllAsTouched();
+      return;
     }
+
+    this.isLoading = true;
+    
+    const requestPayload = {
+      ...this.addDriverForm.value,
+      fleetOwnerEmail: this.userEmail
+    };
+
+    this._http.sendPostRequest('api/fleet-owners/add-driver', requestPayload)
+       .subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        Swal.fire({
+          icon: 'success',
+          title: 'Driver Added Successfully',
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          this.viewDrivers(); // Navigate after Swal closes
+        });
+      },
+      error: (err) => {
+          this.isLoading = false;
+          console.error('Error adding Driver', err);
+          let errorMessage = 'An error occurred while adding the driver';
+          
+          if (err.error?.message) {
+            errorMessage = err.error.message;
+          } else if (err.status === 0) {
+            errorMessage = 'Unable to connect to server. Please check your connection.';
+          } else if (err.status === 400) {
+            errorMessage = 'Invalid request data. Please check the form fields.';
+          } else if (err.status === 409) {
+            errorMessage = 'A driver with this email already exists.';
+          }
+          
+          Swal.fire({
+            icon: 'error',
+            title: 'Error Adding Driver',
+            text: errorMessage,
+          });
+        },
+      });
   }
+    viewDrivers(): void {
+  this.router.navigate(['/fleet-owner-dashboard/drivers'], {
+    queryParams: { username: this.userEmail },
+  });
+}
+  // Helper methods for form validation in template
+  get firstName() { return this.addDriverForm.get('firstName'); }
+  get lastName() { return this.addDriverForm.get('lastName'); }
+  get email() { return this.addDriverForm.get('email'); }
+  get password() { return this.addDriverForm.get('password'); }
+  get phoneNumber() { return this.addDriverForm.get('phoneNumber'); }
 }

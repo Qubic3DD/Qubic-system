@@ -1,0 +1,21 @@
+/* Add any custom styles here */
+.mat-selection-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.mat-list-option {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .mat-list-option {
+  border-bottom-color: #4b5563;
+}
+
+.mat-pseudo-checkbox {
+  color: #ec4899 !important;
+}
+
+.mat-pseudo-checkbox-checked {
+  background: #ec4899 !important;
+}

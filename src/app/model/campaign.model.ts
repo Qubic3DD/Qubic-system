@@ -1,4 +1,3 @@
-// campaign.model.ts
 export interface MediaFile {
   id: number;
   name: string;
@@ -20,5 +19,8 @@ export interface Campaign {
   mediaFile: MediaFile;
   creationDate: string;
   streamUrl: string;
+  price: number;
+  targetCities: { id: number, name: string }[];
+  targetProvinces: { id: number, name: string }[];
   active: boolean;
 }

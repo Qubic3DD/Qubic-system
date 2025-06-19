@@ -138,7 +138,7 @@ addCampaign(): void {
   }
 
   editCampaign(campaignId: number): void {
-    this.router.navigate(['/campaign/edit', campaignId]);
+this.router.navigate(['/advertiser-dashboard/edit', campaignId]);
   }
 
   deleteCampaign(campaignId: number,): void {

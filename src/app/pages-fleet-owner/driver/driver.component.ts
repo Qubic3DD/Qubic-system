@@ -5,8 +5,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { DriverProfile } from '../../api/Response/interfaces';
-import { Observable } from 'rxjs/internal/Observable';
-import { map } from 'rxjs/internal/operators/map';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-driver',
@@ -16,9 +16,11 @@ import { map } from 'rxjs/internal/operators/map';
   styleUrls: ['./driver.component.css'],
 })
 export class DriverComponentFleet implements OnInit {
-    @Input() isCollapsed = false;
+  @Input() isCollapsed = false;
+
   userEmail: string | null = null;
   userName: string | null = null;
+  userId: number | null = null;
 
   drivers: any[] = [];
   filteredDrivers: any[] = [];
@@ -41,42 +43,56 @@ export class DriverComponentFleet implements OnInit {
     roles: ['DRIVER'],
     status: 'Active',
   };
-
   constructor(private http: HttpClient, public router: Router) {
-    // Get user info from localStorage when component initializes
     this.userEmail = localStorage.getItem('userEmail');
+    this.userId = Number(localStorage.getItem('userId'));
     this.userName = localStorage.getItem('userName');
   }
+
   ngOnInit(): void {
     this.fetchDrivers();
   }
 
   fetchDriversd(): Observable<DriverProfile[]> {
-  return this.http.get<any>('http://41.76.110.219:8443/profile/fleet-owners/3/drivers').pipe(
-    map((response: { data: any; }) => response.data) // extract data here
-  );
-}
+    return this.http.get<{ data: DriverProfile[] }>(
+      `${environment.api}profile/fleet-owners/${this.userId}/drivers`
+    ).pipe(
+      map(response => response.data),
+      catchError(error => {
+        console.error('Error fetching drivers:', error);
+        return throwError(() => new Error('Failed to fetch drivers'));
+      })
+    );
+  }
 
-fetchDrivers(): void {
-  this.isLoading = true;
-  this.http.get<any>('http://41.76.110.219:8443/profile/fleet-owners/3/drivers').subscribe({
-    next: (response) => {
-      this.drivers = response.data;
-      this.filteredDrivers = [...this.drivers];
-      this.isLoading = false;
-    },
-    error: (error) => {
-      console.error('Error fetching drivers:', error);
-      this.isLoading = false;
-    },
-  });
-}
+  fetchDrivers(): void {
+    if (!this.userId) {
+      console.error('User ID is not available');
+      return;
+    }
 
-    viewDriverDetails(userName: string): void {
-  this.router.navigate(['/fleet-owner-dashboard/driver-details'], {
-    queryParams: { username: userName },
-  });
-}
+    this.isLoading = true;
+    this.http.get<{ data: DriverProfile[] }>(
+      `${environment.api}profile/fleet-owners/${this.userId}/drivers`
+    ).subscribe({
+      next: (response) => {
+        this.drivers = response.data || [];
+        this.filteredDrivers = [...this.drivers];
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching drivers:', error);
+        this.isLoading = false;
+      },
+    });
+  }
+
+  viewDriverDetails(userName: string): void {
+    this.router.navigate(['/fleet-owner-dashboard/driver-details'], {
+      queryParams: { username: userName },
+    });
+  }
+
   
   getDocumentUrlByUsernameAndPurpose(
     username: string,
@@ -166,7 +182,7 @@ openAddDriverModal(): void {
   }
 
   editDriver(driver: any) {
-    this.router.navigate(['/drivers/edit', driver.email]);
+    this.router.navigate(['/fleet-owner-dashboard/edit', driver.email]);
   }
 
 
@@ -187,7 +203,7 @@ openAddDriverModal(): void {
         });
     }
   }
-  goToEditDriver(driverId: string) {
-    this.router.navigate(['/drivers', driverId, 'edit']); // Adjust route as needed
-  }
+goToEditDriver(email: string) {
+  this.router.navigate(['/fleet-owner-dashboard/edit', email]);
+}
 }

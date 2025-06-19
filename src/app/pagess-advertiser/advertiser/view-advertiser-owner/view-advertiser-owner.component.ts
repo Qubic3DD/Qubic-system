@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -17,15 +17,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CampaignService } from '../../../services/campaign.service';
-import { AdvertisersResponse } from '../../../api/Response/AdvertisersResponse';
-import { Campaign } from '../../../model/campaign.model';
-import { AddCampaignComponent } from '../../campaign/campaign/add-campaign/add-campaign.component';
-import { CampaignComponentAdvertiser } from '../../campaign/campaign.component';
-import { MatProgressBar } from '@angular/material/progress-bar';
-import { Pipe, PipeTransform } from '@angular/core';
-import { TruncatePipe } from './truncate.pipe';
 import { DriverProfile } from '../../../api/Response/interfaces';
+
 @Component({
   selector: 'app-view-advertiser',
   standalone: true,
@@ -47,24 +40,17 @@ import { DriverProfile } from '../../../api/Response/interfaces';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    MatProgressBar,
-     TruncatePipe,
   ]
 })
 export class ViewAdvertiserComponentDetatils implements OnInit {
-  advertiser: AdvertisersResponse | null = null;
-  campaigns: Campaign[] = [];
-  filteredCampaigns: Campaign[] = [];
+  advertiser: any | null = null;
   isLoading = true;
   error: string | null = null;
-  activeTab: 'profile' | 'campaigns' | 'analytics' | 'documents' = 'profile';
-  searchQuery = '';
-  revenueChart: any;
-  campaignStatusChart: any;
+  activeTab: 'profile' | 'analytics' | 'documents' = 'profile';
   activeTabIndex = 0;
   driver: DriverProfile | null = null;
-  recentActivity: any[] = [];
-  asvertiserId: number | null =null;
+  asvertiserId: number | null = null;
+
   // Analytics data
   view: [number, number] = [700, 400];
   showXAxis = true;
@@ -91,12 +77,6 @@ export class ViewAdvertiserComponentDetatils implements OnInit {
     { "name": "Jun", "value": 0 }
   ];
 
-  campaignStatusData = [
-    { "name": "Active", "value": 0 },
-    { "name": "Inactive", "value": 0 },
-    { "name": "Completed", "value": 0 }
-  ];
-
   Math = Math;
 
   constructor(
@@ -105,71 +85,51 @@ export class ViewAdvertiserComponentDetatils implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private campaignService: CampaignService
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
- const email = localStorage.getItem('userEmail');
+    const email = localStorage.getItem('userEmail');
     if (email) {
-      if (email) {
-         this.fetchDriver(email);
-        this.fetchAdvertiser(email);
-        this.fetchCampaigns();
-} else {
+      this.fetchDriver(email);
+      this.fetchAdvertiser(email);
+    } else {
       this.error = 'No user email found in storage';
       this.isLoading = false;
-      }
-      }  }
+    }
+  }
 
   hasValidImageUrl(email: string): boolean {
     const url = this.getDocumentUrlByUsernameAndPurpose(email, 'PROFILE_PICTURE');
     return !!url && url.trim() !== '';
   }
 
-fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
-    // Remove encodeURIComponent here - we'll do it in fetchDriver
-    return this.http.get<ApiResponse<DriverProfile>>(
+  fetchpro(email: string): Observable<any> {
+    return this.http.get<any>(
       `http://41.76.110.219:8443/profile/retrieve/${email}`
     );
-}
-
+  }
 
   fetchDriver(email: string): void {
-      this.isLoading = true;
-      const encodedEmail = encodeURIComponent(email); // Encode only once here
-      this.fetchpro(encodedEmail).pipe(
-        catchError(error => {
-          console.error('Error fetching driver:', error);
-          this.error = `Failed to load driver profile ${email}`;
-          this.isLoading = false;
-          return of(null);
-        })
-      ).subscribe((response: ApiResponse<DriverProfile> | null) => {
-        if (response && response.data) {
-          this.driver = response.data;
-          this.asvertiserId = response.data.id;
-          console.log('Advertiser ID:', this.asvertiserId); // Debug print
-          this.loadCampaigns();
-          this.isLoading = false;
-        } else {
-          this.error = 'No data received from server';
-          this.isLoading = false;
-        }
-      });
-  }
-  loadCampaigns(): void {
     this.isLoading = true;
-    this.campaignService.getCampaignsByAdvertiserId(this.asvertiserId!).subscribe({
-      next: (response) => {
-        this.campaigns = response.data;
-        this.filterCampaigns();
+    const encodedEmail = encodeURIComponent(email);
+    this.fetchpro(encodedEmail).pipe(
+      catchError(error => {
+        console.error('Error fetching driver:', error);
+        this.error = `Failed to load driver profile ${email}`;
         this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching campaigns:', err);
+        return of(null);
+      })
+    ).subscribe((response: any | null) => {
+      if (response && response.data) {
+        this.driver = response.data;
+        this.asvertiserId = response.data.id;
+        console.log('Advertiser ID:', this.asvertiserId);
         this.isLoading = false;
-      },
+      } else {
+        this.error = 'No data received from server';
+        this.isLoading = false;
+      }
     });
   }
 
@@ -194,7 +154,7 @@ fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
   fetchAdvertiser(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<ApiResponse<AdvertisersResponse>>(`http://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
+    this.http.get<any>(`http://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching advertiser:', error);
         this.error = `Failed to load advertiser profile ${email}`;
@@ -213,30 +173,9 @@ fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
     });
   }
 
-  fetchCampaigns(): void {
-    if (!this.advertiser?.id) return;
-    
-    this.isLoading = true;
-    this.campaignService.getCampaignsByAdvertiserId(this.advertiser.id).pipe(
-      map(response => response.data || []),
-      tap(campaigns => {
-        this.campaigns = campaigns;
-        this.filteredCampaigns = [...campaigns];
-        this.updateCampaignStatusChart(campaigns);
-      }),
-      catchError(error => {
-        console.error('Error fetching campaigns:', error);
-        this.error = 'Failed to load campaigns';
-        return of([]);
-      })
-    ).subscribe(() => {
-      this.isLoading = false;
-    });
-  }
-
   setActiveTab(index: number): void {
     this.activeTabIndex = index;
-    const tabNames = ['profile', 'campaigns', 'analytics', 'documents'];
+    const tabNames = ['profile', 'analytics', 'documents'];
     const activeTabName = tabNames[index] || 'profile';
     
     if (activeTabName === 'analytics') {
@@ -265,56 +204,6 @@ fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
     }
   }
 
-  updateCampaignStatusChart(campaigns: Campaign[]): void {
-    const statusCounts = {
-      active: campaigns.filter(c => c.active).length,
-      inactive: campaigns.filter(c => !c.active).length,
-      completed: campaigns.filter(c => new Date(c.endDate) < new Date()).length
-    };
-
-    this.campaignStatusData = [
-      { name: 'Active', value: statusCounts.active },
-      { name: 'Inactive', value: statusCounts.inactive },
-      { name: 'Completed', value: statusCounts.completed }
-    ];
-  }
-
-  openAddCampaignDialog(advertiserId: number): void {
-    const dialogRef = this.dialog.open(AddCampaignComponent, {
-      width: '600px',
-      data: { advertiserId: advertiserId }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === 'success') {
-        this.fetchCampaigns();
-      }
-    });
-  }
-
-  filterCampaigns(): void {
-    if (!this.searchQuery) {
-      this.filteredCampaigns = [...this.campaigns];
-      return;
-    }
-
-    const query = this.searchQuery.toLowerCase();
-    this.filteredCampaigns = this.campaigns.filter(campaign =>
-      campaign.name.toLowerCase().includes(query) ||
-      campaign.description?.toLowerCase().includes(query) ||
-      campaign.mediaFile?.name.toLowerCase().includes(query)
-    );
-  }
-
-  viewCampaign(campaign: Campaign): void {
-    this.dialog.open(CampaignComponentAdvertiser, {
-      width: '800px',
-      data: { campaign },
-      panelClass: 'custom-dialog-container'
-    });
-  }
-
-
   downloadDocument(documentId: string): void {
     this.snackBar.open('Downloading document...', 'Close', {
       duration: 2000
@@ -329,23 +218,4 @@ fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
       default: return 'bg-gray-100 text-gray-800';
     }
   }
-
-  getCampaignProgress(campaign: Campaign): number {
-    if (!campaign.requiredImpressions) return 0;
-    return Math.min(100, (campaign.accumulatedImpressions / campaign.requiredImpressions) * 100);
-  }
-
-  isCampaignActive(campaign: Campaign): boolean {
-    const now = new Date();
-    const startDate = new Date(campaign.startDate);
-    const endDate = new Date(campaign.endDate);
-    return campaign.active && now >= startDate && now <= endDate;
-  }
-}
-
-interface ApiResponse<T> {
-  token: string | null;
-  data: T;
-  message: string;
-  timestamp: string;
 }
