@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
-import { ApplicationDto } from '../../model/application.dto';
+import { ApplicationDto, UploadedDocuments } from '../../model/application.dto';
 import { ApplicationStatus } from '../../services/application-status';
 import { Role, ROLE_CONFIGS } from '../../services/role.enum';
 import { environmentApplication } from '../../environments/environment';
@@ -13,7 +13,7 @@ import { TransportType } from '../../services/transport-type.enum';
 import { VehicleType } from '../../services/vehicle-type.enum';
 import { VehicleResponse } from './vehicle-response.model';
 import { VehicleFormModel, VehicleService } from '../../services/vehicle.service';
-import { VehicleInformation } from '../../model/adverrtiser.model';
+import {  VehicleInformation } from '../../model/adverrtiser.model';
 
 type AppTab = 'new' | 'details';
 type AppFlow = 'new' | 'existing';
@@ -202,8 +202,86 @@ countMissingDocuments(app: ApplicationDto): number {
   return requiredDocs.filter(docType => !uploadedDocTypes.includes(docType)).length;
 }
 
-// Get required document types based on role
-private getRequiredDocumentsForRole(role: Role): DocumentPurpose[] {
+getDocumentDescription(docType: DocumentPurpose): string {
+  const descriptions: Record<DocumentPurpose, string> = {
+    [DocumentPurpose.ID_DOCUMENT]: 'Clear copy of your ID document (front and back)',
+    [DocumentPurpose.PROOF_OF_ADDRESS]: 'Recent utility bill or bank statement (not older than 3 months)',
+    [DocumentPurpose.PROFILE_PICTURE]: 'Clear passport-style photo',
+    [DocumentPurpose.LICENSE]: 'Valid driver license copy',
+    [DocumentPurpose.VEHICLE_REGISTRATION]: 'Vehicle registration certificate',
+    [DocumentPurpose.VEHICLE_INSURANCE]: 'Vehicle insurance certificate',
+    [DocumentPurpose.VEHICLE_INSPECTION_REPORT]: 'Vehicle inspection report',
+    [DocumentPurpose.VEHICLE_PHOTO]: 'Clear photo of the vehicle',
+    [DocumentPurpose.ROADWORTHY_CERTIFICATE]: 'Roadworthy certificate',
+    [DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE]: 'Company registration documents',
+    [DocumentPurpose.BUSINESS_LICENSE]: 'Business operating license',
+    [DocumentPurpose.TAX_CLEARANCE_CERTIFICATE]: 'Valid tax clearance certificate',
+    [DocumentPurpose.COMPANY_PROFILE]: 'Company profile document',
+    [DocumentPurpose.COMPANY_LOGO]: 'Company logo image',
+    [DocumentPurpose.BUSINESS_ADDRESS_PROOF]: 'Proof of business address',
+    [DocumentPurpose.CAMPAIGN_VIDEO]: 'Campaign video file',
+    [DocumentPurpose.CAMPAIGN_PICTURE]: 'Campaign picture',
+    [DocumentPurpose.OTHER]: 'Additional document'
+  };
+  
+  return descriptions[docType] || 'Required document';
+}
+downloadDocument(documentId: number): void {
+  const url = `${environmentApplication.api}applications/${this.completeApp?.id}/documents/${documentId}/download`;
+  window.open(url, '_blank');
+}
+
+// In your component class
+getUploadedDocuments(): UploadedDocuments[] {
+  return this.completeApp?.uploadedDocuments || [];
+}
+
+getMissingDocuments(): DocumentPurpose[] {
+  if (!this.completeApp?.roles?.length) return [];
+  
+  const requiredDocs = this.getRequiredDocumentsForRole(this.completeApp.roles[0]);
+  const uploadedDocTypes = this.getUploadedDocuments().map(d => d.documentPurpose);
+  
+  return requiredDocs.filter(docType => 
+    !uploadedDocTypes.includes(docType) &&
+    !(docType === DocumentPurpose.PROFILE_PICTURE && this.completeApp?.profileImage)
+  );
+}
+
+
+
+// In your component class
+
+getRequiredDocumentsForApplication(): { type: DocumentPurpose; name: string; description: string }[] {
+  if (!this.completeApp?.roles?.length) return [];
+  
+  const requiredDocs = this.getRequiredDocumentsForRole(this.completeApp.roles[0]);
+  
+  return requiredDocs.map(docType => ({
+    type: docType,
+    name: this.getDocumentName(docType),
+    description: this.getDocumentDescription(docType)
+  }));
+}
+
+getMissingDocumentsForApplication(): DocumentPurpose[] {
+  if (!this.completeApp?.roles?.length) return [];
+  
+  const requiredDocs = this.getRequiredDocumentsForRole(this.completeApp.roles[0]);
+  const uploadedDocTypes = this.completeApp.uploadedDocuments?.map(d => d.documentPurpose) || [];
+  
+  // Also check if profile image is uploaded
+  const hasProfileImage = !!this.completeApp.profileImage;
+  
+  return requiredDocs.filter(docType => {
+    if (docType === DocumentPurpose.PROFILE_PICTURE) {
+      return !hasProfileImage;
+    }
+    return !uploadedDocTypes.includes(docType);
+  });
+}
+
+private getRequiredDocumentsForRole(role: string): DocumentPurpose[] {
   const baseDocs = [
     DocumentPurpose.ID_DOCUMENT,
     DocumentPurpose.PROOF_OF_ADDRESS,
@@ -211,22 +289,26 @@ private getRequiredDocumentsForRole(role: Role): DocumentPurpose[] {
   ];
 
   switch (role) {
-    case Role.DRIVER:
-      return [...baseDocs, DocumentPurpose.LICENSE, DocumentPurpose.VEHICLE_REGISTRATION];
-    case Role.FLEET_OWNER:
+    case 'DRIVER':
+      return [...baseDocs, 
+        DocumentPurpose.LICENSE, 
+        DocumentPurpose.VEHICLE_REGISTRATION,
+        DocumentPurpose.VEHICLE_INSPECTION_REPORT
+      ];
+    case 'FLEET_OWNER':
       return [...baseDocs, 
         DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
         DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
         DocumentPurpose.BUSINESS_LICENSE,
         DocumentPurpose.VEHICLE_REGISTRATION
       ];
-    case Role.AGENCY:
+    case 'AGENCY':
       return [...baseDocs,
         DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
         DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
         DocumentPurpose.BUSINESS_LICENSE
       ];
-    case Role.ADVERTISER:
+    case 'ADVERTISER':
       return [...baseDocs,
         DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE
       ];
@@ -234,24 +316,34 @@ private getRequiredDocumentsForRole(role: Role): DocumentPurpose[] {
       return baseDocs;
   }
 }
+
+isDocumentUploaded(docType: DocumentPurpose): boolean {
+  // Check profile image separately
+  if (docType === DocumentPurpose.PROFILE_PICTURE) {
+    return !!this.completeApp?.profileImage;
+  }
+  
+  // Check other documents
+  return this.completeApp?.uploadedDocuments?.some(d => d.documentPurpose === docType) || false;
+}
+
+
 async loadCompleteApplication(email: string): Promise<void> {
   try {
     const response = await this.http.get<ApplicationDto>(
-      `${environmentApplication.api}applications/application-by-email?email=${email}`
+      `${environmentApplication.api}applications/application-by-email?email=${email}&includeDocuments=true`
     ).toPromise();
 
     if (response) {
       this.completeApp = response;
       this.selectedApplication = response;
       
-      // Map vehicles if they exist
       if (response.vehicleInformation) {
         this.submissionForm.vehicles = response.vehicleInformation.map(v => 
           this.mapVehicleResponseToForm(v)
         );
       }
       
-      // Load vehicle images
       await this.loadVehicleImages();
     }
   } catch (error) {
@@ -934,13 +1026,6 @@ getDocumentName(documentPurpose: DocumentPurpose): string {
     });
   }
 
-isDocumentUploaded(docType: DocumentPurpose): boolean {
-  // Check both local submission and complete app documents
-  const localUpload = this.submissionForm.documents.some(d => d.type === docType);
-  const serverUpload = this.completeApp?.uploadedDocuments?.some(d => d.documentPurpose === docType);
-  
-  return localUpload || serverUpload || false;
-}
 
 // Helper method to get uploaded document
 getUploadedDocument(docType: DocumentPurpose): any {

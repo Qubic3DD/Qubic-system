@@ -101,6 +101,8 @@ export interface UploadedDocuments {
   documentPurpose: DocumentPurpose;
   creationDate: Date;
   fileSize?: number; 
+
+
 }
 
 
