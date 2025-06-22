@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { ApplicationDocument, ApplicationDto, DocumentPurpose } from '../../model/application.dto';
+import { ApplicationDto, UploadedDocuments } from '../../model/application.dto';
 import { environment } from '../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -17,6 +17,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ReplaceUnderscorePipe } from "../replace-underscore.pipe.spec";
+import { ApplicationDocument } from '../../api/Response/interfaceAproval';
+import { DocumentPurpose } from '../../services/document-purpose';
 
 @Component({
   selector: 'app-application-dashboard',
@@ -153,7 +155,7 @@ fetchApplication(): void {
     });
   }
 
-  downloadDocument(document: ApplicationDocument): void {
+  downloadDocument(document: UploadedDocuments): void {
     window.open(document.url, '_blank');
   }
 }

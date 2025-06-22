@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponentAdvertiser } from '../../components/sidebar copy 3/sidebar.component';
 @Component({
-  selector: 'app-home',
+  selector: 'app-home-advertiser',
   standalone: true,
   imports: [RouterOutlet, SidebarComponentAdvertiser, HeaderComponent],
   templateUrl: './home.component.html',

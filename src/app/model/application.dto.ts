@@ -4,6 +4,7 @@ import { Role } from "../services/role.enum";
 import { VehicleInformation } from "./adverrtiser.model";
 
 export interface ApplicationDto {
+lastUpdated: any;
 gender: any;
   role: Role | ApplicationStatus;
   id: number;
@@ -19,7 +20,7 @@ gender: any;
   roles: Role[];
  submissionDate: string | Date;  // Allow both string and Date types
   approvalDate?: string | Date;   // Optional and allows both types
-  status: string; // Corresponds to ApplicationStatus in backend
+  status: ApplicationStatus; // Corresponds to ApplicationStatus in backend
   idNumber: string;
   licenseType: string;
   dateOfBirth?: string;
@@ -88,23 +89,18 @@ gender: any;
   vehicleInformation?: VehicleInformation[];
 }
 
-export interface ApplicationDocument {
-  id: number;
-  name: string;
-  type: string;
-  url: string;
-  purpose: DocumentPurpose;
-  uploadedDate: Date;
-}
+
 export interface UploadedDocuments {
+  campaignId: number;
   id: number;
-  name?: string;
+  name?: string ;
   fileType?: string;
   filePath?:string;
   url?: string;
   userInformationId?:number;
-  purpose: DocumentPurpose;
+  documentPurpose: DocumentPurpose;
   creationDate: Date;
+  fileSize?: number; 
 }
 
 

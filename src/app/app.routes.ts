@@ -29,11 +29,16 @@ import { EditProfileComponentDrive } from './pages-dash/driver/edit-profile.comp
 import { EditFleetProfileComponentComponent } from './pages-fleet-owner/fleet-owners/edit-profile.component/edit-profile.component.component';
 import { EditProfileComponentComponent } from './pages-fleet-owner/driver/edit-profile.component/edit-profile.component.component';
 import { CampaignEditComponent } from './pagess-advertiser/camapign-edit/camapign-edit.component';
+import { AppForgotPasswordComponent } from './pages/app-forgot-password/app-forgot-password.component';
+import {  TrackApplicationComponent } from './pages/application-tracking-component/application-tracking-component.component';
+
 
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+{ path: 'forgot-password', component: AppForgotPasswordComponent },
+
   
   // Admin Dashboard (unchanged)
   {
@@ -174,6 +179,13 @@ export const routes: Routes = [
   },
   
   // Applicant Dashboard (unchanged)
+    // Applicant Dashboard (unchanged)
+{
+  path: 'application-dashboard-track',
+  component: TrackApplicationComponent,
+  canActivate: [authGuard]
+},
+
   { 
     path: 'application-dashboard', 
     component: ApplicationDashboardComponent,

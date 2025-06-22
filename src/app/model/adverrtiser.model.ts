@@ -1,6 +1,7 @@
 import { TransportType } from "../services/transport-type.enum";
 import { VehicleType } from "../services/vehicle-type.enum";
 import { VehicleImageResponse } from "../services/vehicle.service";
+import { UploadedDocuments } from "./application.dto";
 
 export interface Advertiser {
   id:number;
@@ -32,7 +33,7 @@ accountId: number;
   rating: number | null;
   languages: string[];
   vehicleInformation: VehicleInformation[];
-  uploadedDocuments: UploadedDocument[];
+  uploadedDocuments: UploadedDocuments[];
   uploadedMediaFiles: any | null;
   idno: string | null;
   company: boolean;
@@ -55,16 +56,6 @@ export interface VehicleInformation {
   vehicleImageUrl?:string | null;
 }
 
-export interface UploadedDocument {
-  id: number;
-  name: string;
-  fileType: 'IMAGE' | 'VIDEO' | string;
-  filePath: string;
-  creationDate: string;
-  userInformationId: number | null;
-  campaignId: number | null;
-  documentPurpose: 'PROFILE_PICTURE' | 'CAMPAIGN_VIDEO' | string;
-}
 export interface ServiceInformation {
   // Add real properties if known
 }

@@ -8,7 +8,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-confirm-dialog',
+  selector: 'app-confirm-dialog-v2',
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.css'],
     imports: [

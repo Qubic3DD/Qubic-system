@@ -4,7 +4,7 @@ import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SidebarComponentAgency } from '../../components/sidebar copy 4/sidebar.component';
 @Component({
-  selector: 'app-home',
+  selector: 'app-home-agency',
   standalone: true,
   imports: [RouterOutlet, SidebarComponentAgency, HeaderComponent],
   templateUrl: './home.component.html',

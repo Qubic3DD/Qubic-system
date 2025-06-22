@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 import { ApplicationDto } from '../../model/application.dto';
 import { ApplicationStatus } from '../../services/application-status';
@@ -14,7 +15,8 @@ import { VehicleResponse } from './vehicle-response.model';
 import { VehicleFormModel, VehicleService } from '../../services/vehicle.service';
 import { VehicleInformation } from '../../model/adverrtiser.model';
 
-type AppTab = 'overview' | 'new' | 'details';
+type AppTab = 'new' | 'details';
+type AppFlow = 'new' | 'existing';
 
 enum FileType {
   IMAGE = 'IMAGE',
@@ -41,51 +43,33 @@ enum FileType {
   standalone: true
 })
 export class ApplicationDashboardComponent implements OnInit {
-  applications: ApplicationDto[] = [];
   selectedApplication: ApplicationDto | null = null;
   isLoading = false;
-  selectedFile: File | null = null;
-  documentPurpose: DocumentPurpose | null = null;
-  searchQuery: string = '';
-  searchResults: ApplicationDto[] = [];
-  searchPerformed: boolean = false;
-  errorMessage: string = '';
+  errorMessage = '';
   missingDocuments: string[] = [];
-  activeTab: AppTab = 'overview';
-    currentYear = new Date().getFullYear();
-    completeApp: ApplicationDto | null = null;
+  activeTab: AppTab = 'new';
+  currentYear = new Date().getFullYear();
+  completeApp: ApplicationDto | null = null;
   
- 
-   vehicleTypes = Object.values(VehicleType).filter(value => typeof value === 'string') as string[];
-transportTypes = Object.values(TransportType).filter(value => typeof value === 'string') as string[];
+  // From route parameters
+  applicationRole: Role | null = null;
+  applicationFlow: AppFlow = 'new';
+  applicantEmail: string | null = null;
 
-// Make enums available to template
-VehicleType = VehicleType;
-TransportType = TransportType;
-  availableApplicationRoles: Role[] = [
-    Role.DRIVER, 
-    Role.FLEET_OWNER, 
-    Role.AGENCY, 
-    Role.ADVERTISER,
-  ];
+  vehicleTypes = Object.values(VehicleType).filter(value => typeof value === 'string') as string[];
+  transportTypes = Object.values(TransportType).filter(value => typeof value === 'string') as string[];
 
-  // Enums and configs for template
+  // Make enums available to template
+  VehicleType = VehicleType;
+  TransportType = TransportType;
   Role = Role;
   ApplicationStatus = ApplicationStatus;
   ROLE_CONFIGS = ROLE_CONFIGS;
-  documentPurposes = Object.values(DocumentPurpose);
   DocumentPurpose = DocumentPurpose;
-  
+  documentPurposes = Object.values(DocumentPurpose);
 
-  licenseTypes = [
-    'Learner', 'Code 8', 'Code 10', 'Code 14', 
-    'Professional Driving Permit', 'International'
-  ];
-
-  companyTypes = [
-    'Pty Ltd', 'Sole Proprietor', 'Partnership', 
-    'CC', 'Non-Profit', 'Government'
-  ];
+  licenseTypes = ['Learner', 'Code 8', 'Code 10', 'Code 14', 'Professional Driving Permit', 'International'];
+  companyTypes = ['Pty Ltd', 'Sole Proprietor', 'Partnership', 'CC', 'Non-Profit', 'Government'];
 
   submissionForm = {
     applicationRole: null as Role | null,
@@ -99,18 +83,7 @@ TransportType = TransportType;
     dateOfBirth: '',
     address: '',
     city: '',
-      vehicles: [] as Array<{
-    vehicleType: VehicleType;
-    licensePlate: string;
-    capacity: string;
-    color: string;
-    year: string;
-    vehicleImage: File | null;
-    transportType?: TransportType; // Optional if needed
-    make?: string;
-    model?:string;
-    id?:number
-  }>,
+    vehicles: [] as VehicleFormModel[],
     postalCode: '',
     country: '',
     licenseType: '',
@@ -123,35 +96,98 @@ TransportType = TransportType;
     website: '',
     contactPerson: '',
     contactTitle: '',
+    approvalDate:'',
     fleetSize: 0,
-   
-    documents: [] as { type: DocumentPurpose; file: File,filetype:FileType }[],
-    submissionDate: '' as string,
-    approvalDate: '' as string
+    documents: [] as { type: DocumentPurpose; file: File, filetype: FileType }[],
+    submissionDate: '' as string
   };
+  searchQuery: any;
+  searchPerformed: boolean | undefined;
+  searchResults: ApplicationDto[] | undefined;
+  selectedFile: File | null | undefined;
+  applications: any[] | undefined;
+  documentPurpose: any;
 
- constructor(
+  constructor(
     private http: HttpClient,
+    private route: ActivatedRoute,
+    private router: Router,
     public themeService: ThemeService,
-    private vehicleService: VehicleService // Add vehicle service
+    private vehicleService: VehicleService
   ) {}
 
   ngOnInit(): void {
-    this.submissionForm.vehicles.push(this.createEmptyVehicle());
+    this.route.queryParams.subscribe(params => {
+      this.applicationRole = params['role'] as Role || null;
+      this.applicationFlow = params['flow'] as AppFlow || 'new';
+      this.applicantEmail = params['email'] || null;
+
+      if (this.applicationRole) {
+        this.submissionForm.applicationRole = this.applicationRole;
+      }
+
+      if (this.applicationFlow === 'existing' && this.applicantEmail) {
+        this.searchExistingApplication(this.applicantEmail);
+      } else {
+        this.submissionForm.vehicles.push(this.createEmptyVehicle());
+        this.submissionForm.email = this.applicantEmail || '';
+      }
+    });
   }
-createEmptyVehicle(): VehicleFormModel {
-  return {
-    vehicleType: '' as VehicleType,
-    licensePlate: '',
-    capacity: '',
-    color: '',
-    year: '',
-    vehicleImage: null,
-    transportType: undefined,
-    make: '',
-    model: ''
-  };
-}
+
+  createEmptyVehicle(): VehicleFormModel {
+    return {
+      vehicleType: '' as VehicleType,
+      licensePlate: '',
+      capacity: '',
+      color: '',
+      year: '',
+      vehicleImage: null,
+      transportType: undefined,
+      make: '',
+      model: ''
+    };
+  }
+
+  searchExistingApplication(email: string): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    this.http.get<ApplicationDto[]>(
+      `${environmentApplication.api}applications/application-by-email?email=${encodeURIComponent(email)}`
+    ).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response && response.length > 0) {
+          // Filter by role if we have one
+          const filtered = this.applicationRole 
+            ? response.filter(app => app.applicationRole === this.applicationRole)
+            : response;
+          
+          if (filtered.length > 0) {
+            this.selectedApplication = filtered[0];
+            this.completeApp = filtered[0];
+            this.activeTab = 'details';
+            this.loadVehicleImages();
+          } else {
+            this.errorMessage = 'No application found for this email and role';
+            this.activeTab = 'new';
+          }
+        } else {
+          this.errorMessage = 'No application found for this email';
+          this.activeTab = 'new';
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = error.status === 404 
+          ? 'No application found for this email' 
+          : 'Failed to search application. Please try again.';
+        this.activeTab = 'new';
+      }
+    });
+  }
+
 countUploadedDocuments(app: ApplicationDto): number {
   return app.uploadedDocuments?.length || 0;
 }
@@ -161,7 +197,7 @@ countMissingDocuments(app: ApplicationDto): number {
   if (!app.applicationRole) return 0;
   
   const requiredDocs = this.getRequiredDocumentsForRole(app.applicationRole);
-  const uploadedDocTypes = app.uploadedDocuments?.map(d => d.purpose) || [];
+  const uploadedDocTypes = app.uploadedDocuments?.map(d => d.documentPurpose) || [];
   
   return requiredDocs.filter(docType => !uploadedDocTypes.includes(docType)).length;
 }
@@ -238,12 +274,26 @@ private mapVehicleResponseToForm(vehicle: any): VehicleFormModel {
 }
   showTab(tab: AppTab): boolean {
     const conditions: Record<AppTab, boolean> = {
-      overview: true,
+
       new: true,
       details: !!this.selectedApplication
     };
     return conditions[tab];
   }
+
+
+    setActiveTab(tab: AppTab): void {
+    this.activeTab = tab;
+  }
+
+  isActiveTab(tab: AppTab): boolean {
+    return this.activeTab === tab;
+  }
+
+  backToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
  async loadVehicleImages(): Promise<void> {
     try {
       // If we have vehicles in the selected application
@@ -266,13 +316,7 @@ private mapVehicleResponseToForm(vehicle: any): VehicleFormModel {
       console.error('Error loading vehicle images:', error);
     }
   }
-  setActiveTab(tab: AppTab): void {
-    this.activeTab = tab;
-  }
 
-  isActiveTab(tab: AppTab): boolean {
-    return this.activeTab === tab;
-  }
 
   getTabClasses(tab: AppTab): string {
     const baseClasses = 'border-b-2 font-medium text-sm py-4 px-1';
@@ -553,16 +597,15 @@ async submitApplication(): Promise<void> {
     const completeApp = await this.http.get<ApplicationDto>(
       `${environmentApplication.api}applications/${newApp.id}?includeVehicles=true&includeDocuments=true`
     ).toPromise();
-
-    if (completeApp) {
-      this.completeApp = completeApp;
-      this.applications = [...this.applications, completeApp];
-      this.selectedApplication = completeApp;
-      this.activeTab = 'details';
-      
-      // Load vehicle images after we have the complete application
-      await this.loadVehicleImages();
-    }
+if (completeApp) {
+  this.completeApp = completeApp;
+  this.applications = [completeApp]; // Simplified since we're replacing the array
+  this.selectedApplication = completeApp;
+  this.activeTab = 'details';
+  
+  // Load vehicle images after we have the complete application
+  await this.loadVehicleImages();
+}
 
     this.errorMessage = 'Application submitted successfully!';
     setTimeout(() => {
@@ -701,7 +744,7 @@ private getRolesForApplication(applicationRole: Role): string[] {
 private async uploadDocuments(
   applicationId: number,
   file: File,
-  purpose: DocumentPurpose,
+  documentPurpose: DocumentPurpose,
   fileType: FileType,
   additionalData?: { vehicleId?: number; licensePlate?: string }
 ): Promise<void> {
@@ -709,7 +752,7 @@ private async uploadDocuments(
   formData.append('file', file);
 
   const params: any = {
-    documentPurpose: purpose,
+    documentPurpose: documentPurpose,
     fileType: fileType
   };
 
@@ -728,12 +771,12 @@ private async uploadDocuments(
       { params } // attach query params
     ).toPromise();
   } catch (error) {
-    console.error(`Error uploading ${purpose} document:`, error);
+    console.error(`Error uploading ${documentPurpose} document:`, error);
     throw error;
   }
 }
 
-  getDocumentIcon(docPurpose: DocumentPurpose): string {
+  getDocumentIcon(docdocumentPurpose: DocumentPurpose): string {
     const icons: Record<DocumentPurpose, string> = {
       // Personal Documents
       [DocumentPurpose.PROFILE_PICTURE]: '🖼️',
@@ -764,10 +807,10 @@ private async uploadDocuments(
       [DocumentPurpose.OTHER]: '📄'
     };
 
-    return icons[docPurpose] || '📄';
+    return icons[docdocumentPurpose] || '📄';
   }
 
-getDocumentName(purpose: DocumentPurpose): string {
+getDocumentName(documentPurpose: DocumentPurpose): string {
   const docMap: Record<DocumentPurpose, string> = {
     [DocumentPurpose.PROFILE_PICTURE]: 'Profile Picture',
     [DocumentPurpose.ID_DOCUMENT]: 'ID Document',
@@ -789,23 +832,23 @@ getDocumentName(purpose: DocumentPurpose): string {
     [DocumentPurpose.OTHER]: 'Other Document'
   };
 
-  return docMap[purpose] || purpose.toString();
+  return docMap[documentPurpose] || documentPurpose.toString();
 }
 
-  isImageDocument(purpose: DocumentPurpose): boolean {
+  isImageDocument(documentPurpose: DocumentPurpose): boolean {
     return [
       DocumentPurpose.PROFILE_PICTURE,
       DocumentPurpose.ID_DOCUMENT,
       DocumentPurpose.VEHICLE_PHOTO,
       DocumentPurpose.COMPANY_LOGO
-    ].includes(purpose);
+    ].includes(documentPurpose);
   }
 
   getDocumentUrl(doc: any): string {
-    if (this.isImageDocument(doc.purpose)) {
-      return `${environmentApplication.api}applications/${doc.id}/documents/view?purpose=${doc.purpose}`;
+    if (this.isImageDocument(doc.documentPurpose)) {
+      return `${environmentApplication.api}applications/${doc.id}/documents/view?documentPurpose=${doc.documentPurpose}`;
     } else {
-      return `${environmentApplication.api}applications/${doc.id}/documents/download?purpose=${doc.purpose}`;
+      return `${environmentApplication.api}applications/${doc.id}/documents/download?documentPurpose=${doc.documentPurpose}`;
     }
   }
 
@@ -894,7 +937,7 @@ getDocumentName(purpose: DocumentPurpose): string {
 isDocumentUploaded(docType: DocumentPurpose): boolean {
   // Check both local submission and complete app documents
   const localUpload = this.submissionForm.documents.some(d => d.type === docType);
-  const serverUpload = this.completeApp?.uploadedDocuments?.some(d => d.purpose === docType);
+  const serverUpload = this.completeApp?.uploadedDocuments?.some(d => d.documentPurpose === docType);
   
   return localUpload || serverUpload || false;
 }
@@ -907,11 +950,11 @@ getUploadedDocument(docType: DocumentPurpose): any {
 
   // Then check server documents
   if (this.completeApp?.uploadedDocuments) {
-    const serverDoc = this.completeApp.uploadedDocuments.find(d => d.purpose === docType);
+    const serverDoc = this.completeApp.uploadedDocuments.find(d => d.documentPurpose === docType);
     if (serverDoc) {
       return {
-        type: serverDoc.purpose,
-        file: { name: this.getDocumentName(serverDoc.purpose) }
+        type: serverDoc.documentPurpose,
+        file: { name: this.getDocumentName(serverDoc.documentPurpose) }
       };
     }
   }
