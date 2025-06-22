@@ -29,9 +29,10 @@ import { UserSelectDialogComponent } from './pages/tablet/user-select-dialog/use
 import { ApplicationDashboardComponent } from './pages/application-dashboard/application-dashboard.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  
-  // Admin Dashboard (unchanged)
+
+  // Login route (now the landing page)
+{ path: '', component: LoginComponent },
+  { path: 'application/:email', component: ApplicationDashboardComponent },
   {
     path: '',
     component: HomeComponent,
@@ -163,15 +164,19 @@ export const routes: Routes = [
             (m) => m.DriverProfileComponent
           ),
       },
-    ]
+        ],
+      },
+
+      {
+  path: 'approvals/:id',
+  loadComponent: () =>
+    import('../app/pages/approvals/view-application.component/view-application.component.component').then(
+      m => m.ViewApplicationComponent
+    )
+},
+
+
+    ],
   },
-  
-  // Applicant Dashboard (unchanged)
-  { 
-    path: 'application-dashboard', 
-    component: ApplicationDashboardComponent,
-    canActivate: [authGuard],
-  },
-  
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: '' },
 ];
