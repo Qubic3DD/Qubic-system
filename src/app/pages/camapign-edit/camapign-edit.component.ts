@@ -155,18 +155,23 @@ loadCampaign(): void {
       startDate: new Date(formData.startDate).toISOString(),
       endDate: new Date(formData.endDate).toISOString()
     };
-
-    this.campaignService.updateCampaign(this.campaignId!, requestData).subscribe({
-      next: () => {
-        this.snackBar.open('Campaign updated successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/campaigns', this.campaignId]);
-      },
-      error: (err) => {
-        console.error('Error updating campaign:', err);
-        this.snackBar.open('Failed to update campaign', 'Close', { duration: 3000 });
-        this.isSubmitting = false;
-      }
+this.campaignService.updateCampaign(this.campaignId!, requestData).subscribe({
+  next: () => {
+    this.snackBar.open('Campaign updated successfully', 'Close', {
+      duration: 3000,
     });
+    
+    // Navigate to updated campaign's detail page
+    this.router.navigate(['/campaign', this.campaignId]);
+  },
+  error: (err) => {
+    console.error('Error updating campaign:', err);
+    this.snackBar.open('Failed to update campaign', 'Close', {
+      duration: 3000,
+    });
+    this.isSubmitting = false;
+  }
+});
   }
 
 

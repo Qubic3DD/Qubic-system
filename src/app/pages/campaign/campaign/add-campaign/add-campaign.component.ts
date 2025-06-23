@@ -58,18 +58,18 @@ videoDimensions: {width: number, height: number} | null = null;
     private snackBar: MatSnackBar,
     private router: Router
   ) {
-    this.campaignForm = this.fb.group({
-      advertiserId: ['', Validators.required],
-      name: ['', Validators.required],
-      description: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      requiredImpressions: [1000, [Validators.required, Validators.min(1000)]],
-      provinceId: [[]], // Made optional by removing Validators.required
-      cityId: [[]],     // Made optional by removing Validators.required
-      mediaFileType: [FileType.VIDEO, Validators.required],
-      documentPurpose: [DocumentPurpose.CAMPAIGN_VIDEO, Validators.required]
-    });
+   this.campaignForm = this.fb.group({
+  advertiserId: ['', Validators.required],
+  name: ['', Validators.required],
+  description: ['', Validators.required],
+  startDate: ['', Validators.required],
+  endDate: ['', Validators.required],
+  requiredImpressions: [1000, [Validators.required, Validators.min(1000)]],
+  provinceId: [[]],
+  cityId: [[]],
+ mediaFileType: [FileType.VIDEO, Validators.required], // Will send "VIDEO"
+  documentPurpose: [DocumentPurpose.CAMPAIGN_VIDEO, Validators.required]
+});
   }
 
 
@@ -359,7 +359,8 @@ private formatDateForBackend(date: Date): string {
          `${ms(date.getMilliseconds())}`;
 }
 
-  // Submit form
+
+
 onSubmit(): void {
   this.formSubmitted = true;
   
@@ -372,9 +373,18 @@ onSubmit(): void {
   const startDate = new Date(this.campaignForm.value.startDate);
   const endDate = new Date(this.campaignForm.value.endDate);
 
-  // Format dates exactly as backend expects
-  const formattedStartDate = this.formatDateForBackend(startDate);
-  const formattedEndDate = this.formatDateForBackend(endDate);
+  // Format dates exactly as backend expects (yyyy-MM-dd HH:mm:ss.SSS)
+  const formatDate = (date: Date): string => {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const padMilli = (n: number) => n.toString().padStart(3, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+           `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.` +
+           `${padMilli(date.getMilliseconds())}`;
+  };
+
+  const formattedStartDate = formatDate(startDate);
+  const formattedEndDate = formatDate(endDate);
+  const mediaFileTypeValue = this.campaignForm.value.mediaFileType;
 
   const formData = new FormData();
   formData.append('file', this.selectedFile);
@@ -383,7 +393,8 @@ onSubmit(): void {
   formData.append('startDate', formattedStartDate);
   formData.append('endDate', formattedEndDate);
   formData.append('requiredImpressions', this.campaignForm.value.requiredImpressions.toString());
-
+  formData.append('advertiserId', this.campaignForm.value.advertiserId);
+  formData.append('mediaFileType', mediaFileTypeValue);
   // Append each city ID if any are selected
   if (this.selectedCities.length > 0) {
     this.selectedCities.forEach(cityId => {
@@ -398,22 +409,32 @@ onSubmit(): void {
     });
   }
   
-  formData.append('price', this.calculatedPrice.toString());
+  // Use the enum value directly (VIDEO, IMAGE, etc.)
   formData.append('mediaFileType', this.campaignForm.value.mediaFileType);
+  
+  // Similarly for documentPurpose
   formData.append('documentPurpose', this.campaignForm.value.documentPurpose);
 
   this.campaignService.createCampaign(formData).subscribe(
     (response) => {
       this.isLoading = false;
-      this.router.navigate(['/campaigns']);
+      this.snackBar.open('Campaign created successfully!', 'Close', {
+        duration: 3000,
+      });
+    this.router.navigate(['/campaign', response.data.id]);
+      
     },
     (error) => {
       console.error('Error creating campaign', error);
       this.isLoading = false;
+      this.snackBar.open(
+        error.error?.message || 'Failed to create campaign', 
+        'Close', 
+        { duration: 5000 }
+      );
     }
   );
 }
-
   // Close dropdowns when clicking outside
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event): void {
@@ -435,13 +456,3 @@ export interface Province {
   id: number;
   name: string;
 }
-
-
-
-
-
-
-
-
-
-
