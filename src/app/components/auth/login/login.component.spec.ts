@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CamapignEditComponentE } from './camapign-edit.component';
+import { LoginComponent } from './login.component';
 
-describe('CamapignEditComponentE', () => {
-  let component: CamapignEditComponentE;
-  let fixture: ComponentFixture<CamapignEditComponentE>;
+describe('LoginComponent', () => {
+  let component: LoginComponent;
+  let fixture: ComponentFixture<LoginComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CamapignEditComponentE]
+      imports: [LoginComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CamapignEditComponentE);
+    fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

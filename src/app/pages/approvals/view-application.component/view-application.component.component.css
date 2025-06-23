@@ -105,8 +105,8 @@
   .viewer-content {
     flex: 1;
     overflow: auto;
-    padding: 24px;
-    max-width: 1200px;
+    padding: 16px;
+    max-width: 1600px;
     margin: 0 auto;
     width: 100%;
     

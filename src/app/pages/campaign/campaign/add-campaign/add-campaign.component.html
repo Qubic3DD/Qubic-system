@@ -4,7 +4,7 @@
   </h1>
 
   <form [formGroup]="campaignForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate class="space-y-6">
-    <!-- Loading Spinner -->
+     <!-- Loading Spinner -->
     <div *ngIf="loadingAdvertisers" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-xl flex flex-col items-center">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500 mb-4"></div>
@@ -51,18 +51,10 @@
     <!-- Campaign Name -->
     <div class="space-y-2">
       <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Campaign Name</label>
-      <div class="relative">
-        <input formControlName="name" required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
-        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-        </div>
-      </div>
-      <p *ngIf="campaignForm.get('name')?.hasError('required') && formSubmitted" class="mt-1 text-sm text-red-600">
+      <input formControlName="name" required
+        class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+      <p *ngIf="campaignForm.get('name')?.hasError('required') && formSubmitted" 
+         class="mt-1 text-sm text-red-600">
         Campaign name is required
       </p>
     </div>
@@ -72,43 +64,95 @@
       <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
       <textarea formControlName="description" rows="3" required
         class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300"></textarea>
-      <p *ngIf="
-          campaignForm.get('description')?.hasError('required') && formSubmitted
-        " class="mt-1 text-sm text-red-600">
+      <p *ngIf="campaignForm.get('description')?.hasError('required') && formSubmitted" 
+         class="mt-1 text-sm text-red-600">
         Description is required
       </p>
     </div>
 
     <!-- Date Range Fields -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
-        <input type="date" formControlName="startDate" required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
-        <p *ngIf="
-            campaignForm.get('startDate')?.hasError('required') && formSubmitted
-          " class="mt-1 text-sm text-red-600">
-          Start date is required
-        </p>
-      </div>
+  <div class="space-y-2">
+  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
+  <input type="date" formControlName="startDate" required
+    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+</div>
 
-      <div class="space-y-2">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
-        <input type="date" formControlName="endDate" required
-          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
-        <p *ngIf="
-            campaignForm.get('endDate')?.hasError('required') && formSubmitted
-          " class="mt-1 text-sm text-red-600">
-          End date is required
-        </p>
+<div class="space-y-2">
+  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
+  <input type="date" formControlName="endDate" required
+    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+</div>
+<div class="space-y-6">
+  <!-- Province Selector -->
+  <div class="space-y-2">
+    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Provinces</label>
+    <div class="relative">
+      <button type="button" 
+        (click)="toggleProvinceDropdown()"
+        class="flex justify-between items-center w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500">
+        <span>{{ getSelectedProvinceLabels() || 'Select provinces...' }}</span>
+        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      
+      <!-- Province Dropdown -->
+      <div *ngIf="showProvinceDropdown" class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 max-h-60 overflow-auto">
+        <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+          <input type="text" [(ngModel)]="provinceSearch" (ngModelChange)="filterProvinces()" 
+            placeholder="Search provinces..."
+            class="w-full px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300">
+        </div>
+        <div *ngFor="let province of filteredProvinces" class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center">
+          <input type="checkbox" [id]="'province-'+province.id" 
+            [checked]="isProvinceSelected(province.id)"
+            (change)="toggleProvinceSelection(province.id)"
+            class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 dark:border-gray-600 rounded mr-2">
+          <label [for]="'province-'+province.id" class="text-sm text-gray-700 dark:text-gray-300">{{ province.name }}</label>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- Required Impressions -->
+  <!-- City Selector -->
+  <div class="space-y-2" *ngIf="selectedProvinces.length > 0">
+    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select Cities</label>
+    <div class="relative">
+      <button type="button" 
+        (click)="toggleCityDropdown()"
+        class="flex justify-between items-center w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500">
+        <span>{{ getSelectedCityLabels() || 'Select cities...' }}</span>
+        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      
+      <!-- City Dropdown -->
+      <div *ngIf="showCityDropdown" class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 max-h-60 overflow-auto">
+        <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+          <input type="text" [(ngModel)]="citySearch" (ngModelChange)="filterCities()" 
+            placeholder="Search cities..."
+            class="w-full px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300">
+        </div>
+        <div *ngFor="let city of filteredCities" class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center">
+          <input type="checkbox" [id]="'city-'+city.id" 
+            [checked]="isCitySelected(city.id)"
+            (change)="toggleCitySelection(city.id)"
+            class="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 dark:border-gray-600 rounded mr-2">
+          <label [for]="'city-'+city.id" class="text-sm text-gray-700 dark:text-gray-300">
+            {{ city.name }} <span class="text-xs text-gray-500 dark:text-gray-400">({{ getProvinceName(city.province.id) }})</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Required Impressions & Price Calculation -->
     <div class="space-y-2">
       <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Required Impressions</label>
       <div class="relative">
-        <input type="number" formControlName="requiredImpressions" min="1" required
+        <input type="number" formControlName="requiredImpressions" min="1000" step="1000" required
           class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
@@ -118,29 +162,51 @@
           </svg>
         </div>
       </div>
-      <p *ngIf="
-          campaignForm.get('requiredImpressions')?.hasError('required') &&
-          formSubmitted
-        " class="mt-1 text-sm text-red-600">
+      <div *ngIf="calculatedPrice > 0" class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+        <p class="text-gray-700 dark:text-gray-300">
+          <span class="font-medium">Calculated Price:</span> R{{ calculatedPrice | number:'1.2-2' }}
+          <span class="text-sm text-gray-500 dark:text-gray-400">({{ pricePer1000 | currency:'ZAR':'symbol':'1.0-0' }} per 1000 impressions)</span>
+        </p>
+      </div>
+      <p *ngIf="campaignForm.get('requiredImpressions')?.hasError('required') && formSubmitted" 
+         class="mt-1 text-sm text-red-600">
         Required impressions is required
       </p>
-      <p *ngIf="
-          campaignForm.get('requiredImpressions')?.hasError('min') &&
-          formSubmitted
-        " class="mt-1 text-sm text-red-600">
-        Must be at least 1
+      <p *ngIf="campaignForm.get('requiredImpressions')?.hasError('min') && formSubmitted" 
+         class="mt-1 text-sm text-red-600">
+        Minimum impressions is 1000
       </p>
     </div>
 
-    <!-- Media File Upload -->
-    <div class="space-y-4">
-      <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300">
-        Campaign Media
-      </h3>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        Accepted formats: MP4, MOV, AVI (Max 50MB)
-      </p>
+    <!-- Media File Type and Purpose -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Media File Type</label>
+        <select formControlName="mediaFileType" required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300">
+          <option *ngFor="let type of fileTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
 
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Document Purpose</label>
+        <select formControlName="documentPurpose" required
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300">
+          <option *ngFor="let purpose of documentPurposes" [value]="purpose">{{ purpose }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Media File Upload -->
+<div class="space-y-4">
+  <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300">
+    Campaign Media
+  </h3>
+  <p class="text-sm text-gray-500 dark:text-gray-400">
+    Accepted formats: MP4, MOV, AVI (Max 50MB)<br>
+    <span class="font-medium">Required:</span> Landscape orientation (4:3 or 16:10 aspect ratio)<br>
+    <span class="font-medium">Minimum resolution:</span> 1024x600 pixels
+  </p>
       <input type="file" #fileUpload (change)="onFileSelected($event)"
         accept="video/mp4,video/quicktime,video/x-msvideo" hidden required />
 
@@ -154,23 +220,27 @@
         Choose File
       </button>
 
-      <div *ngIf="selectedFile" class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
-        <div class="flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span class="text-gray-700 dark:text-gray-300">{{ selectedFile.name }} ({{ selectedFile.size | fileSize
-            }})</span>
-        </div>
-        <button type="button" (click)="removeFile()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
 
+<div *ngIf="selectedFile" class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
+  <div class="flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <div>
+      <span class="text-gray-700 dark:text-gray-300">{{ selectedFile.name }} ({{ selectedFile.size | fileSize }})</span>
+      <div *ngIf="videoDimensions" class="text-xs text-gray-500 dark:text-gray-400">
+        Resolution: {{videoDimensions.width}}×{{videoDimensions.height}}
+      </div>
+    </div>
+  </div>
+  <button type="button" (click)="removeFile()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+</div>
       <p *ngIf="!selectedFile && formSubmitted" class="mt-1 text-sm text-red-600">
         Media file is required
       </p>
@@ -183,7 +253,7 @@
         Cancel
       </button>
       <button type="submit" [disabled]="isLoading"
-        class="inline-flex  cursor-pointer justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed">
+        class="inline-flex cursor-pointer justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed">
         <span *ngIf="!isLoading">Create Campaign</span>
         <span *ngIf="isLoading" class="flex items-center">
           <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"

@@ -47,6 +47,7 @@ export class DriverProfileComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
   recentActivity: any[] = [];
+  isDarkMode = false; // Add this line
 
   constructor(
     private route: ActivatedRoute,
@@ -55,6 +56,18 @@ export class DriverProfileComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    // Save preference to localStorage
+    localStorage.setItem('darkMode', JSON.stringify(this.isDarkMode));
+    
+    // Also toggle Angular Material dark theme
+    if (this.isDarkMode) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -195,9 +208,7 @@ fetchRecentActivity(driverId: string): void {
     }
   }
 
-  editDriver(driver: any): void {
-    this.router.navigate(['/drivers/edit', driver.id]);
-  }
+
 
   downloadDocument(documentId: string): void {
     this.snackBar.open('Downloading document...', 'Close', { duration: 2000 });

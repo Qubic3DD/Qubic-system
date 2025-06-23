@@ -8,16 +8,17 @@
 
     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
       <!-- Search Input -->
-<div class="relative w-full sm:w-64"> 
-  <input [(ngModel)]="searchQuery" (input)="searchApplications()" type="text"
-    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-    placeholder="Search by email, name or phone...">
-  <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-    <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-    </svg>
-  </div>
-</div>
+      <div class="relative w-full sm:w-64"> 
+        <input [(ngModel)]="searchQuery" (input)="searchApplications()" type="text"
+          class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+          placeholder="Search by email, name or phone...">
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+      
       <!-- Filter Dropdowns -->
       <div class="flex gap-2 w-full sm:w-auto">
         <div class="relative w-full sm:w-36">
@@ -83,35 +84,40 @@
     <p class="mt-4 text-gray-600 dark:text-gray-300">Loading applications...</p>
   </div>
 
-  <!-- Application Grid -->
+  <!-- Applications Grid -->
   <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let app of filteredApplications"
-      class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden transition-colors duration-200 border" 
-      [class.border-pink-200]="app.approved"
-      [class.dark:border-pink-800]="app.approved"
-      [class.border-red-200]="app.rejected"
-      [class.dark:border-red-800]="app.rejected"
-      [class.border-gray-200]="!app.reviewed"
-      [class.dark:border-gray-700]="!app.reviewed">
+    <div *ngFor="let app of filteredApplications" class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden border" 
+         [class.border-green-200]="app.status === ApplicationStatus.APPROVED"
+         [class.dark:border-green-800]="app.status === ApplicationStatus.APPROVED"
+         [class.border-red-200]="app.status === ApplicationStatus.REJECTED"
+         [class.dark:border-red-800]="app.status === ApplicationStatus.REJECTED"
+         [class.border-yellow-200]="app.status === ApplicationStatus.MORE_INFO_REQUIRED"
+         [class.dark:border-yellow-800]="app.status === ApplicationStatus.MORE_INFO_REQUIRED"
+         [class.border-gray-200]="app.status === ApplicationStatus.PENDING"
+         [class.dark:border-gray-700]="app.status === ApplicationStatus.PENDING">
 
       <!-- Card Header -->
       <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-600 dark:text-white truncate">
-          {{ getApplicationTypeDisplay(app.type) }} - {{ app.firstName }}
+          {{ getApplicationTypeDisplay(app.type) }} - {{ app.firstName }} {{ app.lastName }}
         </h2>
         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" 
-          [class.bg-yellow-100]="!app.reviewed"
-          [class.text-yellow-800]="!app.reviewed"
-          [class.dark:bg-yellow-600]="!app.reviewed"
-          [class.dark:text-yellow-200]="!app.reviewed"
-          [class.bg-pink-100]="app.approved"
-          [class.text-pink-800]="app.approved"
-          [class.dark:bg-pink-600]="app.approved"
-          [class.dark:text-pink-200]="app.approved"
-          [class.bg-red-100]="app.rejected"
-          [class.text-red-800]="app.rejected"
-          [class.dark:bg-red-600]="app.rejected"
-          [class.dark:text-red-200]="app.rejected">
+              [class.bg-yellow-100]="app.status === ApplicationStatus.PENDING"
+              [class.text-yellow-800]="app.status === ApplicationStatus.PENDING"
+              [class.dark:bg-yellow-600]="app.status === ApplicationStatus.PENDING"
+              [class.dark:text-yellow-200]="app.status === ApplicationStatus.PENDING"
+              [class.bg-green-100]="app.status === ApplicationStatus.APPROVED"
+              [class.text-green-800]="app.status === ApplicationStatus.APPROVED"
+              [class.dark:bg-green-600]="app.status === ApplicationStatus.APPROVED"
+              [class.dark:text-green-200]="app.status === ApplicationStatus.APPROVED"
+              [class.bg-red-100]="app.status === ApplicationStatus.REJECTED"
+              [class.text-red-800]="app.status === ApplicationStatus.REJECTED"
+              [class.dark:bg-red-600]="app.status === ApplicationStatus.REJECTED"
+              [class.dark:text-red-200]="app.status === ApplicationStatus.REJECTED"
+              [class.bg-blue-100]="app.status === ApplicationStatus.MORE_INFO_REQUIRED"
+              [class.text-blue-800]="app.status === ApplicationStatus.MORE_INFO_REQUIRED"
+              [class.dark:bg-blue-600]="app.status === ApplicationStatus.MORE_INFO_REQUIRED"
+              [class.dark:text-blue-200]="app.status === ApplicationStatus.MORE_INFO_REQUIRED">
           {{ getStatusText(app) }}
         </span>
       </div>
@@ -132,47 +138,42 @@
           <span class="text-gray-700 dark:text-gray-300">Submitted: {{ app.submissionDate | date:'mediumDate' }}</span>
         </div>
 
-<!-- <div *ngIf="app.documents?.length > 0" class="mt-4">
-
-
+        <div *ngIf="app.uploadedDocuments!.length > 0" class="mt-4">
           <h4 class="text-sm font-medium text-gray-600 dark:text-white mb-2">Documents</h4>
           <ul class="space-y-1">
-            <li *ngFor="let doc of app.documents" class="flex items-center">
-              <svg class="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span class="text-sm text-gray-600 dark:text-gray-300">{{ doc.name }}</span>
+            <li *ngFor="let doc of app.uploadedDocuments" class="flex items-center justify-between">
+              <div class="flex items-center">
+                <svg class="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span class="text-sm text-gray-600 dark:text-gray-300">{{ doc.name }}</span>
+              </div>
+              <span class="text-xs italic text-gray-400 dark:text-gray-500 ml-4">{{ doc.documentPurpose }}</span>
             </li>
           </ul>
-        </div> -->
+        </div>
       </div>
 
       <!-- Card Actions -->
       <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-2">
-<button (click)="viewApplication(app)"
-  class="inline-flex items-center px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200">
-  <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-  </svg>
-  View
-</button>
+        <button (click)="viewApplication(app)"
+          class="inline-flex items-center px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200">
+          View
+        </button>
 
-
-        <button (click)="approveApplication(app)" [disabled]="app.reviewed"
-          class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 dark:bg-pink-700 dark:hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50 transition-colors duration-200">
-          <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
+        <button (click)="openActionDialog('approve', app)" [disabled]="app.status !== ApplicationStatus.PENDING"
+          class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition-colors duration-200">
           Approve
         </button>
 
-        <button (click)="rejectApplication(app)" [disabled]="app.reviewed"
+        <button (click)="openActionDialog('reject', app)" [disabled]="app.status !== ApplicationStatus.PENDING"
           class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 transition-colors duration-200">
-          <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
           Reject
+        </button>
+
+        <button (click)="openActionDialog('request-info', app)" [disabled]="app.status !== ApplicationStatus.PENDING"
+          class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors duration-200">
+          Request Info
         </button>
       </div>
     </div>
@@ -185,6 +186,85 @@
     </svg>
     <h3 class="mt-2 text-lg font-medium text-gray-600 dark:text-white">No applications found</h3>
     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+  </div>
+
+  <!-- Action Dialog -->
+  <div *ngIf="selectedApplication && currentAction" class="fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Backdrop -->
+      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+        <div class="absolute inset-0 bg-gray-500 opacity-75 dark:bg-gray-900 dark:opacity-75" (click)="closeActionDialog()"></div>
+      </div>
+      
+      <!-- Dialog Container -->
+      <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <!-- Dialog Header -->
+        <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <button type="button" (click)="closeActionDialog()" class="ml-2 text-gray-400 hover:text-gray-500">
+            <span class="sr-only">Close</span>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+            {{ currentAction === 'approve' ? 'Approve Application' : 
+               currentAction === 'reject' ? 'Reject Application' : 
+               'Request Additional Information' }}
+          </h3>
+        </div>
+        
+        <!-- Dialog Body -->
+        <div class="px-4 py-5 sm:p-6">
+          <!-- Content based on action type -->
+          <div *ngIf="currentAction === 'approve'">
+            <p class="text-gray-600 dark:text-gray-300">Are you sure you want to approve this application?</p>
+          </div>
+          
+          <div *ngIf="currentAction === 'reject'">
+            <label for="rejectionReason" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Reason for rejection:</label>
+            <textarea id="rejectionReason" [(ngModel)]="rejectionReason" rows="3"
+              class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white"></textarea>
+          </div>
+          
+          <div *ngIf="currentAction === 'request-info' && selectedApplication.roles?.length">
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">Select which documents you need from the applicant:</p>
+            <div class="space-y-2">
+              <div *ngFor="let doc of getRequiredDocuments(selectedApplication.roles![0])" class="flex items-center">
+                <div class="flex items-center h-5">
+                  <input id="{{'doc-'+doc}}" [(ngModel)]="selectedDocuments[doc]" type="checkbox" 
+                    class="focus:ring-pink-500 h-4 w-4 text-pink-600 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600">
+                </div>
+                <div class="ml-3 text-sm">
+                  <label for="{{'doc-'+doc}}" class="font-medium text-gray-700 dark:text-gray-300">{{ getDocumentName(doc) }}</label>
+                  <p *ngIf="isDocumentUploaded(doc)" class="text-xs text-green-600 dark:text-green-400">(Already uploaded)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Dialog Footer -->
+        <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse bg-gray-50 dark:bg-gray-700/30">
+          <button type="button" (click)="processApplication()" [disabled]="isActionDisabled()"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+            [class.bg-green-600]="currentAction === 'approve'"
+            [class.hover:bg-green-700]="currentAction === 'approve'"
+            [class.bg-red-600]="currentAction === 'reject'"
+            [class.hover:bg-red-700]="currentAction === 'reject'"
+            [class.bg-blue-600]="currentAction === 'request-info'"
+            [class.hover:bg-blue-700]="currentAction === 'request-info'"
+            [class.disabled:opacity-50]="isActionDisabled()">
+            {{ currentAction === 'approve' ? 'Approve' : 
+               currentAction === 'reject' ? 'Reject' : 
+               'Request Info' }}
+          </button>
+          <button type="button" (click)="closeActionDialog()"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Application Detail Modal -->
@@ -275,20 +355,19 @@
               </h4>
               <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
                 <ul class="space-y-2">
-                  <li *ngFor="let doc of selectedApplication.documents" class="flex items-center justify-between">
+                  <li *ngFor="let doc of selectedApplication.uploadedDocuments" class="flex items-center justify-between">
                     <div class="flex items-center">
                       <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                       <span class="text-gray-700 dark:text-gray-300">{{ doc.name }}</span>
                     </div>
-                  <button 
-  [disabled]="selectedApplication.id === null"
-  (click)="downloadDocument(selectedApplication.id!, doc.documentPurpose)"
-  class="text-sm text-pink-600 dark:text-pink-400 hover:text-pink-500 dark:hover:text-pink-300">
-  Download
-</button>
-
+                    <button 
+                      [disabled]="selectedApplication.id === null"
+                      (click)="downloadDocument(selectedApplication.id!, doc.documentPurpose)"
+                      class="text-sm text-pink-600 dark:text-pink-400 hover:text-pink-500 dark:hover:text-pink-300">
+                      Download
+                    </button>
                   </li>
                 </ul>
               </div>

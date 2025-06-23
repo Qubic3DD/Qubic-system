@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import {  of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -15,10 +15,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
-import { DriverDetailsDialogComponent } from '../driver-details-dialog/driver-details-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AddDriverDialogComponent } from '../add-driver-dialog/add-driver-dialog.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-view-fleet-owner',
@@ -37,23 +36,19 @@ import { AddDriverDialogComponent } from '../add-driver-dialog/add-driver-dialog
     MatTooltipModule,
     MatMenuModule,
     NgxChartsModule,
-     MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule
+    MatFormFieldModule,
+    MatInputModule
   ]
 })
 export class ViewFleetOwnerComponent implements OnInit {
+  userEmail: string | null = null;
+  userName: string | null = null;
+  userId: number | null = null;
   fleetOwner: FleetOwner | null = null;
-  drivers: DriverProfile[] = [];
-  filteredDrivers: DriverProfile[] = [];
   isLoading = true;
   error: string | null = null;
-  activeTab: 'profile' | 'drivers' | 'analytics' | 'documents' = 'profile';
-  searchQuery = '';
-  revenueChart: any;
-  driverStatusChart: any;
-activeTabIndex = 0; 
+  activeTabIndex = 0;
+   
   // Analytics data
   view: [number, number] = [700, 400];
   showXAxis = true;
@@ -64,101 +59,54 @@ activeTabIndex = 0;
   xAxisLabel = 'Month';
   showYAxisLabel = true;
   yAxisLabel = 'Revenue';
-colorScheme = {
-  name: 'myScheme',
-  selectable: true,
-  group: 'Ordinal',
-  domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
-};
+  
+  colorScheme = {
+    name: 'myScheme',
+    selectable: true,
+    group: 'Ordinal',
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+  };
+  tabs = [
+    { label: 'Profile', index: 0, icon: 'person' },
+    { label: 'Analytics', index: 1, icon: 'analytics' },
+    { label: 'Documents', index: 2, icon: 'folder' }
+  ];
 
   revenueData = [
-    {
-      "name": "Jan",
-      "value": 0
-    },
-    {
-      "name": "Feb",
-      "value": 0
-    },
-    {
-      "name": "Mar",
-      "value": 0
-    },
-    {
-      "name": "Apr",
-      "value": 0
-    },
-    {
-      "name": "May",
-      "value": 0
-    },
-    {
-      "name": "Jun",
-      "value": 0
-    }
+    { "name": "Jan", "value": 0 },
+    { "name": "Feb", "value": 0 },
+    { "name": "Mar", "value": 0 },
+    { "name": "Apr", "value": 0 },
+    { "name": "May", "value": 0 },
+    { "name": "Jun", "value": 0 }
   ];
 
-  driverStatusData = [
-    {
-      "name": "Active",
-      "value": 0
-    },
-    {
-      "name": "Inactive",
-      "value": 0
-    },
-    {
-      "name": "On Leave",
-      "value": 0
-    }
-  ];
-Math = Math;
-
+  Math = Math;
 
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.userEmail = localStorage.getItem('userEmail');
+    this.userId = Number(localStorage.getItem('userId'));
+    this.userName = localStorage.getItem('userName');
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const username = params['username'];
       if (username) {
         this.fetchFleetOwner(username);
-        this.fetchDrivers();
       } else {
         this.error = 'No username provided';
         this.isLoading = false;
       }
     });
   }
-hasValidImageUrl(email: string): boolean {
-  const url = this.getDocumentUrlByUsernameAndPurpose(email, 'PROFILE_PICTURE');
-  return !!url && url.trim() !== '';
-}
 
-  getDocumentUrlByUsernameAndPurpose(
-    username: string,
-    purpose: string
-  ): string {
-    if (!username || !purpose) return '';
-    const encodedUsername = encodeURIComponent(username);
-    const encodedPurpose = encodeURIComponent(purpose);
-    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
-  }
-    getInitials(name: string): string {
-  if (!name) return '';
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-}
-imageLoadFailed: { [email: string]: boolean } = {};
-
-onImageError(email: string) {
-  this.imageLoadFailed[email] = true;
-}
   fetchFleetOwner(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
@@ -180,40 +128,52 @@ onImageError(email: string) {
       }
     });
   }
+  hasValidImageUrl(email: string): boolean {
+    const url = this.getDocumentUrlByUsernameAndPurpose(email, 'PROFILE_PICTURE');
+    return !!url && url.trim() !== '';
+  }
+
+  getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
+    if (!username || !purpose) return '';
+    const encodedUsername = encodeURIComponent(username);
+    const encodedPurpose = encodeURIComponent(purpose);
+    return `${environment.api}files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+  }
+
+  getTabClasses(index: number): string {
+    const baseClasses = 'px-4 py-3 text-sm font-medium text-center border-b-2 flex items-center justify-center gap-2 transition-colors duration-200';
+    
+    if (this.activeTabIndex === index) {
+      return `${baseClasses} border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-400`;
+    } else {
+      return `${baseClasses} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300`;
+    }
+  }
+  getInitials(name: string): string {
+    if (!name) return '';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+
+  imageLoadFailed: { [email: string]: boolean } = {};
+
+  onImageError(email: string) {
+    this.imageLoadFailed[email] = true;
+  }
 
 
   setActiveTab(index: number): void {
-  this.activeTabIndex = index;
-  // If you still need the string values for other logic
-  const tabNames = ['profile', 'drivers', 'analytics', 'documents'];
-  const activeTabName = tabNames[index] || 'profile';
+    this.activeTabIndex = index;
+    if (index === 1) { // Analytics tab
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 300);
+    }
+  }
+
   
-  // Handle any specific logic for different tabs
-  if (activeTabName === 'analytics') {
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 300);
-  }}
+
   goBack(): void {
     this.router.navigate(['/fleet-owners']);
-  }
-  fetchDrivers(): void {
-    this.isLoading = true;
-    this.http.get<ApiResponse<DriverProfile[]>>('http://41.76.110.219:8443/profile/drivers').pipe(
-      map(response => response.data || []),
-      tap(drivers => {
-        this.drivers = drivers;
-        this.filteredDrivers = [...drivers];
-        this.updateDriverStatusChart(drivers);
-      }),
-      catchError(error => {
-        console.error('Error fetching drivers:', error);
-        this.error = 'Failed to load drivers';
-        return of([]);
-      })
-    ).subscribe(() => {
-      this.isLoading = false;
-    });
   }
 
   initializeCharts(): void {
@@ -231,58 +191,11 @@ onImageError(email: string) {
     }
   }
 
-  updateDriverStatusChart(drivers: DriverProfile[]): void {
-    const statusCounts = {
-      active: drivers.filter(d => d.status === 'Active').length,
-      inactive: drivers.filter(d => d.status === 'Inactive').length,
-      onLeave: drivers.filter(d => d.status === 'On Leave').length
-    };
-
-    this.driverStatusData = [
-      { name: 'Active', value: statusCounts.active },
-      { name: 'Inactive', value: statusCounts.inactive },
-      { name: 'On Leave', value: statusCounts.onLeave }
-    ];
-  }
-openAddDriverDialog(fleetOwnerEmail: string): void {
-  this.dialog.open(AddDriverDialogComponent, {
-    width: '600px',
-    data: {
-      fleetOwnerEmail: fleetOwnerEmail
-    }
-  });
-}
-
-
-  filterDrivers(): void {
-    if (!this.searchQuery) {
-      this.filteredDrivers = [...this.drivers];
-      return;
-    }
-
-    const query = this.searchQuery.toLowerCase();
-    this.filteredDrivers = this.drivers.filter(driver =>
-      (driver.firstName + ' ' + driver.lastName).toLowerCase().includes(query) ||
-      driver.phoneNo?.toLowerCase().includes(query) ||
-      driver.email.toLowerCase().includes(query) ||
-      driver.licenseType?.toLowerCase().includes(query)
-    );
-  }
-
-  viewDriver(driver: DriverProfile): void {
-    this.dialog.open(DriverDetailsDialogComponent, {
-      width: '800px',
-      data: { driver },
-      panelClass: 'custom-dialog-container'
-    });
-  }
-
-  editFleetOwner(driver: any) {
-    this.router.navigate(['/fleet-owners/edit', driver.email]);
+  editFleetOwner(fleetOwner: FleetOwner): void {
+    this.router.navigate(['/fleet-owners/edit', fleetOwner.email]);
   }
 
   downloadDocument(documentId: string): void {
-    // Implement document download logic
     this.snackBar.open('Downloading document...', 'Close', {
       duration: 2000
     });
@@ -367,28 +280,4 @@ interface FleetOwner {
   subscriptionPlan: string | null;
   subscriptionExpiry: string | null;
   vehicleCount: number | null;
-}
-
-interface DriverProfile {
-  id: number;
-  email: string;
-  profile: string | null;
-  phoneNo: string;
-  userName: string;
-  userHandle: string;
-  roles: string[];
-  firstName: string;
-  lastName: string;
-  gender: string | null;
-  idNumber: string | null;
-  licenseType: string | null;
-  dateOfBirth: string | null;
-  address: string | null;
-  city: string | null;
-  postalCode: string | null;
-  country: string | null;
-  status: string;
-  rating: number | null;
-  joinedDate: string;
-  lastTripDate: string | null;
 }

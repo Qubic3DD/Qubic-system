@@ -7,75 +7,181 @@
 
 <ng-container *ngIf="!loading && campaign">
   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-    <!-- Header -->
-    <div class="p-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-        {{ campaign.name }}
-      </h1>
-      <div class="mb-4">
+    <!-- Header with campaign name and status -->
+    <div class="bg-gradient-to-r from-pink-500 to-purple-600 p-6 text-white">
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-3xl font-bold mb-2">{{ campaign.name }}</h1>
+          <p class="text-pink-100">{{ campaign.description }}</p>
+        </div>
         <span [class]="
             campaign.active
-              ? 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
-              : 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+              ? 'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white text-pink-600 shadow-lg'
+              : 'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700'
           ">
-          {{ campaign.active ? "Active" : "Inactive" }}
+          {{ campaign.active ? "ACTIVE" : "INACTIVE" }}
         </span>
       </div>
+    </div>
 
-      <!-- Content -->
-      <div class="space-y-4">
-        <p class="text-gray-700 dark:text-gray-300">
-          {{ campaign.description }}
-        </p>
-
-        <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
-
-        <!-- Dates -->
-        <div class="flex items-center justify-between text-gray-700 dark:text-gray-300">
-          <div class="flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-500 dark:text-pink-400" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span>Start: {{ campaign.startDate | date }}</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 dark:text-green-400" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>End: {{ campaign.endDate | date }}</span>
-          </div>
-        </div>
-
-        <!-- Impressions -->
-        <div class="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-500 dark:text-pink-400" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          <span>Impressions: {{ campaign.accumulatedImpressions }} /
-            {{ campaign.requiredImpressions }}</span>
-        </div>
-
-        <!-- Progress bar -->
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-          <div class="bg-pink-600 dark:bg-pink-500 h-2.5 rounded-full" [style.width.%]="getProgress()"></div>
-        </div>
-
-        <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
-
+    <!-- Main content -->
+    <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left column - Campaign details -->
+      <div class="lg:col-span-2 space-y-6">
         <!-- Video section -->
-        <div *ngIf="campaign.id" class="space-y-2">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-            Campaign Video
-          </h3>
-          <video width="100%" controls [src]="getCampaignVideoUrl(campaign.id)" class="rounded-lg"></video>
+        <div *ngIf="campaign.mediaFile" class="bg-gray-50 dark:bg-gray-700 rounded-xl overflow-hidden">
+          <div class="p-4 border-b border-gray-200 dark:border-gray-600">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center">
+              <mat-icon class="mr-2 text-pink-500">videocam</mat-icon>
+              Campaign Video
+            </h2>
+          </div>
+          <video 
+            width="100%" 
+            controls 
+            [src]="'http://41.76.110.219:8443' + campaign.streamUrl" 
+            class="w-full"
+            poster="https://via.placeholder.com/800x450?text=Loading+Video"
+          ></video>
+          <div class="p-4 text-sm text-gray-600 dark:text-gray-300">
+            <p>File: {{ campaign.mediaFile.name }}</p>
+            <p>Uploaded: {{ campaign.mediaFile.creationDate | date:'medium' }}</p>
+          </div>
+        </div>
+
+        <!-- Description section -->
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+            <mat-icon class="mr-2 text-pink-500">description</mat-icon>
+            Campaign Details
+          </h2>
+          <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ campaign.description }}</p>
+        </div>
+      </div>
+
+      <!-- Right column - Stats and info -->
+      <div class="space-y-6">
+        <!-- Campaign stats card -->
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+            <mat-icon class="mr-2 text-pink-500">analytics</mat-icon>
+            Campaign Stats
+          </h2>
+          
+          <div class="space-y-4">
+            <!-- Impressions progress -->
+            <div>
+              <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-1">
+                <span>Impressions</span>
+                <span>{{ campaign.accumulatedImpressions }} / {{ campaign.requiredImpressions }}</span>
+              </div>
+              <mat-progress-bar 
+                mode="determinate" 
+                [value]="getProgress()"
+                color="primary"
+              ></mat-progress-bar>
+              <div class="text-right text-xs text-gray-500 mt-1">
+                {{ getProgress() | number:'1.0-2' }}% complete
+              </div>
+            </div>
+
+            <!-- Dates -->
+            <mat-divider></mat-divider>
+            <div class="space-y-2">
+              <div class="flex items-center">
+                <mat-icon class="text-pink-500 mr-2">event</mat-icon>
+                <div>
+                  <div class="text-sm text-gray-500">Start Date</div>
+                  <div class="font-medium">{{ campaign.startDate | date:'mediumDate' }}</div>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <mat-icon class="text-pink-500 mr-2">event_available</mat-icon>
+                <div>
+                  <div class="text-sm text-gray-500">End Date</div>
+                  <div class="font-medium">{{ campaign.endDate | date:'mediumDate' }}</div>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <mat-icon class="text-pink-500 mr-2">update</mat-icon>
+                <div>
+                  <div class="text-sm text-gray-500">Days Remaining</div>
+                  <div class="font-medium">{{ getDaysRemaining() }} day{{ getDaysRemaining() !== 1 ? 's' : '' }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Budget -->
+            <mat-divider></mat-divider>
+       <div class="flex items-center">
+  <span class="text-pink-500 mr-2 font-bold">R</span>
+  <div>
+    <div class="text-sm text-gray-500">Campaign Budget</div>
+    <div class="font-medium">{{ campaign.price | currency:'ZAR':'symbol':'1.0-0' }}</div>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <!-- Target locations -->
+        <div *ngIf="hasTargetLocations()" class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+            <mat-icon class="mr-2 text-pink-500">location_on</mat-icon>
+            Target Locations
+          </h2>
+          
+          <div *ngIf="campaign.targetProvinces?.length" class="mb-4">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Provinces</h3>
+            <div class="flex flex-wrap gap-2">
+              <mat-chip *ngFor="let province of campaign.targetProvinces" class="!bg-pink-100 !text-pink-800 dark:!bg-pink-900 dark:!text-pink-200">
+                {{ province }}
+              </mat-chip>
+            </div>
+          </div>
+          
+          <div *ngIf="campaign.targetCities?.length">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">Cities</h3>
+            <div class="flex flex-wrap gap-2">
+              <mat-chip *ngFor="let city of campaign.targetCities" class="!bg-purple-100 !text-purple-800 dark:!bg-purple-900 dark:!text-purple-200">
+                {{ city }}
+              </mat-chip>
+            </div>
+          </div>
+        </div>
+
+        <!-- Media file info -->
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+            <mat-icon class="mr-2 text-pink-500">file_present</mat-icon>
+            Media File
+          </h2>
+          
+          <mat-list>
+            <mat-list-item>
+              <mat-icon matListItemIcon>description</mat-icon>
+              <div matListItemTitle>Name</div>
+              <div matListItemLine>{{ campaign.mediaFile.name }}</div>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>category</mat-icon>
+              <div matListItemTitle>Type</div>
+              <div matListItemLine>{{ campaign.mediaFile.fileType }}</div>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>calendar_today</mat-icon>
+              <div matListItemTitle>Uploaded</div>
+              <div matListItemLine>{{ campaign.mediaFile.creationDate | date:'medium' }}</div>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon matListItemIcon>cloud_download</mat-icon>
+              <div matListItemTitle>
+                <a [href]="'http://41.76.110.219:8443' + campaign.mediaFile.downloadUrl" 
+                   class="text-pink-600 hover:underline dark:text-pink-400">
+                  Download Media File
+                </a>
+              </div>
+            </mat-list-item>
+          </mat-list>
         </div>
       </div>
     </div>

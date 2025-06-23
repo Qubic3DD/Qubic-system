@@ -1,3 +1,5 @@
+import { UploadedDocuments } from "../../model/application.dto";
+import { Role } from "../../services/role.enum";
 import { TransportType } from "../../services/transport-type.enum";
 import { VehicleType } from "../../services/vehicle-type.enum";
 
@@ -17,7 +19,7 @@ export interface Application {
   phoneNo?: string;
   username?: string;
   userHandle?: string;
-  roles?: string[];
+  roles?: Role[];
 
   firstName?: string;
   lastName?: string;
@@ -84,7 +86,7 @@ export interface Application {
   approved?: boolean;
   rejected?: boolean;
   rejectionReason?: string;
-  documents?: UserDocuments[];
+  uploadedDocuments?: UploadedDocuments[];
 
   type?: string;
 }

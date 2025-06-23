@@ -6,8 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampaignService } from '../../services/campaign.service';
 import { Campaign } from '../../model/campaign.model';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-campaign-details',
@@ -21,6 +24,9 @@ import { Campaign } from '../../model/campaign.model';
     MatProgressBarModule,
     MatChipsModule,
     MatDividerModule,
+    MatListModule,
+    MatTooltipModule,
+    CurrencyPipe
   ],
 })
 export class CampaignDetailsComponent implements OnInit {
@@ -56,7 +62,16 @@ export class CampaignDetailsComponent implements OnInit {
       100
     );
   }
-  getCampaignVideoUrl(id: number): string {
-    return `http://41.76.110.219:8443/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
+
+  getDaysRemaining(): number {
+    if (!this.campaign) return 0;
+    const endDate = new Date(this.campaign.endDate);
+    const today = new Date();
+    const diffTime = endDate.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  hasTargetLocations(): boolean {
+    return (this.campaign?.targetCities?.length || 0) + (this.campaign?.targetProvinces?.length || 0) > 0;
   }
 }

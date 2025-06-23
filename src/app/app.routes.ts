@@ -26,9 +26,9 @@ import { EditPassengerComponent } from './pages/passanger/edit-profile.component
 import { EditFleetProfileComponentComponent } from './pages/fleet-owners/edit-profile.component/edit-profile.component.component';
 import { TabletViewComponent } from './pages/tablet/tablet-view.component/tablet-view.component.component';
 import { UserSelectDialogComponent } from './pages/tablet/user-select-dialog/user-select-dialog.component';
-import { ApplicationDashboardComponent } from './pages/application-dashboard/application-dashboard.component';
-import { LoginComponent } from './components/login-component/login.component.component';
 import { DashboardComponentAdvertiser } from './components/dashboard advertiser/dashboard.component';
+import { LoginComponent } from './components/auth/login/login.component';
+import { CamapignEditComponentPages } from './pages/camapign-edit/camapign-edit.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -39,7 +39,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponentAdvertiser },
-      
+
       // Campaigns routes
       { path: 'campaigns/new', component: AddCampaignComponent },
       {
@@ -49,6 +49,8 @@ export const routes: Routes = [
             (m) => m.CampaignDetailsComponent
           ),
       },
+             { path: 'campaign/edit/:id', component: CamapignEditComponentPages },
+      
       {
         path: 'campaigns',
         loadComponent: () =>
