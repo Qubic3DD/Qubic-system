@@ -7,7 +7,7 @@ import { ConfirmDialogComponent } from '../../pages/campaign/confirm-dialog/conf
 import { VehicleService } from '../../services/vehicle.service';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs/operators';
-import { VehicleInformation } from '../../model/adverrtiser.model';
+import { VehicleInformationrmation } from '../../model/adverrtiser.model';
 
 @Component({
   selector: 'app-vehicles',
@@ -17,13 +17,13 @@ import { VehicleInformation } from '../../model/adverrtiser.model';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class VehiclesComponent implements OnInit {
-  vehicles: VehicleInformation[] = [];
+  vehicles: VehicleInformationrmation[] = [];
   isLoading = false;
   error: string | null = null;
   searchEmail = '';
   isAddingVehicle = false;
   vehicleForm: FormGroup;
-  currentVehicle: VehicleInformation | null = null;
+  currentVehicle: VehicleInformationrmation | null = null;
 
   // Vehicle types for dropdown
   vehicleTypes = ['Sedan', 'SUV', 'Truck', 'Van', 'Motorcycle', 'Bus', 'Other'];
@@ -80,7 +80,7 @@ export class VehiclesComponent implements OnInit {
     this.isAddingVehicle = true;
   }
 
-  startEditVehicle(vehicle: VehicleInformation): void {
+  startEditVehicle(vehicle: VehicleInformationrmation): void {
     this.currentVehicle = vehicle;
     this.vehicleForm.patchValue({
       ...vehicle,
@@ -134,7 +134,7 @@ export class VehiclesComponent implements OnInit {
       });
   }
 
-  confirmDelete(vehicle: VehicleInformation): void {
+  confirmDelete(vehicle: VehicleInformationrmation): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
@@ -189,7 +189,7 @@ export class VehiclesComponent implements OnInit {
     });
   }
 
-  trackByVehicleId(index: number, vehicle: VehicleInformation): number {
+  trackByVehicleId(index: number, vehicle: VehicleInformationrmation): number {
     return vehicle.id!;
   }
 

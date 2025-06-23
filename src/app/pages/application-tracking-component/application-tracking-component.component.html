@@ -99,10 +99,10 @@
     [class]="activeTab === 'vehicle' 
       ? 'px-6 py-4 font-medium text-sm border-b-2 border-pink-500 text-pink-600 dark:text-pink-400'
       : 'px-6 py-4 font-medium text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'"
-    [disabled]="!application.vehicleInformation || application.vehicleInformation.length === 0">
+    [disabled]="!application.VehicleInformationrmation || application.VehicleInformationrmation.length === 0">
     <div class="flex items-center gap-2">
       <mat-icon class="text-base">directions_car</mat-icon>
-      Vehicle Info ({{ application.vehicleInformation?.length || 0 }})
+      Vehicle Info ({{ application.VehicleInformationrmation?.length || 0 }})
     </div>
   </button>
 </div>
@@ -358,15 +358,15 @@
 
       <!-- Vehicle Info Tab -->
       <div *ngIf="activeTab === 'vehicle'" class="p-6">
-        <div *ngIf="!application.vehicleInformation || application.vehicleInformation.length === 0" 
+        <div *ngIf="!application.VehicleInformationrmation || application.VehicleInformationrmation.length === 0" 
              class="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
           <mat-icon class="text-5xl mb-4 opacity-60">directions_car</mat-icon>
           <p class="text-lg">No vehicle information available</p>
         </div>
 
-        <div *ngIf="application.vehicleInformation && application.vehicleInformation.length > 0" 
+        <div *ngIf="application.VehicleInformationrmation && application.VehicleInformationrmation.length > 0" 
              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div *ngFor="let vehicle of application.vehicleInformation" 
+          <div *ngFor="let vehicle of application.VehicleInformationrmation" 
                class="bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="h-40 bg-gray-200 dark:bg-gray-600 relative">
               <div class="absolute inset-0 bg-cover bg-center" 

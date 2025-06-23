@@ -264,14 +264,14 @@
               </div>
               <div class="info-item">
                 <span class="info-label">Vehicle Assigned:</span>
-                <span class="info-value">{{ admin.vehicleInformation?.length ? admin.vehicleInformation[0].type : 'None' }}</span>
+                <span class="info-value">{{ admin.VehicleInformationrmation?.length ? admin.VehicleInformationrmation[0].type : 'None' }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">Vehicle Details:</span>
                 <span class="info-value">
-                  <span *ngIf="admin.vehicleInformation?.length; else noVehicle">
-                    {{ admin.vehicleInformation[0].make }} {{ admin.vehicleInformation[0].model }} 
-                    ({{ admin.vehicleInformation[0].year }})
+                  <span *ngIf="admin.VehicleInformationrmation?.length; else noVehicle">
+                    {{ admin.VehicleInformationrmation[0].make }} {{ admin.VehicleInformationrmation[0].model }} 
+                    ({{ admin.VehicleInformationrmation[0].year }})
                   </span>
                   <ng-template #noVehicle>No vehicle assigned</ng-template>
                 </span>
@@ -279,7 +279,7 @@
               <div class="info-item">
                 <span class="info-label">Plate Number:</span>
                 <span class="info-value">
-                  {{ admin.vehicleInformation?.length ? admin.vehicleInformation[0].plateNumber : 'N/A' }}
+                  {{ admin.VehicleInformationrmation?.length ? admin.VehicleInformationrmation[0].plateNumber : 'N/A' }}
                 </span>
               </div>
             </div>

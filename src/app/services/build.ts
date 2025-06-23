@@ -56,7 +56,7 @@
 //     socialLinks: [''],
 
 //     // Vehicle Information
-//     vehicleInformation: this.fb.array([]),
+//     VehicleInformationrmation: this.fb.array([]),
 //     availableVehicleTypes: this.fb.array([]),
 //     preferredOperatingAreas: this.fb.array([]),
 
@@ -67,7 +67,7 @@
 // }
 
 // // Helper methods for dynamic form arrays
-// addVehicleInformation(): void {
+// addVehicleInformationrmation(): void {
 //   const vehicleForm = this.fb.group({
 //     capacity: [''],
 //     colour: [''],
@@ -78,7 +78,7 @@
 //     vehicleType: [''],
 //     userInformationId: [null]
 //   });
-//   (this.form.get('vehicleInformation') as FormArray).push(vehicleForm);
+//   (this.form.get('VehicleInformationrmation') as FormArray).push(vehicleForm);
 // }
 
 // addCoverageArea(): void {

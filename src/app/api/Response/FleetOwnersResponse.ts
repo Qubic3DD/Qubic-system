@@ -37,7 +37,7 @@ export interface DriverProfile {
     disability: string | null;
     languages: string[];
 
-    vehicleInformation: any[];
+    VehicleInformationrmation: any[];
     uploadedDocuments: any[];
 
     username: string;
@@ -100,7 +100,7 @@ export interface FleetOwnersResponse2 {
     disability: string | null;
     languages: string[];
 
-    vehicleInformation: any[];
+    VehicleInformationrmation: any[];
     uploadedDocuments: any[];
 
     username: string;

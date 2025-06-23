@@ -1,4 +1,4 @@
-import { VehicleInformation } from "../../model/adverrtiser.model";
+import { VehicleInformationrmation } from "../../model/adverrtiser.model";
 
 // interfaces.ts
 export interface ApiResponse<T> {
@@ -37,7 +37,7 @@ export interface DriverProfile {
   bio: string;
   rating: number | null;
   languages: string[];
-  vehicleInformation: VehicleInformation[];
+  VehicleInformationrmation: VehicleInformationrmation[];
   uploadedDocuments: UserDocument[]; // Consider creating a specific interface for documents
   uploadedMediaFiles: UserDocument[]; // Consider creating a specific interface for media files
   idno: string | null;

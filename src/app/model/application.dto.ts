@@ -1,7 +1,7 @@
 import { DocumentPurpose } from "../api/Response/interfaceAproval";
 import { ApplicationStatus } from "../services/application-status";
 import { Role } from "../services/role.enum";
-import { VehicleInformation } from "./adverrtiser.model";
+import { VehicleInformationrmation } from "./adverrtiser.model";
 
 export interface ApplicationDto {
 lastUpdated: any;
@@ -86,7 +86,7 @@ gender: any;
 
   // Documents
   uploadedDocuments?: UploadedDocuments[];
-  vehicleInformation?: VehicleInformation[];
+  VehicleInformationrmation?: VehicleInformationrmation[];
 }
 
 

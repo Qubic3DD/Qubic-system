@@ -32,13 +32,13 @@ accountId: number;
   bio: string | null;
   rating: number | null;
   languages: string[];
-  vehicleInformation: VehicleInformation[];
+  VehicleInformationrmation: VehicleInformationrmation[];
   uploadedDocuments: UploadedDocuments[];
   uploadedMediaFiles: any | null;
   idno: string | null;
   company: boolean;
 }
-export interface VehicleInformation {
+export interface VehicleInformationrmation {
   id?: number;
   licensePlate?: string;
   color?: string;
@@ -46,15 +46,14 @@ export interface VehicleInformation {
   isPublic?: boolean;
   vehicleType?: VehicleType;
   transportType?: TransportType;
-  userInformationId?: number;
+  userInformationId?: number | null;
   year?: string;
-  make?: string ;
+  make?: string;
   model?: string;
-  creationDate?: string;
+  creationDate?: string | null;
   vehicleImages?: VehicleImageResponse[];
-  licenseRegistrationNo?:string;
-  vehicleImageUrl?:string | null;
-}
+  licenseRegistrationNo?: string;
+  vehicleImageUrl?: string | null;}
 
 export interface ServiceInformation {
   // Add real properties if known

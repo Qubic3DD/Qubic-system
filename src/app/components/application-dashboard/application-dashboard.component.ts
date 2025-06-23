@@ -13,7 +13,7 @@ import { TransportType } from '../../services/transport-type.enum';
 import { VehicleType } from '../../services/vehicle-type.enum';
 import { VehicleResponse } from './vehicle-response.model';
 import { VehicleFormModel, VehicleService } from '../../services/vehicle.service';
-import {  VehicleInformation } from '../../model/adverrtiser.model';
+import {  VehicleInformationrmation } from '../../model/adverrtiser.model';
 
 type AppTab = 'new' | 'details';
 type AppFlow = 'new' | 'existing';
@@ -338,8 +338,8 @@ async loadCompleteApplication(email: string): Promise<void> {
       this.completeApp = response;
       this.selectedApplication = response;
       
-      if (response.vehicleInformation) {
-        this.submissionForm.vehicles = response.vehicleInformation.map(v => 
+      if (response.VehicleInformationrmation) {
+        this.submissionForm.vehicles = response.VehicleInformationrmation.map(v => 
           this.mapVehicleResponseToForm(v)
         );
       }
@@ -389,8 +389,8 @@ private mapVehicleResponseToForm(vehicle: any): VehicleFormModel {
  async loadVehicleImages(): Promise<void> {
     try {
       // If we have vehicles in the selected application
-      if (this.selectedApplication?.vehicleInformation) {
-        for (const vehicle of this.selectedApplication.vehicleInformation) {
+      if (this.selectedApplication?.VehicleInformationrmation) {
+        for (const vehicle of this.selectedApplication.VehicleInformationrmation) {
           if (vehicle.id) { // Make sure vehicle has an ID
             const images = await this.vehicleService.getVehicleImages(vehicle.id).toPromise();
             if (images && images.length > 0) {
@@ -725,7 +725,7 @@ private async createVehiclesAndUploadImages(applicationId: number): Promise<numb
     
     try {
       for (const vehicle of this.submissionForm.vehicles) {
-const vehicleRequest: VehicleInformation = {
+const vehicleRequest: VehicleInformationrmation = {
   capacity: vehicle.capacity,
   color: vehicle.color,
   licenseRegistrationNo: vehicle.licensePlate,

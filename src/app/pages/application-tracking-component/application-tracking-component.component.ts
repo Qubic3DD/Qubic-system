@@ -5,7 +5,7 @@ import { DocumentPurpose } from '../../services/document-purpose';
 import { ApplicationsService } from '../../services/application.service';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, DatePipe } from '@angular/common';
-import { VehicleInformation } from '../../model/adverrtiser.model';
+import { VehicleInformationrmation } from '../../model/adverrtiser.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -393,7 +393,7 @@ onFileSelected(event: Event, purpose: DocumentPurpose): void {
     }
   }
 
-  getVehicleImage(vehicle: VehicleInformation): string {
+  getVehicleImage(vehicle: VehicleInformationrmation): string {
     return vehicle.vehicleImageUrl || 'assets/default-vehicle.jpg';
   }
 

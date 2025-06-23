@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { environmentApplication } from '../environments/environment';
 import { VehicleResponse } from '../components/application-dashboard/vehicle-response.model';
 import { DocumentPurpose } from './document-purpose';
-import { VehicleInformation } from '../model/adverrtiser.model';
+import { VehicleInformationrmation } from '../model/adverrtiser.model';
 import { TransportType } from './transport-type.enum';
 import { VehicleType } from './vehicle-type.enum';
 
@@ -23,30 +23,30 @@ export class VehicleService {
     return this.http.get<VehicleResponse>(`${this.apiUrl}/${id}`);
   }
 
-  saveVehicle(vehicleData: VehicleInformation): Observable<VehicleInformation> {
+  saveVehicle(vehicleData: VehicleInformationrmation): Observable<VehicleInformationrmation> {
     return vehicleData.id 
-      ? this.http.put<VehicleInformation>(`${this.apiUrl}/${vehicleData.id}`, vehicleData)
-      : this.http.post<VehicleInformation>(this.apiUrl, vehicleData);
+      ? this.http.put<VehicleInformationrmation>(`${this.apiUrl}/${vehicleData.id}`, vehicleData)
+      : this.http.post<VehicleInformationrmation>(this.apiUrl, vehicleData);
   }
-createVehicle(vehicle: VehicleInformation): Observable<VehicleInformation> {
-  return this.http.post<VehicleInformation>(this.apiUrl, vehicle);
+createVehicle(vehicle: VehicleInformationrmation): Observable<VehicleInformationrmation> {
+  return this.http.post<VehicleInformationrmation>(this.apiUrl, vehicle);
 }
 
   deleteVehicle(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getVehiclesByUserEmail(email: string): Observable<VehicleInformation[]> {
-    return this.http.get<VehicleInformation[]>(`${this.apiUrl}`, {
+  getVehiclesByUserEmail(email: string): Observable<VehicleInformationrmation[]> {
+    return this.http.get<VehicleInformationrmation[]>(`${this.apiUrl}`, {
       params: { email }
     });
   }
 
-  addVehicle(vehicle: VehicleInformation): Observable<VehicleInformation> {
-    return this.http.post<VehicleInformation>(this.apiUrl, vehicle);
+  addVehicle(vehicle: VehicleInformationrmation): Observable<VehicleInformationrmation> {
+    return this.http.post<VehicleInformationrmation>(this.apiUrl, vehicle);
   }
-updateVehicle(vehicleId: number, vehicleData: VehicleInformation): Observable<VehicleInformation> {
-  return this.http.put<VehicleInformation>(`${this.apiUrl}/${vehicleId}`, vehicleData);
+updateVehicle(vehicleId: number, vehicleData: VehicleInformationrmation): Observable<VehicleInformationrmation> {
+  return this.http.put<VehicleInformationrmation>(`${this.apiUrl}/${vehicleId}`, vehicleData);
 }
 
   uploadVehicleImage(

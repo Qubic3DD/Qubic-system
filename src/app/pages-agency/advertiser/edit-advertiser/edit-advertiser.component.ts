@@ -86,7 +86,7 @@ export class EditAdvertiserComponent implements OnInit {
       bio: ['', Validators.maxLength(1000)],
       
       // Vehicle Information
-      vehicleInformation: this.fb.group({
+      VehicleInformationrmation: this.fb.group({
         capacity: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
         colour: ['', [Validators.required, Validators.maxLength(30)]],
         licenseRegistrationNo: ['', [Validators.required, Validators.maxLength(20)]],
@@ -164,8 +164,8 @@ export class EditAdvertiserComponent implements OnInit {
   }
 
   // Getter for vehicle information FormGroup
-  get vehicleInfo() {
-    return this.advertiserForm.get('vehicleInformation') as FormGroup;
+  get VehicleInformation() {
+    return this.advertiserForm.get('VehicleInformationrmation') as FormGroup;
   }
 
 
@@ -255,7 +255,7 @@ export class EditAdvertiserComponent implements OnInit {
 export class GetUserRequest {
   username: string | undefined;
   includeLanguages?: boolean;
-  includeVehicleInfo?: boolean;
+  includeVehicleInformation?: boolean;
 
   constructor(init?: Partial<GetUserRequest>) {
     Object.assign(this, init);

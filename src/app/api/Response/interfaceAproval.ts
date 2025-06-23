@@ -70,7 +70,7 @@ export interface Application {
   activeContracts?: number;
   numberOfDrivers?: number;
 
-  vehicleInformation?: VehicleInformationRequest[]; // define this separately if needed
+  VehicleInformationrmation?: VehicleInformationrmationRequest[]; // define this separately if needed
   availableVehicleTypes?: string[];
   preferredOperatingAreas?: string[];
 
@@ -127,7 +127,7 @@ export interface UserDocuments {
   downloadUrl?: string;
 }
 
-interface VehicleInformationRequest {
+interface VehicleInformationrmationRequest {
   capacity: string;
   colour: string;
   licenseRegistrationNo: string;

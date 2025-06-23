@@ -8,7 +8,7 @@ interface Document {
   file?: File;
 }
 
-type VehicleInformation = {
+type VehicleInformationrmation = {
   capacity: string;
   colour: string;
   licenseRegistrationNo: string;
@@ -41,7 +41,7 @@ export class AdvertisersRequest extends BaseRequest {
   disability: string | null = null;
   bio: string | null = null;
   languages: string[] = [];
-  vehicleInformation: VehicleInformation[] = [];
+  VehicleInformationrmation: VehicleInformationrmation[] = [];
   uploadedDocuments: Document[] = [];
   idno: string | null = null;
   company: boolean = false;    

@@ -546,16 +546,16 @@
         </div>
 
         <!-- Vehicle Information Section -->
-        <div *ngIf="selectedApplication.vehicleInformation?.length" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div *ngIf="selectedApplication.VehicleInformationrmation?.length" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
           <div class="flex justify-between items-center mb-6">
             <h3 class="text-xl font-semibold">Vehicle Information</h3>
             <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
-              {{ selectedApplication.vehicleInformation?.length }} vehicles
+              {{ selectedApplication.VehicleInformationrmation?.length }} vehicles
             </span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let vehicle of selectedApplication.vehicleInformation" class="border rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-700">
+            <div *ngFor="let vehicle of selectedApplication.VehicleInformationrmation" class="border rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-700">
               <!-- Vehicle Image -->
               <div class="h-48 bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden">
                 <img *ngIf="vehicle.vehicleImageUrl" 

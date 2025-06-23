@@ -67,7 +67,7 @@ export interface AgenciesResponse {
     };
 
     // System Data
-    vehicleInformation: any[];
+    VehicleInformationrmation: any[];
     uploadedDocuments: any[];
     serviceInformation: any;
     status: string | null;

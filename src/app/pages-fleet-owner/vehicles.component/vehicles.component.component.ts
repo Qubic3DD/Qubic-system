@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../pages/campaign/confirm-dialog/confirm-dialog.component';
 import { VehicleService } from '../../services/vehicle.service';
 import { CommonModule } from '@angular/common';
-import { VehicleInformation } from '../../model/adverrtiser.model';
+import { VehicleInformationrmation } from '../../model/adverrtiser.model';
 @Component({
   selector: 'app-vehicles',
   standalone: true,
@@ -16,14 +16,14 @@ import { VehicleInformation } from '../../model/adverrtiser.model';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class VehiclesComponentFleet implements OnInit {
-  vehicles: VehicleInformation[] = [];
+  vehicles: VehicleInformationrmation[] = [];
   isLoading = false;
   isSaving = false;
   isDeleting = false;
   error: string | null = null;
   searchEmail = '';
   isAddingVehicle = false;
-  currentVehicle: VehicleInformation | null = null;
+  currentVehicle: VehicleInformationrmation | null = null;
 
   vehicleForm: FormGroup;
 
@@ -79,7 +79,7 @@ export class VehiclesComponentFleet implements OnInit {
     this.isAddingVehicle = true;
   }
 
-  startEditVehicle(vehicle: VehicleInformation): void {
+  startEditVehicle(vehicle: VehicleInformationrmation): void {
     this.currentVehicle = vehicle;
     this.vehicleForm.patchValue(vehicle);
     this.isAddingVehicle = true;
@@ -98,7 +98,7 @@ export class VehiclesComponentFleet implements OnInit {
     }
 
     this.isSaving = true;
-    const vehicleData = this.vehicleForm.value as VehicleInformation;
+    const vehicleData = this.vehicleForm.value as VehicleInformationrmation;
 
     if (this.currentVehicle) {
       vehicleData.id = this.currentVehicle.id;
@@ -125,7 +125,7 @@ export class VehiclesComponentFleet implements OnInit {
     }
   }
 
-  confirmDelete(vehicle: VehicleInformation): void {
+  confirmDelete(vehicle: VehicleInformationrmation): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
@@ -174,7 +174,7 @@ export class VehiclesComponentFleet implements OnInit {
     });
   }
 
-  trackByVehicleId(index: number, vehicle: VehicleInformation): number {
+  trackByVehicleId(index: number, vehicle: VehicleInformationrmation): number {
     return vehicle.id!;
   }
 }

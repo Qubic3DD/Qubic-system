@@ -345,7 +345,7 @@ interface FleetOwner {
   bio: string | null;
   disability: string | null;
   languages: string[];
-  vehicleInformation: any[];
+  VehicleInformationrmation: any[];
   uploadedDocuments: any[];
   username: string;
   idno: string | null;

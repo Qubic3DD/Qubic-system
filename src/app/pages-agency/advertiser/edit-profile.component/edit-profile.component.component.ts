@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse, DriverProfile, VehicleInfo, UserDocument } from '../../../api/Response/interfaces';
+import { ApiResponse, DriverProfile, VehicleInformation, UserDocument } from '../../../api/Response/interfaces';
 
 @Component({
   selector: 'app-edit-profile',
@@ -43,7 +43,7 @@ export class EditProfileComponentComponent implements OnInit {
     bio: '',
     rating: null,
     languages: [],
-    vehicleInformation: [],
+    VehicleInformationrmation: [],
     uploadedDocuments: [],
     uploadedMediaFiles: [],
     idno: null,
@@ -92,7 +92,7 @@ showSuccessPopup() {
               ...response.data,
               dateOfBirth: this.formatDateForInput(response.data.dateOfBirth),
               languages: response.data.languages || [],
-              vehicleInformation: response.data.vehicleInformation || []
+              VehicleInformationrmation: response.data.VehicleInformationrmation || []
             };
             this.languagesInput = this.driver.languages.join(', ');
               this.userDocuments = response.data.uploadedDocuments || [];
@@ -296,7 +296,7 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
   }
 
   addVehicle(): void {
-    const newVehicle: VehicleInfo = {
+    const newVehicle: VehicleInformation = {
       capacity: '',
       colour: '',
       licenseRegistrationNo: '',
@@ -306,11 +306,11 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
       userInformationId: null,
       public: true
     };
-    this.driver.vehicleInformation.push(newVehicle);
+    this.driver.VehicleInformationrmation.push(newVehicle);
   }
 
   removeVehicle(index: number): void {
-    this.driver.vehicleInformation.splice(index, 1);
+    this.driver.VehicleInformationrmation.splice(index, 1);
   }
 
   nextStep(): void {

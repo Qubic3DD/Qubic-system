@@ -22,7 +22,7 @@ export interface AdvertisersResponse {
     disability: string | null;
     bio: string | null;
     languages: string[];
-    vehicleInformation: any[];
+    VehicleInformationrmation: any[];
     uploadedDocuments: any[];
     username: string;
     idno: string | null;
