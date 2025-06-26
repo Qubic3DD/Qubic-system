@@ -9,9 +9,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { environment, environmentApplication } from '../../environments/environment';
 import { ApiResponse, Application, UserDocuments } from '../../api/Response/interfaceAproval';
 import { ViewApplicationComponent } from './view-application.component/view-application.component.component';
+import { ApplicationDto } from '../../model/application.dto';
 
 
 
@@ -25,12 +26,12 @@ import { ViewApplicationComponent } from './view-application.component/view-appl
   standalone: true
 })
 export class ApprovalsComponent {
-  applications: Application[] = [];
+  applications: ApplicationDto[] = [];
   searchQuery = '';
   filterType = '';
   filterStatus = '';
-  filteredApplications: Application[] = [];
-  selectedApplication: Application | null = null;
+  filteredApplications: ApplicationDto[] = [];
+  selectedApplication: ApplicationDto | null = null;
   isLoading = false;
   errorMessage = '';
   dialogRef: any;
@@ -45,7 +46,7 @@ export class ApprovalsComponent {
 
 loadApplications() {
   this.isLoading = true;
-  this.http.get<Application[]>(`${environment.api}api/applications/pending`)
+  this.http.get<ApplicationDto[]>(`${environment.api}api/applications/pending`)
     .subscribe({
       next: (response) => {
         this.applications = response.map(app => ({
@@ -122,7 +123,7 @@ private isValidEmail(email: string): boolean {
 
 
 
-private mapDocuments(app: Application): UserDocuments[] {
+private mapDocuments(app: ApplicationDto): UserDocuments[] {
     const documents: UserDocuments[] = [];
 
     // Map ID document if exists
@@ -204,7 +205,7 @@ filterApplications() {
   }
 
   
- viewApplication(application: Application) {
+ viewApplication(application: ApplicationDto) {
     const dialogRef = this.dialog.open(ViewApplicationComponent, {
  width: '70vw',      // full viewport width
     height: '80vh',     // full viewport height
@@ -232,25 +233,27 @@ filterApplications() {
   }
 
 
-  approveApplication(app: Application) {
-    this.http.post(`${environment.api}api/applications/${app.id}/approve`, null)
-      .subscribe({
-        next: () => {
-          app.reviewed = true;
-          app.approved = true;
-          app.rejected = false;
-          app.approvalDate = new Date();
-          this.closeModal();
-          this.filterApplications();
-        },
-        error: (err) => {
-          this.errorMessage = 'Failed to approve application';
-          console.error(err);
-        }
-      });
-  }
+approveApplication(app: ApplicationDto) {
+  this.http.put(`${environmentApplication.api}applications/${app.id}/approve`, null)
+    .subscribe({
+      next: () => {
+        app.reviewed = true;
+        app.approved = true;
+        app.rejected = false;
+        app.approvalDate = new Date();
+        this.closeModal(); // Assuming this closes a modal dialog
+        this.filterApplications(); // Refresh or filter application list
+      },
+      error: (err) => {
+        this.errorMessage = 'Failed to approve application';
+        console.error('Approval error:', err);
+      }
+    });
+}
 
-  rejectApplication(app: Application) {
+
+
+  rejectApplication(app: ApplicationDto) {
     const reason = prompt('Please enter rejection reason:');
     if (reason) {
       this.http.post(`${environment.api}api/applications/${app.id}/reject`, { reason })
@@ -284,7 +287,7 @@ downloadDocument(appId: number, documentPurpose: string) {
     this.selectedApplication = null;
   }
 
-  getStatusText(app: Application): string {
+  getStatusText(app: ApplicationDto): string {
     if (app.approved) return 'Approved';
     if (app.rejected) return 'Rejected';
     return 'Pending Review';

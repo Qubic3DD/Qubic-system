@@ -300,7 +300,7 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
 addVehicle(): void {
   const newVehicle: VehicleInformationrmation = {
     capacity: '',
-    color: '',
+    colour: '',
     licenseRegistrationNo: '',
     creationDate: '',
     transportType: undefined,

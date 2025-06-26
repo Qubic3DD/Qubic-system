@@ -140,7 +140,7 @@ export class ApplicationDashboardComponent implements OnInit {
       vehicleType: '' as VehicleType,
       licensePlate: '',
       capacity: '',
-      color: '',
+      colour: '',
       year: '',
       vehicleImage: null,
       transportType: undefined,
@@ -355,7 +355,7 @@ private mapVehicleResponseToForm(vehicle: any): VehicleFormModel {
     vehicleType: vehicle.vehicleType || '',
     licensePlate: vehicle.licenseRegistrationNo || '',
     capacity: vehicle.capacity || '',
-    color: vehicle.color || '',
+    colour: vehicle.colour || '',
     year: vehicle.year || '',
     vehicleImage: null, // Will be loaded separately
     transportType: vehicle.transportType,
@@ -395,7 +395,7 @@ private mapVehicleResponseToForm(vehicle: any): VehicleFormModel {
             const images = await this.vehicleService.getVehicleImages(vehicle.id).toPromise();
             if (images && images.length > 0) {
               // Find the main vehicle photo (you might need to adjust this logic)
-              const mainImage = images.find(img => img.purpose === DocumentPurpose.VEHICLE_PHOTO);
+              const mainImage = images.find(img => img.documentPurpose === DocumentPurpose.VEHICLE_PHOTO);
               if (mainImage) {
                 // Add the image URL to the vehicle object
                 vehicle.vehicleImageUrl = this.vehicleService.getVehicleImageUrl(mainImage.id).toString();
@@ -727,7 +727,7 @@ private async createVehiclesAndUploadImages(applicationId: number): Promise<numb
       for (const vehicle of this.submissionForm.vehicles) {
 const vehicleRequest: VehicleInformationrmation = {
   capacity: vehicle.capacity,
-  color: vehicle.color,
+  colour: vehicle.colour,
   licenseRegistrationNo: vehicle.licensePlate,
   isPublic: true,
   creationDate: new Date().toISOString(),

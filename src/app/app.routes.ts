@@ -1,3 +1,4 @@
+
 import { Routes } from '@angular/router';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -12,7 +13,7 @@ import { AddDriverComponent } from '../app/pages/driver/add-driver/add-driver.co
 import { DriverComponent } from './pages/driver/driver.component';
 import { AgenciesComponent } from './pages/agencies/agencies.component';
 import { FleetOwnersComponent } from './pages/fleet-owners/fleet-owners.component';
-import { PassengerComponent } from './pages/passanger/passanger.component';
+import {  PassengerComponent } from './pages/passanger/passanger.component';
 import { MessagesComponent } from './pages/messages/messages.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { ApprovalsComponent } from './pages/approvals/approvals.component';
@@ -26,22 +27,23 @@ import { EditPassengerComponent } from './pages/passanger/edit-profile.component
 import { EditFleetProfileComponentComponent } from './pages/fleet-owners/edit-profile.component/edit-profile.component.component';
 import { TabletViewComponent } from './pages/tablet/tablet-view.component/tablet-view.component.component';
 import { UserSelectDialogComponent } from './pages/tablet/user-select-dialog/user-select-dialog.component';
-import { DashboardComponentAdvertiser } from './components/dashboard advertiser/dashboard.component';
-import { LoginComponent } from './components/auth/login/login.component';
-import { CamapignEditComponentPages } from './pages/camapign-edit/camapign-edit.component';
 
+import { LoginComponent } from './components/auth/login/login.component';
+import { DashboardComponentAdvertiser } from './components/dashboard advertiser/dashboard.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
+
+  // Login route (now the landing page)
+{ path: '', component: LoginComponent },
+
   {
     path: '',
     component: HomeComponent,
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponentAdvertiser },
-
-      // Campaigns routes
       { path: 'campaigns/new', component: AddCampaignComponent },
+ 
       {
         path: 'campaign/:id',
         loadComponent: () =>
@@ -49,8 +51,6 @@ export const routes: Routes = [
             (m) => m.CampaignDetailsComponent
           ),
       },
-             { path: 'campaign/edit/:id', component: CamapignEditComponentPages },
-      
       {
         path: 'campaigns',
         loadComponent: () =>
@@ -59,133 +59,127 @@ export const routes: Routes = [
           ),
       },
 
-      // Advertisers routes
+      { path: 'drivers/edit/:email', component: EditProfileComponentComponent },
       {
         path: 'advertisers',
         children: [
           { path: '', component: AdvertiserComponent },
           { path: 'add', component: AddAdvertiserComponent },
           { path: 'edit', component: EditAdvertiserComponent },
-          {
-            path: 'details',
-            loadComponent: () =>
-              import('./pages/advertiser/view-advertiser-owner/view-advertiser-owner.component').then(
-                m => m.ViewAdvertiserComponent
-              )
-          }
+           {
+      path: 'details',
+      loadComponent: () =>
+        import('./pages/advertiser/view-advertiser-owner/view-advertiser-owner.component').then(
+          m => m.ViewAdvertiserComponent
+        )
+    }
         ],
       },
 
-      // Admins routes
-      {
+         {
         path: 'admins',
         children: [
           { path: '', component: AdminComponent },
           { path: 'add', component: AddAdminComponent },
           { path: 'edit', component: EditAdvertiserComponent },
-          {
-            path: 'details',
-            loadComponent: () =>
-              import('./pages/admin/view-fleet-owner/view-fleet-owner.component').then(
-                m => m.ViewAdminComponent
-              )
-          }
+
+            {
+      path: 'details',
+      loadComponent: () =>
+        import('./pages/admin/view-fleet-owner/view-fleet-owner.component').then(
+          m => m.ViewAdminComponent
+        )
+    }
         ],
       },
-
-      // Messages and Approvals
-      { path: 'messages', component: MessagesComponent },
-      { path: 'approvals', component: ApprovalsComponent },
-      
-      // Agencies routes
-      {
+        { path: 'messages', component: MessagesComponent },
+         { path: 'approvals', component: ApprovalsComponent },
+        
+    {
         path: 'agencies',
         children: [
           { path: '', component: AgenciesComponent },
           { path: 'add', component: AddAgenciesComponent },
           { path: 'edit', component: EditAgenciesComponent },
+
           {
-            path: 'details',
-            loadComponent: () =>
-              import('./pages/agencies/view-fleet-owner/view-fleet-owner.component').then(
-                m => m.ViewAgencyComponent 
-              )
-          }
+      path: 'details',
+      loadComponent: () =>
+        import('./pages/agencies/view-fleet-owner/view-fleet-owner.component').then(
+          m => m.ViewAgencyComponent 
+        )
+    }
         ],
       },
+ {
+  path: 'fleet-owners',
+  children: [
+    { path: '', component: FleetOwnersComponent },
+    { path: 'add', component: AddFleetOwnerComponent },
+    { path: 'edit', component: EditFleetProfileComponentComponent },
+    {
+      path: 'details',
+      loadComponent: () =>
+        import('./pages/fleet-owners/view-fleet-owner/view-fleet-owner.component').then(
+          m => m.ViewFleetOwnerComponent
+        )
+    }
+  ],
+}
+,
+ {
+  path: 'tablets',
+  children: [
+    { path: '', component: TabletComponent },
+    { path: ':id', component: TabletViewComponent },
+    {path:'assign',component: UserSelectDialogComponent}
+  ],
+},
 
-      // Fleet Owners routes
-      {
-        path: 'fleet-owners',
-        children: [
-          { path: '', component: FleetOwnersComponent },
-          { path: 'add', component: AddFleetOwnerComponent },
-          { path: 'edit', component: EditFleetProfileComponentComponent },
-          {
-            path: 'details',
-            loadComponent: () =>
-              import('./pages/fleet-owners/view-fleet-owner/view-fleet-owner.component').then(
-                m => m.ViewFleetOwnerComponent
-              )
-          }
-        ],
-      },
-
-      // Tablets routes
-      {
-        path: 'tablets',
-        children: [
-          { path: '', component: TabletComponent },
-          { path: ':id', component: TabletViewComponent },
-          { path: 'assign', component: UserSelectDialogComponent }
-        ],
-      },
-
-      // Passenger routes
-      {
+      
+             {
         path: 'passenger',
         children: [
           { path: '', component: PassengerComponent },
           { path: 'add', component: AddPassengerComponent },
           { path: 'edit', component: EditPassengerComponent },
           {
-            path: 'details',
-            loadComponent: () =>
-              import('./pages/passanger/view-fleet-owner/view-fleet-owner.component').then(
-                m => m.ViewPassengerComponent  
-              )
-          }
+      path: 'details',
+      loadComponent: () =>
+        import('./pages/passanger/view-fleet-owner/view-fleet-owner.component').then(
+          m => m.ViewPassengerComponent  
+        )
+    }
         ],
       },
+  
 
-      // Drivers routes
       {
         path: 'drivers',
         children: [
           { path: '', component: DriverComponent },
           { path: 'add', component: AddDriverComponent },
-          { path: 'edit/:email', component: EditProfileComponentComponent },
-          {
-            path: 'details',
-            loadComponent: () =>
-              import('../app/pages/driver/view-fleet-owner/view-fleet-owner.component').then(
-                (m) => m.DriverProfileComponent
-              )
-          },
+          { path: 'edit', component: EditAdvertiserComponent },
+             {
+        path: 'details',
+        loadComponent: () =>
+          import('../app/pages/driver/view-fleet-owner/view-fleet-owner.component').then(
+            (m) => m.DriverProfileComponent
+          ),
+      },
         ],
       },
 
-      // Approval details route
       {
-        path: 'approvals/:id',
-        loadComponent: () =>
-          import('../app/pages/approvals/view-application.component/view-application.component.component').then(
-            m => m.ViewApplicationComponent
-          )
-      },
+  path: 'approvals/:id',
+  loadComponent: () =>
+    import('../app/pages/approvals/view-application.component/view-application.component.component').then(
+      m => m.ViewApplicationComponent
+    )
+},
+
+
     ],
   },
-  
-  // Wildcard route
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: '' },
 ];

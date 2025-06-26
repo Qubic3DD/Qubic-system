@@ -5,7 +5,7 @@ import { DocumentPurpose } from '../../services/document-purpose';
 import { ApplicationsService } from '../../services/application.service';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule, DatePipe } from '@angular/common';
-import { VehicleInformationrmation } from '../../model/adverrtiser.model';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,7 +13,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AppDocumentViewerComponent } from '../app-document-viewer/app-document-viewer.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Role } from '../../services/role.enum';
 import { ROLE_CONFIGS } from '../../services/role.enum';
 import { TransportType } from '../../services/transport-type.enum';
@@ -22,6 +22,13 @@ import { environmentApplication } from '../../environments/environment';
 import { FileType } from '../../services/file-type';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { FileSizePipe } from "../../pagess-advertiser/campaign/campaign/add-campaign/file-size.pipe";
+import { VehicleImageResponse, VehicleService } from '../../services/vehicle.service';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { VehicleInformationrmation } from '../../model/adverrtiser.model';
+import { catchError, map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-track-application',
@@ -36,34 +43,66 @@ import { FileSizePipe } from "../../pagess-advertiser/campaign/campaign/add-camp
     MatIconModule,
     MatButtonModule,
     MatProgressBarModule,
+    MatTooltipModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     FileSizePipe
-],
+  ],
   providers: [DatePipe],
 })
 export class TrackApplicationComponent implements OnInit {
+formatRole(role: Role): string {
+  switch (role) {
+    case Role.DRIVER:
+      return 'Driver';
+    case Role.FLEET_OWNER:
+      return 'Fleet Owner';
+    case Role.AGENCY:
+      return 'Agency';
+    case Role.ADVERTISER:
+      return 'Advertiser';
+    default:
+      return 'Unknown Role';
+  }
+}
+
+getImagePreview(arg0: any) {
+throw new Error('Method not implemented.');
+}
   application: ApplicationDto | null = null;
   loading = true;
   error: string | null = null;
-activeTab: 'details' | 'documents' | 'missing' | 'vehicle' = 'details';
+  activeTab: 'details' | 'documents' | 'missing' | 'vehicle' = 'details';
 
+  // Vehicle properties
+  showVehicleForm = false;
+  newVehicle: Partial<VehicleInformationrmation> = {
+    transportType: TransportType.TAXI,
+    vehicleType: VehicleType.HATCH
+  };
+  vehicleImageFile: File | null = null;
+  vehicleImagePreview: string | null = null;
+  isEditingVehicle = false;
+  private apiUrl = environmentApplication.api + 'images/';
+  private imageCache = new Map<number, Observable<string | null>>();
+  // Other existing properties...
   uploadProgress: number | null = null;
   isUploading = false;
   selectedDocumentPurpose: DocumentPurpose | null = null;
-selectedFile: File | null = null;
-
-  Role = Role;
-  ROLE_CONFIGS = ROLE_CONFIGS;
-  DocumentPurpose = DocumentPurpose;
-  documentPurposes = Object.values(DocumentPurpose);
-  
-  licenseTypes = ['Learner', 'Code 8', 'Code 10', 'Code 14', 'Professional Driving Permit', 'International'];
-  companyTypes = ['Pty Ltd', 'Sole Proprietor', 'Partnership', 'CC', 'Non-Profit', 'Government'];
- missingDocuments: DocumentPurpose[] = [];
-
+  selectedFile: File | null = null;
+  vehicleTypes = Object.values(VehicleType).filter(value => typeof value === 'string') as string[];
+  transportTypes = Object.values(TransportType).filter(value => typeof value === 'string') as string[];
+  missingDocuments: DocumentPurpose[] = [];
+Role: any;
+vehicle: any;
+i: any;
 
   constructor(
     private route: ActivatedRoute,
     private applicationsService: ApplicationsService,
+    private vehicleService: VehicleService,
     private sanitizer: DomSanitizer,
     private dialog: MatDialog,
     private http: HttpClient,
@@ -72,8 +111,8 @@ selectedFile: File | null = null;
   ) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const email = params['email'];
+    this.route.paramMap.subscribe(params => {
+      const email = params.get('email');
       if (email) {
         this.fetchApplication(email);
       } else {
@@ -81,138 +120,377 @@ selectedFile: File | null = null;
         this.loading = false;
       }
     });
-  }
+  }submitVehicle(): void {
+  if (!this.application?.id) return;
 
-  fetchApplication(email: string): void {
-    this.loading = true;
-    this.error = null;
-    this.applicationsService.getApplicationByEmail(email).subscribe({
-      next: (data) => {
-        this.application = data[0];
-        this.calculateMissingDocuments();
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load application. Please try again later.';
-        this.loading = false;
-        console.error(err);
+  // First, prepare the vehicle data (without image)
+  const vehicleData = {
+    ...this.newVehicle,
+    applicationId: this.application.id,
+    applicationNumber:this.application.id
+  };
+
+  // Remove image-related fields before sending
+  delete vehicleData.vehicleImageUrl;
+
+  // Determine if we're creating or updating
+  const isCreate = !this.isEditingVehicle || !this.newVehicle.id;
+
+  // Step 1: Create/Update the vehicle record
+  const vehicleRequest = isCreate
+    ? this.vehicleService.addVehicleToApplication(this.application.id, vehicleData)
+    : this.vehicleService.updateVehicle(vehicleData);
+
+  vehicleRequest.pipe(
+    // If creating, ensure we have the ID before proceeding
+    switchMap((response: any) => {
+      // Handle case where backend might return the ID directly or in a nested property
+      const vehicleId = response.id ;
+      
+      if (isCreate && !vehicleId) {
+        throw new Error('Vehicle created but no ID returned');
       }
-    });
+
+      // For create operations, update the local vehicle reference with the ID
+      if (isCreate) {
+        this.newVehicle.id = vehicleId;
+      }
+
+      // If we have an image file, upload it
+      if (this.vehicleImageFile) {
+        return this.uploadVehicleImage(vehicleId).pipe(
+          catchError(imgError => {
+            console.error('Error uploading vehicle image:', imgError);
+            this.snackBar.open('Vehicle saved but image upload failed', 'Close', { duration: 5000 });
+            // Even if image upload fails, we consider the operation successful
+            return of(response);
+          })
+        );
+      }
+      return of(response);
+    })
+  ).subscribe({
+    next: () => {
+      this.handleVehicleSuccess();
+    },
+    error: (err: any) => {
+      console.error(`Error ${isCreate ? 'adding' : 'updating'} vehicle:`, err);
+      const errorMsg = err.message || `Failed to ${isCreate ? 'add' : 'update'} vehicle`;
+      this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
+      this.resetUploadState();
+    }
+  });
+}
+
+private uploadVehicleImage(vehicleId: number): Observable<any> {
+  if (!this.vehicleImageFile) return throwError(() => new Error('No image file selected'));
+
+  const formData = new FormData();
+  formData.append('file', this.vehicleImageFile);
+  formData.append('purpose', DocumentPurpose.VEHICLE_PHOTO.toString());
+
+  return this.http.post(
+    `${environmentApplication.api}vehicles/${vehicleId}/images/purpose/VEHICLE_PHOTO`,
+    formData,
+    { reportProgress: true }
+  );
+}
+
+private handleVehicleSuccess(): void {
+  this.snackBar.open(`Vehicle ${this.isEditingVehicle ? 'updated' : 'added'} successfully!`, 'Close', { duration: 5000 });
+  this.fetchApplication(this.application!.email);
+  this.showVehicleForm = false;
+  this.resetVehicleForm();
+}
+  // Vehicle methods
+  addVehicle(): void {
+    this.showVehicleForm = true;
+    this.isEditingVehicle = false;
+    this.resetVehicleForm();
   }
 
+  editVehicle(vehicle: VehicleInformationrmation): void {
+    this.showVehicleForm = true;
+    this.isEditingVehicle = true;
+    this.newVehicle = { ...vehicle };
+    if (vehicle.vehicleImageUrl) {
+      this.vehicleImagePreview = vehicle.vehicleImageUrl;
+    }
+  }
 
-  calculateMissingDocuments(): void {
-  if (!this.application || !this.application.applicationRole) {
-    this.missingDocuments = [];
+  cancelAddVehicle(): void {
+    this.showVehicleForm = false;
+    this.resetVehicleForm();
+  }
+
+  resetVehicleForm(): void {
+    this.newVehicle = {
+      transportType: TransportType.TAXI,
+      vehicleType: VehicleType.HATCH
+    };
+    this.vehicleImageFile = null;
+    this.vehicleImagePreview = null;
+  }
+
+  onVehicleImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      this.vehicleImageFile = input.files[0];
+      this.vehicleImagePreview = URL.createObjectURL(this.vehicleImageFile);
+    }
+  }
+
+  deleteVehicle(vehicleId: number): void {
+    if (confirm('Are you sure you want to delete this vehicle?')) {
+      this.vehicleService.deleteVehicle(vehicleId).subscribe({
+        next: () => {
+          this.snackBar.open('Vehicle deleted successfully', 'Close', { duration: 3000 });
+          if (this.application?.email) {
+            this.fetchApplication(this.application.email);
+          }
+        },
+        error: (err) => {
+          this.snackBar.open('Error deleting vehicle', 'Close', { duration: 3000 });
+          console.error(err);
+        }
+      });
+    }
+  }
+
+private readonly validFileTypes: { [key in DocumentPurpose]: string[] } = {
+  // Personal Documents
+  [DocumentPurpose.PROFILE_PICTURE]: ['image/jpeg', 'image/png', 'image/gif'],
+  [DocumentPurpose.ID_DOCUMENT]: ['application/pdf', 'image/jpeg', 'image/png'],
+  [DocumentPurpose.PROOF_OF_ADDRESS]: ['application/pdf', 'image/jpeg', 'image/png'],
+  [DocumentPurpose.LICENSE]: ['application/pdf', 'image/jpeg', 'image/png'],
+
+  // Vehicle-related Documents
+  [DocumentPurpose.VEHICLE_REGISTRATION]: ['application/pdf', 'image/jpeg', 'image/png'],
+  [DocumentPurpose.VEHICLE_INSURANCE]: ['application/pdf'],
+  [DocumentPurpose.VEHICLE_INSPECTION_REPORT]: ['application/pdf', 'image/jpeg', 'image/png'],
+  [DocumentPurpose.VEHICLE_PHOTO]: ['image/jpeg', 'image/png'],
+  [DocumentPurpose.ROADWORTHY_CERTIFICATE]: ['application/pdf', 'image/jpeg', 'image/png'],
+
+  // Business-related Documents
+  [DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE]: ['application/pdf', 'image/jpeg', 'image/png'],
+  [DocumentPurpose.BUSINESS_LICENSE]: ['application/pdf', 'image/jpeg', 'image/png'],
+  [DocumentPurpose.TAX_CLEARANCE_CERTIFICATE]: ['application/pdf'],
+  [DocumentPurpose.COMPANY_PROFILE]: [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ],
+  [DocumentPurpose.COMPANY_LOGO]: ['image/jpeg', 'image/png', 'image/svg+xml'],
+  [DocumentPurpose.BUSINESS_ADDRESS_PROOF]: ['application/pdf', 'image/jpeg', 'image/png'],
+
+  // Campaign-related Media
+  [DocumentPurpose.CAMPAIGN_VIDEO]: ['video/mp4', 'video/quicktime'],
+  [DocumentPurpose.CAMPAIGN_PICTURE]: ['image/jpeg', 'image/png', 'image/gif'],
+
+  // Miscellaneous
+  [DocumentPurpose.OTHER]: [
+    'application/pdf',
+    'image/jpeg',
+    'image/png',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  ]
+};
+private getFileTypeFromExtension(filename: string): string {
+  const extension = filename.split('.').pop()?.toLowerCase();
+  
+  switch(extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+    case 'pdf':
+      return 'application/pdf';
+    case 'doc':
+      return 'application/msword';
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    case 'xls':
+      return 'application/vnd.ms-excel';
+    case 'xlsx':
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    case 'mp4':
+      return 'video/mp4';
+    case 'mov':
+      return 'video/quicktime';
+    case 'svg':
+      return 'image/svg+xml';
+    default:
+      return 'application/octet-stream'; // Unknown type
+  }
+}
+
+  // Other existing methods...
+fetchApplication(email: string): void {
+  this.loading = true;
+  this.error = null;
+  
+  this.applicationsService.getApplicationByEmail(email).pipe(
+    switchMap((applications) => {
+      if (!applications || applications.length === 0) {
+        throw new Error('No application found');
+      }
+      
+      this.application = applications[0];
+      
+      // Fetch vehicles for this application
+      if (this.application.id) {
+        return this.vehicleService.getVehiclesByApplication(this.application.id).pipe(
+          map((vehicles) => {
+            // Add vehicles to the application object
+            this.application!.VehicleInformationrmation = vehicles;
+          
+            return applications;
+          }),
+          catchError((vehicleError) => {
+            console.error('Error fetching vehicles:', vehicleError);
+            // Continue even if vehicle fetch fails
+            return of(applications);
+          })
+        );
+
+        
+      }
+      return of(applications);
+    })
+  ).subscribe({
+    next: () => {
+      this.fetchMissingDocuments();
+      this.loading = false;
+    },
+    error: (err) => {
+      this.error = 'Failed to load application. Please try again later.';
+      this.loading = false;
+      console.error(err);
+    }
+  });
+}
+
+calculateAge(birthDate: string | Date | null | undefined): number {
+  if (!birthDate) return 0;
+
+  const birth = new Date(birthDate);
+  if (isNaN(birth.getTime())) return 0; // Invalid date fallback
+
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+}
+
+
+
+fetchMissingDocuments(): void {
+  if (!this.application?.id) {
+    this.calculateMissingDocuments(); // Fallback to client-side calculation
     return;
   }
 
-  const requiredDocs = this.getRequiredDocumentsForRole(this.application.applicationRole);
-  const uploadedDocs = this.application.uploadedDocuments?.map(d => d.documentPurpose) || [];
-  
-  this.missingDocuments = requiredDocs.filter(docType => !uploadedDocs.includes(docType));
+  this.applicationsService.getMissingDocuments(this.application.id).subscribe({
+    next: (missingDocs) => {
+      this.missingDocuments = missingDocs;
+      
+      // If no missing documents from API, try client-side calculation
+      if (missingDocs.length === 0) {
+        this.calculateMissingDocuments();
+      }
+    },
+    error: () => {
+      console.error('Failed to fetch missing documents');
+      this.calculateMissingDocuments();
+    }
+  });
 }
-
-// Update your upload success handler to refresh the missing documents list
-private handleUploadSuccess(): void {
-  this.snackBar.open('Document uploaded successfully!', 'Close', { duration: 5000 });
-  this.resetUploadState();
-  
-  // Refresh application data and missing documents
-  if (this.application?.email) {
-    this.fetchApplication(this.application.email);
-  }
-  
-  // If we're on the missing tab and no more missing docs, switch to documents tab
-  if (this.activeTab === 'missing' && this.missingDocuments.length === 0) {
-    this.activeTab = 'documents';
-  }
-}
-onFileSelected(event: Event, purpose: DocumentPurpose): void {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length) {
-    this.selectedFile = input.files[0];
-    this.selectedDocumentPurpose = purpose;
-    
-    // Validate file size (max 5MB)
-    if (this.selectedFile.size > 5 * 1024 * 1024) {
-      this.snackBar.open('File size should be less than 5MB', 'Close', { duration: 5000 });
-      this.selectedFile = null;
-      input.value = ''; // Clear the file input
+  calculateMissingDocuments(): void {
+    if (!this.application || !this.application.applicationRole) {
+      this.missingDocuments = [];
       return;
     }
+
+    const requiredDocs = this.getRequiredDocumentsForRole(this.application.applicationRole);
+    const uploadedDocs = this.application.uploadedDocuments?.map(d => d.documentPurpose) || [];
     
-    // Validate file type based on purpose
-    if (!this.isValidFileType(this.selectedFile, purpose)) {
-      this.snackBar.open('Invalid file type for this document', 'Close', { duration: 5000 });
-      this.selectedFile = null;
-      input.value = ''; // Clear the file input
-      return;
+    this.missingDocuments = requiredDocs.filter(docType => !uploadedDocs.includes(docType));
+  }
+
+  onFileSelected(event: Event, purpose: DocumentPurpose): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      this.selectedFile = input.files[0];
+      this.selectedDocumentPurpose = purpose;
+      
+      if (this.selectedFile.size > 5 * 1024 * 1024) {
+        this.snackBar.open('File size should be less than 5MB', 'Close', { duration: 5000 });
+        this.selectedFile = null;
+        input.value = '';
+        return;
+      }
+      
+      if (!this.isValidFileType(this.selectedFile, purpose)) {
+        this.snackBar.open('Invalid file type for this document', 'Close', { duration: 5000 });
+        this.selectedFile = null;
+        input.value = '';
+        return;
+      }
     }
   }
+
+getVehicleImageUrl(vehicleId: number): Observable<string | null> { 
+    if (this.imageCache.has(vehicleId)) {
+        return this.imageCache.get(vehicleId)!;
+    }
+
+    const imageUrl$ = this.vehicleService.getVehicleImages(vehicleId).pipe(
+        map(images => {
+            if (!images || images.length === 0) return null;
+            
+            // Assuming the first image is the main vehicle image
+            const image = images[0];
+            
+            // Construct the URL based on your API structure
+            return `${environmentApplication.api}vehicles/images/${image.id}`;
+        }),
+        catchError(error => {
+            console.error(`Failed to get image for vehicle ${vehicleId}`, error);
+            return of(null);
+        }),
+        shareReplay(1) // Cache the result
+    );
+
+    this.imageCache.set(vehicleId, imageUrl$);
+    return imageUrl$;
 }
 
 
-  getRequiredDocumentsForRole(role: Role): DocumentPurpose[] {
-    const baseDocs = [
-      DocumentPurpose.ID_DOCUMENT,
-      DocumentPurpose.PROOF_OF_ADDRESS,
-      DocumentPurpose.PROFILE_PICTURE
-    ];
-
-    switch (role) {
-      case Role.DRIVER:
-        return [...baseDocs, DocumentPurpose.LICENSE, DocumentPurpose.VEHICLE_REGISTRATION];
-      case Role.FLEET_OWNER:
-        return [...baseDocs, 
-          DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
-          DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
-          DocumentPurpose.BUSINESS_LICENSE,
-          DocumentPurpose.VEHICLE_REGISTRATION
-        ];
-      case Role.AGENCY:
-        return [...baseDocs,
-          DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
-          DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
-          DocumentPurpose.BUSINESS_LICENSE
-        ];
-      case Role.ADVERTISER:
-        return [...baseDocs,
-          DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE
-        ];
-      default:
-        return baseDocs;
-    }
-  }
-
-
-
-  isValidFileType(file: File, purpose: DocumentPurpose): boolean {
-    const validTypes = this.getAcceptTypes(purpose).split(',');
-    const fileExtension = file.name.split('.').pop()?.toLowerCase();
-    const fileType = file.type.split('/')[0];
-
-    // Check against MIME types
-    if (validTypes.some(type => type.trim() === file.type)) {
-      return true;
-    }
-
-    // Check against file extensions
-    if (fileExtension && validTypes.some(type => {
-      const ext = type.trim().replace('.', '');
-      return ext === fileExtension;
-    })) {
-      return true;
-    }
-
-    // Special cases for images
-    if (purpose === DocumentPurpose.PROFILE_PICTURE || purpose === DocumentPurpose.VEHICLE_PHOTO) {
-      return fileType === 'image';
-    }
-
+isValidFileType(file: File, purpose: DocumentPurpose): boolean {
+  const allowedTypes = this.validFileTypes[purpose];
+  if (!allowedTypes) {
+    console.error(`No file types defined for document purpose: ${purpose}`);
     return false;
   }
+  
+  // Special case for Windows file types that might report differently
+  const fileType = file.type === '' && file.name ? 
+    this.getFileTypeFromExtension(file.name) : 
+    file.type;
 
+  return allowedTypes.includes(fileType);
+}
   uploadDocument(): void {
     if (!this.selectedFile || !this.selectedDocumentPurpose || !this.application?.id) return;
 
@@ -241,7 +519,18 @@ onFileSelected(event: Event, purpose: DocumentPurpose): void {
     });
   }
 
-
+  private handleUploadSuccess(): void {
+    this.snackBar.open('Document uploaded successfully!', 'Close', { duration: 5000 });
+    this.resetUploadState();
+    
+    if (this.application?.email) {
+      this.fetchApplication(this.application.email);
+    }
+    
+    if (this.activeTab === 'missing' && this.missingDocuments.length === 0) {
+      this.activeTab = 'documents';
+    }
+  }
 
   private handleUploadError(error: any): void {
     console.error('Error uploading document:', error);
@@ -254,6 +543,23 @@ onFileSelected(event: Event, purpose: DocumentPurpose): void {
     this.uploadProgress = null;
     this.selectedFile = null;
     this.selectedDocumentPurpose = null;
+  }
+
+  deleteDocument(purpose: DocumentPurpose): void {
+    if (!this.application?.id) return;
+
+    if (confirm('Are you sure you want to delete this document?')) {
+      this.applicationsService.deleteDocument(this.application.id, purpose).subscribe({
+        next: () => {
+          this.snackBar.open('Document deleted successfully!', 'Close', { duration: 5000 });
+          this.fetchApplication(this.application!.email);
+        },
+        error: (err) => {
+          console.error('Error deleting document:', err);
+          this.snackBar.open('Failed to delete document', 'Close', { duration: 5000 });
+        }
+      });
+    }
   }
 
   viewDocument(document: UploadedDocuments): void {
@@ -284,6 +590,38 @@ onFileSelected(event: Event, purpose: DocumentPurpose): void {
       });
   }
 
+  onDeleteVehicle(vehicleId: number): void {
+    if (confirm('Are you sure you want to delete this vehicle?')) {
+      this.vehicleService.deleteVehicle(vehicleId).subscribe({
+        next: () => {
+          // Handle successful deletion
+          this.snackBar.open('Vehicle deleted successfully', 'Close', { duration: 3000 });
+          this.refreshVehicles(); // Refresh your vehicle list
+        },
+        error: (err) => {
+          this.snackBar.open('Error deleting vehicle', 'Close', { duration: 3000 });
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  onUpdateVehicle(vehicle: VehicleInformationrmation): void {
+    this.vehicleService.updateVehicle( vehicle).subscribe({
+      next: (updatedVehicle) => {
+        // Handle successful update
+        this.snackBar.open('Vehicle updated successfully', 'Close', { duration: 3000 });
+        this.refreshVehicles(); // Refresh your vehicle list
+      },
+      error: (err) => {
+        this.snackBar.open('Error updating vehicle', 'Close', { duration: 3000 });
+        console.error(err);
+      }
+    });
+  }
+  private refreshVehicles(): void {
+    // Implement your refresh logic here
+  }
   downloadDocument(document: UploadedDocuments): void {
     if (!this.application?.id) return;
 
@@ -299,7 +637,48 @@ onFileSelected(event: Event, purpose: DocumentPurpose): void {
       });
   }
 
-  // Helper methods remain the same...
+
+  // Helper methods
+  getRequiredDocumentsForRole(role: Role): DocumentPurpose[] {
+    const baseDocs = [
+      DocumentPurpose.ID_DOCUMENT,
+      DocumentPurpose.PROOF_OF_ADDRESS,
+      DocumentPurpose.PROFILE_PICTURE
+    ];
+
+    switch (role) {
+      case Role.DRIVER:
+        return [
+          ...baseDocs,
+          DocumentPurpose.LICENSE,
+          DocumentPurpose.VEHICLE_REGISTRATION,
+          DocumentPurpose.VEHICLE_INSPECTION_REPORT
+        ];
+      case Role.FLEET_OWNER:
+        return [
+          ...baseDocs,
+          DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
+          DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
+          DocumentPurpose.BUSINESS_LICENSE,
+          DocumentPurpose.VEHICLE_REGISTRATION
+        ];
+      case Role.AGENCY:
+        return [
+          ...baseDocs,
+          DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE,
+          DocumentPurpose.TAX_CLEARANCE_CERTIFICATE,
+          DocumentPurpose.BUSINESS_LICENSE
+        ];
+      case Role.ADVERTISER:
+        return [
+          ...baseDocs,
+          DocumentPurpose.BUSINESS_REGISTRATION_CERTIFICATE
+        ];
+      default:
+        return baseDocs;
+    }
+  }
+
   getDocumentName(purpose: DocumentPurpose): string {
     const docMap: Record<DocumentPurpose, string> = {
       [DocumentPurpose.PROFILE_PICTURE]: 'Profile Picture',
@@ -414,6 +793,10 @@ onFileSelected(event: Event, purpose: DocumentPurpose): void {
 
   isDocumentUploaded(purpose: DocumentPurpose): boolean {
     return !!this.application?.uploadedDocuments?.some(doc => doc.documentPurpose === purpose);
+  }
+
+  canEditApplication(): boolean {
+    return this.application?.status?.toUpperCase() === 'PENDING';
   }
 }
 

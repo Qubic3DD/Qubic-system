@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './add-driver.component.html',
   styleUrls: ['./add-driver.component.css'],
 })
-export class AddDriverComponent implements OnInit {
+export class AddDriverComponentFleet implements OnInit {
   @Input() isCollapsed = false;
   userEmail: string | null = null;
   showPassword = false; // Added this property

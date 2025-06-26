@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { DriverProfile } from '../../../api/Response/interfaces'; // update import path
+import { DriverProfile } from '../../../api/Response/interfaces';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,12 +10,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';  // <-- import Router
 
 @Component({
   selector: 'app-add-driver-dialog',
+  standalone: true,
   templateUrl: './add-driver-dialog.component.html',
   styleUrls: ['./add-driver-dialog.component.css'],
-    imports: [
+  imports: [
     MatDialogModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -29,10 +31,10 @@ import { environment } from '../../../environments/environment';
   ]
 })
 export class AddDriverDialogComponent implements OnInit {
-  
   userEmail: string | null = null;
   userName: string | null = null;
   userId: number | null = null;
+
   selectedDriverEmail = new FormControl('');
   drivers: DriverProfile[] = [];
   filteredDrivers: DriverProfile[] = [];
@@ -44,13 +46,25 @@ export class AddDriverDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<AddDriverDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { fleetOwnerEmail: string },
-    private http: HttpClient
-  ) {  this.userEmail = localStorage.getItem('userEmail');
+    private http: HttpClient,
+    private router: Router   // Inject Router
+  ) {
+    this.userEmail = localStorage.getItem('userEmail');
     this.userId = Number(localStorage.getItem('userId'));
-    this.userName = localStorage.getItem('userName');}
+    this.userName = localStorage.getItem('userName');
+  }
 
   ngOnInit(): void {
     this.fetchDrivers();
+
+    this.selectedDriverEmail.valueChanges.subscribe(email => {
+      if (email) {
+        const selected = this.drivers.find(d => d.email === email);
+        if (selected) {
+          this.searchQuery = selected.fullName;
+        }
+      }
+    });
   }
 
   fetchDrivers(): void {
@@ -71,6 +85,7 @@ export class AddDriverDialogComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching drivers:', error);
         this.isLoading = false;
+        this.loadError = true;
       },
     });
   }
@@ -99,7 +114,17 @@ export class AddDriverDialogComponent implements OnInit {
     this.isSubmitting = true;
 
     this.http.post('http://41.76.110.219:8443/api/user/fleetowner/assign', payload).subscribe({
-      next: () => this.dialogRef.close(true),
+      next: () => {
+        this.isSubmitting = false;
+
+        // Close dialog and then navigate to fleet owner details page
+        this.dialogRef.close(true);  // Optionally pass true for success
+
+        // Navigate to fleet owner details with email as query param
+        this.router.navigate(['/fleet-owners/details'], {
+          queryParams: { email: this.data.fleetOwnerEmail }
+        });
+      },
       error: (err) => {
         console.error('Failed to assign driver:', err);
         this.isSubmitting = false;

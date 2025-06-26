@@ -101,29 +101,32 @@ loadTablet(): void {
     }
   });
 }
+assignTablet(): void {
+  if (!this.tablet) return;
 
-  assignTablet(): void {
-    if (!this.tablet) return;
+  const dialogRef = this.dialog.open(UserSelectDialogComponent, {
+    width: '500px',
+    data: { 
+      title: 'Assign Tablet', 
+      tabletId: this.tablet.id,
+      currentUser: this.tablet.user // Pass current user if exists
+    }
+  });
 
-    const dialogRef = this.dialog.open(UserSelectDialogComponent, {
-      width: '500px',
-      data: { title: 'Assign Tablet', tabletId: this.tablet.id }
-    });
-
-    dialogRef.afterClosed().subscribe((userId: number) => {
-      if (userId) {
-        this.tabletService.assignTablet(this.tablet!.id!, userId).subscribe({
-          next: (updatedTablet: Tablet | null) => {
-            this.tablet = updatedTablet;
-            this.snackBar.open('Tablet assigned successfully!', 'Close', { duration: 3000 });
-          },
-          error: () => {
-            this.snackBar.open('Failed to assign tablet', 'Close', { duration: 3000 });
-          }
-        });
-      }
-    });
-  }
+  dialogRef.afterClosed().subscribe((result: {success: boolean, userId?: number}) => {
+    if (result?.success && result.userId) {
+      this.tabletService.assignTablet(this.tablet!.id!, result.userId).subscribe({
+        next: (updatedTablet) => {
+          this.tablet = updatedTablet;
+          this.snackBar.open('Tablet assigned successfully!', 'Close', { duration: 3000 });
+        },
+        error: () => {
+          this.snackBar.open('Failed to assign tablet', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  });
+}
 
   unassignTablet(): void {
     if (!this.tablet) return;

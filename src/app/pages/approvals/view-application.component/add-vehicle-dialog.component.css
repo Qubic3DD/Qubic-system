@@ -1,0 +1,5 @@
+/* Add any custom styles here if needed */
+.mat-dialog-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}

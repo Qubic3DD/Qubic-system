@@ -1,0 +1,121 @@
+<h2 mat-dialog-title>
+  {{ isEditing ? 'Edit Vehicle' : 'Add New Vehicle' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="vehicleForm" class="space-y-4">
+    <!-- Make and Model -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Make</mat-label>
+        <input matInput formControlName="make" required>
+        <mat-error *ngIf="vehicleForm.get('make')?.hasError('required')">
+          Make is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Model</mat-label>
+        <input matInput formControlName="model" required>
+        <mat-error *ngIf="vehicleForm.get('model')?.hasError('required')">
+          Model is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Year and Color -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Year</mat-label>
+        <input matInput formControlName="year" type="number" required>
+        <mat-error *ngIf="vehicleForm.get('year')?.hasError('required')">
+          Year is required
+        </mat-error>
+        <mat-error *ngIf="vehicleForm.get('year')?.hasError('min') || vehicleForm.get('year')?.hasError('max')">
+          Please enter a valid year
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Color</mat-label>
+        <input matInput formControlName="colour" required>
+        <mat-error *ngIf="vehicleForm.get('colour')?.hasError('required')">
+          Color is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- License Plate -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>License Plate</mat-label>
+      <input matInput formControlName="licenseRegistrationNo" required>
+      <mat-error *ngIf="vehicleForm.get('licenseRegistrationNo')?.hasError('required')">
+        License plate is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Transport and Vehicle Type -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Transport Type</mat-label>
+        <mat-select formControlName="transportType" required>
+          <mat-option *ngFor="let type of transportTypes" [value]="type">
+            {{ getTransportTypeName(type) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Vehicle Type</mat-label>
+        <mat-select formControlName="vehicleType" required>
+          <mat-option *ngFor="let type of vehicleTypes" [value]="type">
+            {{ getVehicleTypeName(type) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Vehicle Image Upload -->
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700">Vehicle Image</label>
+      
+      <div *ngIf="vehicleImagePreview" class="relative">
+        <img [src]="vehicleImagePreview" alt="Vehicle Preview" class="h-48 w-full object-cover rounded-lg">
+        <button mat-icon-button class="absolute top-2 right-2 bg-white/80 hover:bg-white" 
+                (click)="removeImage()" matTooltip="Remove image">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div *ngIf="!vehicleImagePreview" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <mat-icon class="text-4xl text-gray-400">photo_camera</mat-icon>
+        <p class="text-gray-500 mt-2">No image selected</p>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <input type="file" #fileInput (change)="onImageSelected($event)" accept="image/jpeg,image/png" class="hidden">
+        <button mat-stroked-button type="button" (click)="fileInput.click()">
+          <mat-icon class="mr-1">upload</mat-icon>
+          {{ vehicleImagePreview ? 'Change Image' : 'Upload Image' }}
+        </button>
+
+        <div *ngIf="isUploading" class="flex-1 ml-4">
+          <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+          <div class="text-xs text-gray-500 text-right mt-1">
+            {{ uploadProgress }}% uploaded
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="p-4 border-t border-gray-200">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="vehicleForm.invalid || isLoading">
+    <span *ngIf="!isLoading">
+      {{ isEditing ? 'Update Vehicle' : 'Add Vehicle' }}
+    </span>
+    <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
+  </button>
+</mat-dialog-actions>

@@ -1,131 +1,129 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="w-full max-w-4xl">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-4xl mx-4">
     <!-- Logo and Header -->
-    <div class="text-center mb-10">
-      <img src="https://i.ibb.co/d07sYYvs/logo.png" alt="Qubic3D Logo" class="h-20 w-auto mx-auto mb-4">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Welcome to Qubic3D</h1>
-      <p class="mt-2 text-gray-600 dark:text-gray-300">Unified management portal for all your needs</p>
+    <div class="text-center mb-6 sm:mb-10">
+      <img src="https://i.ibb.co/d07sYYvs/logo.png" alt="Qubic3D Logo" class="h-16 sm:h-20 w-auto mx-auto mb-3 sm:mb-4">
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Welcome to Qubic3D</h1>
+      <p class="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">Unified management portal for all your needs</p>
     </div>
 
     <!-- Flow Selection Tabs -->
-<!-- Add to the flow selection tabs -->
-<div class="flex justify-center mb-8 border-b border-gray-200 dark:border-gray-700">
-  <nav class="-mb-px flex space-x-8">
-    <button 
-      (click)="selectFlow('login')"
-      [class]="activeFlow === 'login' ? 
-        'border-blue-500 text-blue-600 dark:text-blue-400 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm' : 
-        'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm'">
-      Existing User Login
-    </button>
-    <button 
-      (click)="selectFlow('apply')"
-      [class]="activeFlow === 'apply' ? 
-        'border-green-500 text-green-600 dark:text-green-400 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm' : 
-        'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm'">
-      New Application
-    </button>
-    <button 
-      (click)="selectFlow('track')"
-      [class]="activeFlow === 'track' ? 
-        'border-purple-500 text-purple-600 dark:text-purple-400 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm' : 
-        'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm'">
-      Track Application
-    </button>
-  </nav>
-</div>
-
-<!-- Add the tracking container to the dual flow container -->
-<div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
-     [class.hidden]="activeFlow !== 'track'">
-  <div class="p-8 h-full flex flex-col">
-    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900/30 mb-4 mx-auto">
-      <svg class="h-6 w-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-      </svg>
+    <div class="flex justify-center mb-6 sm:mb-8 border-b border-gray-200 dark:border-gray-700">
+      <nav class="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto w-full">
+        <button 
+          (click)="selectFlow('login')"
+          [class]="activeFlow === 'login' ? 
+            'border-blue-500 text-blue-600 dark:text-blue-400 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm' : 
+            'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm'">
+          Existing User Login
+        </button>
+        <button 
+          (click)="selectFlow('apply')"
+          [class]="activeFlow === 'apply' ? 
+            'border-green-500 text-green-600 dark:text-green-400 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm' : 
+            'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm'">
+          New Application
+        </button>
+        <button 
+          (click)="selectFlow('track')"
+          [class]="activeFlow === 'track' ? 
+            'border-purple-500 text-purple-600 dark:text-purple-400 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm' : 
+            'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm'">
+          Track Application
+        </button>
+      </nav>
     </div>
-    <h3 class="text-lg font-medium text-center text-gray-900 dark:text-white mb-2">Track Your Application</h3>
-    <p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">Check the status of your existing application</p>
-    
-    <div class="flex-grow flex flex-col">
-      <div class="mb-6">
-        <label for="track-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
-        <input id="track-email" [(ngModel)]="trackingEmail" type="email" autocomplete="email" required
-          class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200"
-          placeholder="your@email.com">
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          Enter the email you used for your application
-        </p>
+
+    <!-- Tracking Container -->
+    <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl mb-6 sm:mb-0"
+         [class.hidden]="activeFlow !== 'track'">
+      <div class="p-6 sm:p-8 h-full flex flex-col">
+        <div class="flex items-center justify-center h-10 sm:h-12 w-10 sm:w-12 rounded-full bg-purple-100 dark:bg-purple-900/30 mb-3 sm:mb-4 mx-auto">
+          <svg class="h-5 sm:h-6 w-5 sm:w-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        </div>
+        <h3 class="text-base sm:text-lg font-medium text-center text-gray-900 dark:text-white mb-1 sm:mb-2">Track Your Application</h3>
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center mb-4 sm:mb-6">Check the status of your existing application</p>
+        
+        <div class="flex-grow flex flex-col">
+          <div class="mb-4 sm:mb-6">
+            <label for="track-email" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
+            <input id="track-email" [(ngModel)]="trackingEmail" type="email" autocomplete="email" required
+              class="appearance-none block w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200 text-xs sm:text-sm"
+              placeholder="your@email.com">
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Enter the email you used for your application
+            </p>
+          </div>
+
+          <button (click)="onTrackApplication()" [disabled]="isLoading || !trackingEmail"
+            class="mt-auto w-full flex justify-center py-2 sm:py-3 px-4 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span *ngIf="!isLoading">Track Application</span>
+            <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-4 sm:h-5 w-4 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
-
-      <button (click)="onTrackApplication()" [disabled]="isLoading || !trackingEmail"
-        class="mt-auto w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-        <span *ngIf="!isLoading">Track Application</span>
-        <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      </button>
     </div>
-  </div>
-</div>
 
     <!-- Dual Flow Container -->
-    <div class="flex flex-col md:flex-row gap-6">
+    <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
       <!-- Login Container -->
-      <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+      <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
            [class.hidden]="activeFlow !== 'login'">
-        <div class="p-8 h-full flex flex-col">
-          <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4 mx-auto">
-            <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="p-6 sm:p-8 h-full flex flex-col">
+          <div class="flex items-center justify-center h-10 sm:h-12 w-10 sm:w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-3 sm:mb-4 mx-auto">
+            <svg class="h-5 sm:h-6 w-5 sm:w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
             </svg>
           </div>
-          <h3 class="text-lg font-medium text-center text-gray-900 dark:text-white mb-2">Already registered?</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">Sign in to access your account</p>
+          <h3 class="text-base sm:text-lg font-medium text-center text-gray-900 dark:text-white mb-1 sm:mb-2">Already registered?</h3>
+          <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center mb-4 sm:mb-6">Sign in to access your account</p>
           
           <form (ngSubmit)="onLogin()" class="flex-grow flex flex-col">
-            <div class="mb-4">
-              <label for="login-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
-              <input id="login-email" name="email" [(ngModel)]="loginEmail " type="email" autocomplete="email" required
-                class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+            <div class="mb-3 sm:mb-4">
+              <label for="login-email" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
+              <input id="login-email" name="email" [(ngModel)]="loginEmail" type="email" autocomplete="email" required
+                class="appearance-none block w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-xs sm:text-sm"
                 placeholder="your@email.com">
             </div>
 
-            <div class="mb-4">
-              <label for="login-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+            <div class="mb-3 sm:mb-4">
+              <label for="login-password" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
               <input id="login-password" name="password" [(ngModel)]="password" type="password" autocomplete="current-password" required
-                class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                class="appearance-none block w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-xs sm:text-sm"
                 placeholder="••••••••">
             </div>
 
-            <div class="mb-4">
-              <label for="login-role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Portal</label>
+            <div class="mb-3 sm:mb-4">
+              <label for="login-role" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Portal</label>
               <select id="login-role" [(ngModel)]="selectedRole" name="role" required
-                class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                class="appearance-none block w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-xs sm:text-sm">
                 <option value="" disabled selected>Select your portal</option>
                 <option *ngFor="let role of loginRoles" [value]="role">{{ getRoleLabel(role) }}</option>
               </select>
             </div>
 
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-4 sm:mb-6">
               <div class="flex items-center">
                 <input id="remember-me" name="remember-me" type="checkbox" [(ngModel)]="rememberMe"
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700">
-                <label for="remember-me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                <label for="remember-me" class="ml-2 block text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                   Remember me
                 </label>
               </div>
-        <a [routerLink]="['/forgot-password']" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
-  Forgot password?
-</a>
-
+              <a [routerLink]="['/forgot-password']" class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
+                Forgot password?
+              </a>
             </div>
 
-            <button type="submit" [disabled]="isLoading || !selectedRole || !loginEmail  || !password"
-              class="mt-auto w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button type="submit" [disabled]="isLoading || !selectedRole || !loginEmail || !password"
+              class="mt-auto w-full flex justify-center py-2 sm:py-3 px-4 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
               <span *ngIf="!isLoading">Sign In</span>
-              <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-4 sm:h-5 w-4 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -135,29 +133,29 @@
       </div>
 
       <!-- Application Container -->
-      <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
+      <div class="flex-1 bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl"
            [class.hidden]="activeFlow !== 'apply'">
-        <div class="p-8 h-full flex flex-col">
-          <div class="flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 mb-4 mx-auto">
-            <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="p-6 sm:p-8 h-full flex flex-col">
+          <div class="flex items-center justify-center h-10 sm:h-12 w-10 sm:w-12 rounded-full bg-green-100 dark:bg-green-900/30 mb-3 sm:mb-4 mx-auto">
+            <svg class="h-5 sm:h-6 w-5 sm:w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h3 class="text-lg font-medium text-center text-gray-900 dark:text-white mb-2">New to Qubic3D?</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">Start your application process</p>
+          <h3 class="text-base sm:text-lg font-medium text-center text-gray-900 dark:text-white mb-1 sm:mb-2">New to Qubic3D?</h3>
+          <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center mb-4 sm:mb-6">Start your application process</p>
           
           <div class="flex-grow flex flex-col">
-            <div class="mb-4">
-              <label for="apply-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
-              <input id="apply-email" [(ngModel)]="applyEmail " type="email" autocomplete="email" required
-                class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
+            <div class="mb-3 sm:mb-4">
+              <label for="apply-email" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
+              <input id="apply-email" [(ngModel)]="applyEmail" type="email" autocomplete="email" required
+                class="appearance-none block w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 text-xs sm:text-sm"
                 placeholder="your@email.com">
             </div>
 
-            <div class="mb-6">
-              <label for="apply-role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Application Type</label>
+            <div class="mb-4 sm:mb-6">
+              <label for="apply-role" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Application Type</label>
               <select id="apply-role" [(ngModel)]="selectedRole" required
-                class="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200">
+                class="appearance-none block w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 text-xs sm:text-sm">
                 <option value="" disabled selected>Select application type</option>
                 <option *ngFor="let role of applyRoles" [value]="role">{{ getRoleLabel(role) }}</option>
               </select>
@@ -166,17 +164,17 @@
               </p>
             </div>
 
-            <div class="mb-6">
-              <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">What you'll need:</h4>
+            <div class="mb-4 sm:mb-6">
+              <h4 class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">What you'll need:</h4>
               <ul class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
                 <li *ngIf="selectedRole" class="flex items-start">
-                  <svg class="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="h-3 sm:h-4 w-3 sm:w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
                   <span>Valid email address</span>
                 </li>
                 <li *ngIf="selectedRole" class="flex items-start">
-                  <svg class="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg class="h-3 sm:h-4 w-3 sm:w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
                   <span>{{ getRoleConfig(selectedRole).requirements || 'Required documents for this role' }}</span>
@@ -184,10 +182,10 @@
               </ul>
             </div>
 
-            <button (click)="onApply()" [disabled]="isLoading || !selectedRole || !applyEmail "
-              class="mt-auto w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button (click)="onApply()" [disabled]="isLoading || !selectedRole || !applyEmail"
+              class="mt-auto w-full flex justify-center py-2 sm:py-3 px-4 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
               <span *ngIf="!isLoading">Start Application</span>
-              <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-3 h-4 sm:h-5 w-4 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -198,41 +196,40 @@
     </div>
 
     <!-- Error Message -->
-    <div *ngIf="errorMessage" class="mt-6 p-3 text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md flex items-center justify-center">
-      <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div *ngIf="errorMessage" class="mt-4 sm:mt-6 p-3 text-xs sm:text-sm text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md flex items-center justify-center">
+      <svg class="h-4 sm:h-5 w-4 sm:w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       {{ errorMessage }}
     </div>
 
     <!-- Success Modal -->
-<!-- Update the success modal -->
-<div *ngIf="loginSuccess" class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all duration-300">
-    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
-      <svg class="h-10 w-10 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
-    </div>
-    <div class="text-center">
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-        {{ activeFlow === 'login' ? 'Welcome back, ' + (userFirstName || 'User') + '!' : 
-           activeFlow === 'apply' ? 'Application started!' : 'Application found!' }}
-      </h3>
-      <p class="text-gray-600 dark:text-gray-300 mb-6">
-        {{ activeFlow === 'login' ? 
-          'Redirecting you to the ' + (selectedRole ? getRoleLabel(selectedRole) : '') + ' dashboard...' : 
-          activeFlow === 'apply' ? 'Taking you to the application form...' : 'Taking you to your application details...' }}
-      </p>
-      <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-        <div class="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full animate-progress"></div>
+    <div *ngIf="loginSuccess" class="fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all duration-300">
+        <div class="mx-auto flex items-center justify-center h-12 sm:h-16 w-12 sm:w-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-3 sm:mb-4">
+          <svg class="h-6 sm:h-10 w-6 sm:w-10 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <div class="text-center">
+          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">
+            {{ activeFlow === 'login' ? 'Welcome back, ' + (userFirstName || 'User') + '!' : 
+               activeFlow === 'apply' ? 'Application started!' : 'Application found!' }}
+          </h3>
+          <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4 sm:mb-6">
+            {{ activeFlow === 'login' ? 
+              'Redirecting you to the ' + (selectedRole ? getRoleLabel(selectedRole) : '') + ' dashboard...' : 
+              activeFlow === 'apply' ? 'Taking you to the application form...' : 'Taking you to your application details...' }}
+          </p>
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+            <div class="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full animate-progress"></div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
     <!-- Footer Links -->
-    <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+    <div class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400">
       <p>Need help? <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">Contact support</a></p>
       <p class="mt-1">By continuing, you agree to our <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">Terms of Service</a> and <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">Privacy Policy</a></p>
     </div>

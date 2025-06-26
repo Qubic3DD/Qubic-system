@@ -47,36 +47,49 @@ export class LoginComponent {
   getRoleConfig(role: Role) {
     return ROLE_CONFIGS[role];
   }
-
-  onTrackApplication() {
-    if (!this.trackingEmail) {
-        this.errorMessage = 'Please enter your email address';
-        return;
-    }
-
-    if (!this.isValidEmail(this.trackingEmail)) {
-        this.errorMessage = 'Please enter a valid email address';
-        return;
-    }
-
-    this.isLoading = true;
-    
-    this.checkExistingApplication(this.trackingEmail).then(exists => {
-        this.isLoading = false;
-        
-        if (exists) {
-            this.router.navigate(['/application-dashboard-track'], { 
-              queryParams: { email: this.trackingEmail }
-            });
-        } else {
-            this.errorMessage = 'No application found with this email address. Would you like to start a new application instead?';
-        }
-    }).catch(error => {
-        this.isLoading = false;
-        this.errorMessage = 'Failed to track application. Please try again.';
-        console.error('Tracking error:', error);
-    });
+onTrackApplication() {
+  if (!this.trackingEmail) {
+    this.errorMessage = 'Please enter your email address';
+    return;
   }
+
+  if (!this.isValidEmail(this.trackingEmail)) {
+    this.errorMessage = 'Please enter a valid email address';
+    return;
+  }
+
+  this.isLoading = true;
+
+  this.checkExistingApplication2(this.trackingEmail).then(exists => {
+    this.isLoading = false;
+
+    if (exists) {
+      this.router.navigate(['/application-dashboard-track', this.trackingEmail]);
+    } else {
+      this.errorMessage = 'No application found with this email address. Would you like to start a new application instead?';
+    }
+  }).catch(error => {
+    this.isLoading = false;
+    this.errorMessage = 'Failed to track application. Please try again.';
+    console.error('Tracking error:', error);
+  });
+}
+
+private async checkExistingApplication2(email: string): Promise<boolean> {
+  if (!email) return false;
+
+  try {
+    const response = await this.http.get<any>(
+      `${environmentApplication.api}applications/by-email?email=${encodeURIComponent(email)}`
+    ).toPromise();
+
+    return response?.length > 0;
+  } catch (error) {
+    console.error('Error checking existing application:', error);
+    return false;
+  }
+}
+
 
   selectFlow(flow: 'login' | 'apply' | 'track') {
     this.activeFlow = flow;
@@ -159,13 +172,7 @@ export class LoginComponent {
       this.isLoading = false;
       
       if (exists) {
-        this.router.navigate(['/application-dashboard'], { 
-          queryParams: { 
-            email: this.applyEmail, 
-            role: this.selectedRole,
-            flow: 'existing'
-          } 
-        });
+          this.router.navigate(['/application-dashboard-track', this.applyEmail]);
       } else {
         this.router.navigate(['/application-dashboard'], { 
           queryParams: { 
@@ -181,20 +188,21 @@ export class LoginComponent {
     });
   }
 
-  private async checkExistingApplication(email: string): Promise<boolean> {
-    if (!email) return false;
-    
-    try {
-      const response = await this.http.get<any>(
-        `${environmentApplication.api}applications/application-by-email?email=${encodeURIComponent(email)}`
-      ).toPromise();
+private async checkExistingApplication(email: string): Promise<boolean> {
+  if (!email) return false;
+  
+  try {
+    const response = await this.http.get<any>(
+      `${environmentApplication.api}applications/by-email?email=${encodeURIComponent(email)}`
+    ).toPromise();
 
-      return response?.length > 0;
-    } catch (error) {
-      console.error('Error checking existing application:', error);
-      return false;
-    }
+    return response?.length > 0;
+  } catch (error) {
+    console.error('Error checking existing application:', error);
+    return false;
   }
+}
+
 
   private fetchProfile(email: string) {
     this.http.get(`http://41.76.110.219:8443/profile/retrieve/${encodeURIComponent(email)}`)

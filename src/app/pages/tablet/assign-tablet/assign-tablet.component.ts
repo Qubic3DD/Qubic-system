@@ -1,14 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TabletService } from '../../../services/tablet.service';
-import { DriverService } from '../../../services/DriverService';  // <- import driver service
-import { UserInfo } from '../../../api/Request/Tablet'; // keep if UserInfo is compatible or change to DriverProfile
+import { DriverService } from '../../../services/DriverService';
+import { UserInfo } from '../../../api/Request/Tablet';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-user-select-dialog',
@@ -18,20 +20,22 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     FormsModule,
     MatButtonModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatListModule,
+    MatIconModule
   ],
   templateUrl: './assign-tablet.component.html',
-  styleUrls: ['./assign-tablet.component.css']
 })
 export class UserSelectDialogComponent implements OnInit {
-  users: UserInfo[] = [];  // or DriverProfile[] if you prefer
+  users: UserInfo[] = [];
   filteredUsers: UserInfo[] = [];
   isLoading = false;
+  isAssigning = false;
   searchQuery = '';
   selectedUser: UserInfo | null = null;
 
   constructor(
-    private driverService: DriverService,  // changed from userService
+    private driverService: DriverService,
     private tabletService: TabletService,
     private dialogRef: MatDialogRef<UserSelectDialogComponent>,
     private snackBar: MatSnackBar,
@@ -42,11 +46,20 @@ export class UserSelectDialogComponent implements OnInit {
     this.loadUsers();
   }
 
+  // Add this method to check if a user is selected
+  isSelected(user: UserInfo): boolean {
+    return this.selectedUser?.id === user.id;
+  }
+
+  trackById(index: number, user: UserInfo): number {
+    return user.id || index;
+  }
+
   loadUsers(): void {
     this.isLoading = true;
     this.driverService.fetchDriversd().subscribe({
       next: (drivers) => {
-        this.users = drivers;  // assign drivers as users
+        this.users = drivers;
         this.filteredUsers = [...drivers];
         this.isLoading = false;
       },
@@ -58,44 +71,41 @@ export class UserSelectDialogComponent implements OnInit {
   }
 
   searchUsers(): void {
-    if (!this.searchQuery || this.searchQuery.trim() === '') {
+    if (!this.searchQuery.trim()) {
       this.filteredUsers = [...this.users];
-    } else {
-      const query = this.searchQuery.toLowerCase();
-      this.filteredUsers = this.users.filter(user =>
-        (user.firstName?.toLowerCase().includes(query) || 
-         user.lastName?.toLowerCase().includes(query) || 
-         user.email?.toLowerCase().includes(query) ||
-         user.phoneNo?.toLowerCase().includes(query))
-      );
+      return;
     }
+    
+    const query = this.searchQuery.toLowerCase();
+    this.filteredUsers = this.users.filter(user =>
+      (user.firstName?.toLowerCase().includes(query) || 
+       user.lastName?.toLowerCase().includes(query) || 
+       user.email?.toLowerCase().includes(query) ||
+       user.phoneNo?.toLowerCase().includes(query))
+    );
   }
-trackById(index: number, user: any): number {
-  return user.id;
-}
 
   selectUser(user: UserInfo): void {
-    this.selectedUser = user;
+    this.selectedUser = this.selectedUser?.id === user.id ? null : user;
   }
 
   onAssign(): void {
     if (this.selectedUser) {
-      this.isLoading = true;
+      this.isAssigning = true;
       this.tabletService.assignTablet(this.data.tabletId, this.selectedUser.id!)
         .subscribe({
-          next: (updatedTablet) => {
-            this.dialogRef.close(updatedTablet);
-            this.snackBar.open('Tablet assigned successfully!', 'Close', { duration: 3000 });
+          next: () => {
+            this.dialogRef.close({ success: true, userId: this.selectedUser?.id });
           },
           error: () => {
             this.snackBar.open('Failed to assign tablet', 'Close', { duration: 3000 });
-            this.isLoading = false;
+            this.isAssigning = false;
           }
         });
     }
   }
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ success: false });
   }
 }

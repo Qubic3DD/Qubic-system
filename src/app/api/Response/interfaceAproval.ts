@@ -2,6 +2,7 @@ import { UploadedDocuments } from "../../model/application.dto";
 import { Role } from "../../services/role.enum";
 import { TransportType } from "../../services/transport-type.enum";
 import { VehicleType } from "../../services/vehicle-type.enum";
+import { VehicleImageResponse } from "../../services/vehicle.service";
 
 export interface ApiResponse<T> {
   token: string | null;
@@ -130,16 +131,21 @@ export interface UserDocuments {
 }
 
 interface VehicleInformationrmationRequest {
-  capacity: string;
-  colour: string;
-  licenseRegistrationNo: string;
-  isPublic: boolean;
-  creationDate: string;
-  transportType: TransportType;
-  vehicleType: VehicleType;
-  userInformationId: number;
+id?: number;
+  plateNumber?: string;
+  colour?: string;
+  capacity?: string;
+  isPublic?: boolean;
+  vehicleType?: VehicleType;
+  transportType?: TransportType;
+  userInformationId?: number | null;
+  year?: string;
+    createdAt?: Date;
+  updatedAt?: Date;
+applicationNumber?:number;
   make?: string;
   model?: string;
-  year?: string;
-  plateNumber?: string;
-}
+  creationDate?: string | null;
+  vehicleImages?: VehicleImageResponse[];
+  licenseRegistrationNo?: string;
+  vehicleImageUrl?: string | null;}

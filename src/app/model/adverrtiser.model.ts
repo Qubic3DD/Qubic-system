@@ -32,7 +32,7 @@ accountId: number;
   bio: string | null;
   rating: number | null;
   languages: string[];
-  VehicleInformationrmation: VehicleInformationrmation[];
+  VehicleInformationrmation?: VehicleInformationrmation[];
   uploadedDocuments: UploadedDocuments[];
   uploadedMediaFiles: any | null;
   idno: string | null;
@@ -40,14 +40,17 @@ accountId: number;
 }
 export interface VehicleInformationrmation {
   id?: number;
-  licensePlate?: string;
-  color?: string;
+  plateNumber?: string;
+  colour?: string;
   capacity?: string;
   isPublic?: boolean;
   vehicleType?: VehicleType;
   transportType?: TransportType;
   userInformationId?: number | null;
   year?: string;
+    createdAt?: Date;
+  updatedAt?: Date;
+applicationNumber?:number;
   make?: string;
   model?: string;
   creationDate?: string | null;

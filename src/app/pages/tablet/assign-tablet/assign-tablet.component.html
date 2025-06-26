@@ -1,0 +1,48 @@
+<div class="p-4">
+  <h2 class="text-xl font-bold mb-4">{{ data.title }}</h2>
+  
+  <div class="mb-4">
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Search drivers</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (input)="searchUsers()">
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center py-4">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading" class="border rounded-lg overflow-hidden">
+    <mat-selection-list>
+      <mat-list-option *ngFor="let user of filteredUsers" 
+                      [selected]="isSelected(user)"
+                      (click)="selectUser(user)">
+        <div class="flex items-center py-2">
+          <div class="flex-1">
+            <div class="font-medium">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="text-sm text-gray-500">{{ user.email }}</div>
+          </div>
+          <mat-icon *ngIf="isSelected(user)" class="text-green-500">check_circle</mat-icon>
+        </div>
+      </mat-list-option>
+    </mat-selection-list>
+
+    <div *ngIf="filteredUsers.length === 0" class="p-4 text-center text-gray-500">
+      No drivers found
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2 mt-4">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button 
+            color="primary"
+            (click)="onAssign()"
+            [disabled]="!selectedUser || isAssigning">
+      <span *ngIf="!isAssigning">Assign</span>
+      <span *ngIf="isAssigning" class="flex items-center">
+        <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+        Assigning...
+      </span>
+    </button>
+  </div>
+</div>

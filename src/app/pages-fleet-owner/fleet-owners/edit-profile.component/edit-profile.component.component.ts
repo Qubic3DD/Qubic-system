@@ -299,8 +299,8 @@ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
 
 addVehicle(): void {
   const newVehicle: VehicleInformationrmation = {
-    licensePlate: '', // Added missing property
-    color: '',       // Corrected from 'colour' to 'color'
+    plateNumber: '', // Added missing property
+    colour: '',       // Corrected from 'colour' to 'color'
     capacity: '',
     licenseRegistrationNo: '',
     creationDate: '', // Changed from null to empty string

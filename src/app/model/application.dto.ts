@@ -16,14 +16,15 @@ gender: any;
   lastName: string;
   fleetSize: number;
   yearsOfExperience: number | 0;
-  
+    submissionDate?: string | Date;
+  approvalDate?: string | Date;
+missingDocuments?:DocumentPurpose[];
+  type?: string;
   roles: Role[];
- submissionDate: string | Date;  // Allow both string and Date types
-  approvalDate?: string | Date;   // Optional and allows both types
   status: ApplicationStatus; // Corresponds to ApplicationStatus in backend
   idNumber: string;
   licenseType: string;
-  dateOfBirth?: string;
+  dateOfBirth?: Date;
   address?: string;
   city?: string;
   postalCode?: string;
@@ -91,6 +92,7 @@ gender: any;
 
 
 export interface UploadedDocuments {
+viewUrl: any;
   campaignId: number;
   id: number;
   name?: string ;

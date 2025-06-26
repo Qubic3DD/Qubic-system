@@ -12,35 +12,7 @@
 
     <form class="space-y-4" [formGroup]="addFleetOwnerForm">
       <!-- Username -->
-      <div>
-        <input
-          type="text"
-          id="userName"
-          name="userName"
-          formControlName="userName"
-          required
-          placeholder="Username"
-          class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-          [class.border-red-500]="
-            addFleetOwnerForm.get('userName')?.invalid &&
-            (addFleetOwnerForm.get('userName')?.dirty || addFleetOwnerForm.get('userName')?.touched)
-          "
-        />
-        <div
-          *ngIf="
-            addFleetOwnerForm.get('userName')?.invalid &&
-            (addFleetOwnerForm.get('userName')?.dirty || addFleetOwnerForm.get('userName')?.touched)
-          "
-          class="text-red-500 text-sm mt-1"
-        >
-          <span *ngIf="addFleetOwnerForm.get('userName')?.errors?.['required']"
-            >Username is required</span
-          >
-          <span *ngIf="addFleetOwnerForm.get('userName')?.errors?.['minlength']"
-            >Username must be at least 3 characters</span
-          >
-        </div>
-      </div>
+  
 
       <!-- Password -->
       <div>
