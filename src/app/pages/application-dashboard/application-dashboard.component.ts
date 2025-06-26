@@ -86,9 +86,9 @@ fetchApplication(): void {
   this.errorMessage = '';
 
   const encodedEmail = encodeURIComponent(this.email.trim().toLowerCase());
-// const apiUrl = `http://41.76.110.219:8443/api/applications/by-email?email=${encodedEmail}`;
+// const apiUrl = `https://41.76.110.219:8443/api/applications/by-email?email=${encodedEmail}`;
 
-  this.http.get<ApplicationDto>("http://41.76.110.219:8443/api/applications/by-email/jane.doe%40example.com").subscribe({
+  this.http.get<ApplicationDto>("https://41.76.110.219:8443/api/applications/by-email/jane.doe%40example.com").subscribe({
     next: (response: ApplicationDto) => {
       this.isLoading = false;
 

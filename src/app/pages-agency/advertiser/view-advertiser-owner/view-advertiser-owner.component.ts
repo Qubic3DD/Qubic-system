@@ -128,7 +128,7 @@ export class ViewAdvertiserComponent implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   getInitials(name: string): string {
@@ -145,7 +145,7 @@ export class ViewAdvertiserComponent implements OnInit {
   fetchAdvertiser(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<ApiResponse<AdvertisersResponse>>(`http://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
+    this.http.get<ApiResponse<AdvertisersResponse>>(`https://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching advertiser:', error);
         this.error = `Failed to load advertiser profile ${email}`;

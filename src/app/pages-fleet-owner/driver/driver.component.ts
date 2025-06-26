@@ -101,7 +101,7 @@ export class DriverComponentFleet implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
     getInitials(name: string): string {
   if (!name) return '';
@@ -167,7 +167,7 @@ openAddDriverModal(): void {
   addDriver(): void {
     this.isLoading = true;
     this.http
-      .post<any>('http://41.76.110.219:8443/profile/drivers', this.newDriver)
+      .post<any>('https://41.76.110.219:8443/profile/drivers', this.newDriver)
       .subscribe({
         next: () => {
           this.fetchDrivers();
@@ -190,7 +190,7 @@ openAddDriverModal(): void {
     if (confirm('Are you sure you want to delete this driver?')) {
       this.isLoading = true;
       this.http
-        .delete(`http://41.76.110.219:8443/profile/drivers/${id}`)
+        .delete(`https://41.76.110.219:8443/profile/drivers/${id}`)
         .subscribe({
           next: () => {
             this.fetchDrivers();

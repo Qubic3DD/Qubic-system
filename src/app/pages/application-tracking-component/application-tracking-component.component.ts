@@ -110,17 +110,19 @@ i: any;
     private snackBar: MatSnackBar
   ) { }
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const email = params.get('email');
-      if (email) {
-        this.fetchApplication(email);
-      } else {
-        this.error = 'No email provided in URL';
-        this.loading = false;
-      }
-    });
-  }submitVehicle(): void {
+ngOnInit(): void {
+  this.route.paramMap.subscribe(params => {
+    const email = params.get('email');
+    if (email) {
+      this.fetchApplication(email);
+    } else {
+      this.error = 'No email provided in URL';
+      this.loading = false;
+    }
+  });
+}
+  
+  submitVehicle(): void {
   if (!this.application?.id) return;
 
   // First, prepare the vehicle data (without image)

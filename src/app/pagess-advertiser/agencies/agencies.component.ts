@@ -76,7 +76,7 @@ getAdvertisers() {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `http://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   getInitials(name: string): string {
@@ -92,7 +92,7 @@ getAdvertisers() {
 
   getAgencies(): void {
     this.isLoading = true;
-    this.http.get<any>('http://41.76.110.219:8443/profile/get-users-by-role/agency')
+    this.http.get<any>('https://41.76.110.219:8443/profile/get-users-by-role/agency')
       .subscribe({
         next: (response) => {
           this.agencies = response.data || [];

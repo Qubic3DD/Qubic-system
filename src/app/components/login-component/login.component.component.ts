@@ -62,7 +62,7 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
     
-    const apiUrl = 'http://41.76.110.219:8443/api/applications/by-email/';
+    const apiUrl = 'https://41.76.110.219:8443/api/applications/by-email/';
     
     this.http.get(`${apiUrl}?email=${encodeURIComponent(this.email)}`).subscribe({
       next: (response: any) => {
