@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Role, ROLE_CONFIGS } from '../../services/role.enum';
+import { Role, ROLE_CONFIGS } from '../../services/role.enum copy';
 import { environmentApplication } from '../../environments/environment';
 
 @Component({
