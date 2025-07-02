@@ -74,7 +74,7 @@ export class ViewAdvertiserComponentDetatils implements OnInit {
   fetchAdvertiser(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<any>(`https://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
+    this.http.get<any>(`https://backend.qubic3d.co.za/profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching advertiser:', error);
         this.error = `Failed to load advertiser profile ${email}`;
@@ -97,7 +97,7 @@ export class ViewAdvertiserComponentDetatils implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   getInitials(name: string): string {

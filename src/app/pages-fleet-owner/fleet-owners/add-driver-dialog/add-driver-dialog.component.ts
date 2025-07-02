@@ -49,7 +49,7 @@ export class AddDriverDialogComponent implements OnInit {
   fetchDrivers(): void {
     this.isLoading = true;
     this.loadError = false;
-    this.http.get<any>('https://41.76.110.219:8443/profile/drivers').subscribe({
+    this.http.get<any>('https://backend.qubic3d.co.za/profile/drivers').subscribe({
       next: (res) => {
         this.drivers = res.data || [];
         this.filteredDrivers = [...this.drivers];
@@ -85,7 +85,7 @@ export class AddDriverDialogComponent implements OnInit {
 
     this.isSubmitting = true;
 
-    this.http.post('https://41.76.110.219:8443/api/user/fleetowner/assign', payload).subscribe({
+    this.http.post('https://backend.qubic3d.co.za/api/user/fleetowner/assign', payload).subscribe({
       next: () => this.dialogRef.close(true),
       error: (err) => {
         console.error('Failed to assign driver:', err);

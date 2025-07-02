@@ -10,7 +10,7 @@ import { DriverProfile } from '../api/Response/interfaces';
 })
 export class DriverService {
 
-  private apiUrl = 'https://41.76.110.219:8443/profile/drivers';
+  private apiUrl = 'https://backend.qubic3d.co.za/profile/drivers';
 
   constructor(private http: HttpClient) {}
 

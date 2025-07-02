@@ -28,6 +28,6 @@ export class ProvinceService {
 
   // Get all provinces (if you want to keep it here instead of separate service)
   getAllProvinces(): Observable<ApiResponse<Province[]>> {
-    return this.http.get<ApiResponse<Province[]>>(`https://41.76.110.219:8443/api/campaigns/campaign/getByprovince`);
+    return this.http.get<ApiResponse<Province[]>>(`https://backend.qubic3d.co.za/api/campaigns/campaign/getByprovince`);
   }
 }

@@ -50,7 +50,7 @@ export class AdminComponent implements OnInit {
   getAdmins(): void {
     this.isLoading = true;
     this.http
-      .get<any>('https://41.76.110.219:8443/profile/get-users-by-role/admin')
+      .get<any>('https://backend.qubic3d.co.za/profile/get-users-by-role/admin')
       .subscribe({
         next: (response) => {
           this.admins = response.data || [];
@@ -113,7 +113,7 @@ export class AdminComponent implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `https://41.76.110.219:8443/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
     getInitials(name: string): string {
   if (!name) return '';

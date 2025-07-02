@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://41.76.110.219:8443",
+    "target": "https://backend.qubic3d.co.za/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

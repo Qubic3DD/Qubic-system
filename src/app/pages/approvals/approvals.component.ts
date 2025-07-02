@@ -342,7 +342,7 @@ private isValidEmail(email: string): boolean {
 
   this.isLoading = true;
   const encodedEmail = encodeURIComponent(email.trim().toLowerCase());
-  const apiUrl = `https://41.76.110.219:8443/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
+  const apiUrl = `https://backend.qubic3d.co.za/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
 
   console.log(`curl -X 'GET' '${apiUrl}' -H 'accept: */*'`);
 

@@ -18,7 +18,7 @@ export class RequestSenderService {
   sendPostRequest<T>(url: string, body: any): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://41.76.110.219:8443',
+      'Access-Control-Allow-Origin': 'https://backend.qubic3d.co.za/',
     });
 
     return this.http.post<T>(environment.api + url, JSON.stringify(body), {
@@ -34,7 +34,7 @@ export class RequestSenderService {
   ): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://41.76.110.219:8443',
+      'Access-Control-Allow-Origin': 'https://backend.qubic3d.co.za/',
     });
 
     let finalUrl = environment.api + url;

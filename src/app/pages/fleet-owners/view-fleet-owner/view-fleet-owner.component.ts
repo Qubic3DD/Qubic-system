@@ -110,7 +110,7 @@ export class ViewFleetOwnerComponent implements OnInit {
   fetchFleetOwner(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<ApiResponse<FleetOwner>>(`https://41.76.110.219:8443/profile/retrieve/${encodedEmail}`).pipe(
+    this.http.get<ApiResponse<FleetOwner>>(`https://backend.qubic3d.co.za/profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching fleet owner:', error);
         this.error = `Failed to load fleet owner profile ${email}`;

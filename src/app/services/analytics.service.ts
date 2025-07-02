@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AnalyticsService {
-  private apiUrl = 'https://41.76.110.219:8443/api/analytics';
+  private apiUrl = 'https://backend.qubic3d.co.za/api/analytics';
 
   constructor(private http: HttpClient) {}
 

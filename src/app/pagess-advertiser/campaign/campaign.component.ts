@@ -75,7 +75,7 @@ export class CampaignComponentAdvertiser implements OnInit {
 fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
     // Remove encodeURIComponent here - we'll do it in fetchDriver
     return this.http.get<ApiResponse<DriverProfile>>(
-      `https://41.76.110.219:8443/profile/retrieve/${email}`
+      `https://backend.qubic3d.co.za/profile/retrieve/${email}`
     );
 }
 fetchDriver(email: string): void {

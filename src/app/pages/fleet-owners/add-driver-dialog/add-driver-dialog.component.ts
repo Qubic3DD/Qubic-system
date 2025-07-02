@@ -113,7 +113,7 @@ export class AddDriverDialogComponent implements OnInit {
 
     this.isSubmitting = true;
 
-    this.http.post('https://41.76.110.219:8443/api/user/fleetowner/assign', payload).subscribe({
+    this.http.post('https://backend.qubic3d.co.za/api/user/fleetowner/assign', payload).subscribe({
       next: () => {
         this.isSubmitting = false;
 
