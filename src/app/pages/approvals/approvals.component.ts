@@ -342,7 +342,10 @@ private isValidEmail(email: string): boolean {
 
   this.isLoading = true;
   const encodedEmail = encodeURIComponent(email.trim().toLowerCase());
-  const apiUrl = `https://backend.qubic3d.co.za/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
+  // Live:
+  // const apiUrl = `https://backend.qubic3d.co.za/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
+  // Local:
+  const apiUrl = `http://localhost:8181/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
 
   console.log(`curl -X 'GET' '${apiUrl}' -H 'accept: */*'`);
 
@@ -391,6 +394,24 @@ get approvedTodayApplications(): number {
       : new Date(app.approvalDate).getTime();
 
     return approvalTime >= startOfToday && approvalTime < startOfTomorrow;
+  }).length;
+}
+
+get rejectedTodayApplications(): number {
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const startOfTomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).getTime();
+
+  return this.filteredApplications.filter(app => {
+    const isRejected = app.status === ApplicationStatus.REJECTED || app.rejected === true;
+    if (!isRejected) return false;
+
+    const anyApp: any = app as any;
+    const dateCandidate = anyApp.rejectionDate ?? app.approvalDate ?? app.submissionDate;
+    if (!dateCandidate) return false;
+
+    const time = dateCandidate instanceof Date ? dateCandidate.getTime() : new Date(dateCandidate).getTime();
+    return time >= startOfToday && time < startOfTomorrow;
   }).length;
 }
 

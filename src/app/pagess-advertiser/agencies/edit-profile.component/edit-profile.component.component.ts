@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse, DriverProfile, UserDocument } from '../../../api/Response/interfaces';
 import { VehicleInformationrmation } from '../../../model/adverrtiser.model';
+import { environment, environmentApplication } from '../../../environments/environment';
 
 @Component({
   selector: 'app-edit-profile',
@@ -62,7 +63,7 @@ export class EditAgenciesComponent implements OnInit {
   currentStep = 1;
   totalSteps = 5;
   userDocuments: UserDocument[] = [];
-successPopupVisible = false;
+ successPopupVisible = false;
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
@@ -77,15 +78,18 @@ successPopupVisible = false;
     }
     this.loadDocumentEnums();
   }
-showSuccessPopup() {
+ showSuccessPopup() {
   this.successPopupVisible = true;
   setTimeout(() => {
     this.successPopupVisible = false;
   }, 3000); // Hide after 3 seconds
-}
+ }
   fetchDriverProfile(email: string): void {
     this.isLoading = true;
-    this.http.get<ApiResponse<DriverProfile>>(`https://backend.qubic3d.co.za/profile/retrieve/${email}`)
+    // Live:
+    // this.http.get<ApiResponse<DriverProfile>>(`https://backend.qubic3d.co.za/profile/retrieve/${email}`)
+    // Local via proxy:
+    this.http.get<ApiResponse<DriverProfile>>(`${environment.api}profile/retrieve/${email}`)
       .subscribe({
         next: (response) => {
           if (response.data) {
@@ -108,7 +112,7 @@ showSuccessPopup() {
         }
       });
   }
-getDocumentPurposeLabel(purpose: string): string {
+ getDocumentPurposeLabel(purpose: string): string {
   const purposeMap: {[key: string]: string} = {
     'ID_DOCUMENT': 'ID Document',
     'LICENSE': 'Driver License',
@@ -117,24 +121,33 @@ getDocumentPurposeLabel(purpose: string): string {
     'VEHICLE_REGISTRATION': 'Vehicle Registration'
   };
   return purposeMap[purpose] || purpose;
-}
+ }
 
 
-viewDocument(username: string, documentPurpose: string): void {
-  const url = `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+ viewDocument(username: string, documentPurpose: string): void {
+  // Live:
+  // const url = `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  // Local via proxy:
+  const url = `${environmentApplication.api}v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
   window.open(url, '_blank');
-}
+ }
 
-downloadDocument(username: string, documentPurpose: string): void {
-  const url = `https://backend.qubic3d.co.za/api/v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+ downloadDocument(username: string, documentPurpose: string): void {
+  // Live:
+  // const url = `https://backend.qubic3d.co.za/api/v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  // Local via proxy:
+  const url = `${environmentApplication.api}v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
   console.log('Downloading document from:', url);
   window.open(url, '_blank');
-}
-//
-  loadUserDocuments(): void {
-    if (!this.driver.username) return;
-    
-    this.http.get<{data: UserDocument[]}>(`https://backend.qubic3d.co.za/api/v1/files/list?username=${this.driver.username}`)
+ }
+ //
+   loadUserDocuments(): void {
+     if (!this.driver.username) return;
+     
+    // Live:
+    // this.http.get<{data: UserDocument[]}>(`https://backend.qubic3d.co.za/api/v1/files/list?username=${this.driver.username}`)
+    // Local via proxy:
+    this.http.get<{data: UserDocument[]}>(`${environmentApplication.api}v1/files/list?username=${this.driver.username}`)
       .subscribe({
         next: (response) => {
           this.userDocuments = response.data || [];
@@ -143,101 +156,121 @@ downloadDocument(username: string, documentPurpose: string): void {
           console.error('Error loading user documents:', error);
         }
       });
-  }
+   }
 
-  private formatDateForInput(dateString: string): string {
-    if (!dateString) return '';
-    try {
-      const datePart = dateString.split(' ')[0];
-      return datePart;
-    } catch (e) {
-      console.warn('Could not parse date:', dateString);
-      return '';
-    }
-  }
+   private formatDateForInput(dateString: string): string {
+     if (!dateString) return '';
+     try {
+       const datePart = dateString.split(' ')[0];
+       return datePart;
+     } catch (e) {
+       console.warn('Could not parse date:', dateString);
+       return '';
+     }
+   }
 
-  loadDocumentEnums(): void {
-    this.documentTypes = [
-      'IDENTITY',
-      'PASSPORT',
-      'DRIVER_LICENSE',
-      'LICENSE_DISC',
-      'CAR_REGISTRATION',
-      'BOLT_REGISTRATION',
-      'UBER_REGISTRATION',
-      'IN_DRIVER_REGISTRATION',
-      'INSURANCE',
-      'CRIMINAL_REPORT',
-      'DRIVING_HISTORY_REPORT',
-      'BUSINESS_REGISTRATION',
-      'TAX_REGISTRATION',
-      'MAINTENANCE_RECORDS',
-      'PROFILE_PICTURE',
-      'PROFILE_VIDEO',
-      'CAMPAIGN_PICTURE',
-      'CAMPAIGN_VIDEO',
-      'OTHER_IMAGE',
-      'OTHER_VIDEO',
-      'OTHER_DOCUMENT'
-    ];
+   loadDocumentEnums(): void {
+     this.documentTypes = [
+       'IDENTITY',
+       'PASSPORT',
+       'DRIVER_LICENSE',
+       'LICENSE_DISC',
+       'CAR_REGISTRATION',
+       'BOLT_REGISTRATION',
+       'UBER_REGISTRATION',
+       'IN_DRIVER_REGISTRATION',
+       'INSURANCE',
+       'CRIMINAL_REPORT',
+       'DRIVING_HISTORY_REPORT',
+       'BUSINESS_REGISTRATION',
+       'TAX_REGISTRATION',
+       'MAINTENANCE_RECORDS',
+       'PROFILE_PICTURE',
+       'PROFILE_VIDEO',
+       'CAMPAIGN_PICTURE',
+       'CAMPAIGN_VIDEO',
+       'OTHER_IMAGE',
+       'OTHER_VIDEO',
+       'OTHER_DOCUMENT'
+     ];
 
-    this.documentPurposes = [
-      'PROFILE_PICTURE',
-      'ID_DOCUMENT',
-      'PROOF_OF_ADDRESS',
-      'LICENSE',
-      'VEHICLE_REGISTRATION',
-      'VEHICLE_INSURANCE',
-      'VEHICLE_INSPECTION_REPORT',
-      'VEHICLE_PHOTO',
-      'ROADWORTHY_CERTIFICATE',
-      'BUSINESS_REGISTRATION_CERTIFICATE',
-      'BUSINESS_LICENSE',
-      'TAX_CLEARANCE_CERTIFICATE',
-      'COMPANY_PROFILE',
-      'COMPANY_LOGO',
-      'BUSINESS_ADDRESS_PROOF',
-      'CAMPAIGN_VIDEO',
-      'CAMPAIGN_PICTURE',
-      'OTHER'
-    ];
-  }
-// In your component.ts file
-vehicleTypes = [
-  { label: 'Hatchback', value: 'HATCH' },
-  { label: 'Sedan', value: 'SEDAN' },
-  { label: 'SUV', value: 'SUV' },
-  { label: 'Taxi', value: 'TAXI' },
-  { label: 'Bus', value: 'BUS' },
-  { label: 'Mini Bus', value: 'MINI_BUS' },
-];
+     this.documentPurposes = [
+       'PROFILE_PICTURE',
+       'ID_DOCUMENT',
+       'PROOF_OF_ADDRESS',
+       'LICENSE',
+       'VEHICLE_REGISTRATION',
+       'VEHICLE_INSURANCE',
+       'VEHICLE_INSPECTION_REPORT',
+       'VEHICLE_PHOTO',
+       'ROADWORTHY_CERTIFICATE',
+       'BUSINESS_REGISTRATION_CERTIFICATE',
+       'BUSINESS_LICENSE',
+       'TAX_CLEARANCE_CERTIFICATE',
+       'COMPANY_PROFILE',
+       'COMPANY_LOGO',
+       'BUSINESS_ADDRESS_PROOF',
+       'CAMPAIGN_VIDEO',
+       'CAMPAIGN_PICTURE',
+       'OTHER'
+     ];
+   }
+ // In your component.ts file
+ vehicleTypes = [
+   { label: 'Hatchback', value: 'HATCH' },
+   { label: 'Sedan', value: 'SEDAN' },
+   { label: 'SUV', value: 'SUV' },
+   { label: 'Taxi', value: 'TAXI' },
+   { label: 'Bus', value: 'BUS' },
+   { label: 'Mini Bus', value: 'MINI_BUS' },
+ ];
 
-transportTypes = [
-  { label: 'Taxi', value: 'TAXI' },
-  { label: 'Bus', value: 'BUS' },
-  { label: 'Bolt', value: 'BOLT' },
-  { label: 'Uber', value: 'UBER' },
-  { label: 'InDrive', value: 'InDRIVE' },
-  { label: 'Other', value: 'OTHER' },
-];
+ transportTypes = [
+   { label: 'Taxi', value: 'TAXI' },
+   { label: 'Bus', value: 'BUS' },
+   { label: 'Bolt', value: 'BOLT' },
+   { label: 'Uber', value: 'UBER' },
+   { label: 'InDrive', value: 'InDRIVE' },
+   { label: 'Other', value: 'OTHER' },
+ ];
 
-  onFileSelected(event: any, isProfilePicture: boolean = false): void {
-    const file: File = event.target.files[0];
-    if (isProfilePicture) {
-      this.uploadProfilePicture(file);
-    } else {
-      this.selectedFile = file;
-    }
-  }
+   onFileSelected(event: any, isProfilePicture: boolean = false): void {
+     const file: File = event.target.files[0];
+     if (isProfilePicture) {
+       this.uploadProfilePicture(file);
+     } else {
+       this.selectedFile = file;
+     }
+   }
 
-  uploadProfilePicture(file: File): void {
-    if (!file || !this.driver.username) return;
-    
-    const formData = new FormData();
-    formData.append('file', file);
-    
+   uploadProfilePicture(file: File): void {
+     if (!file || !this.driver.username) return;
+     
+     const formData = new FormData();
+     formData.append('file', file);
+     
+    // Live:
+    // this.http.post<{data: {downloadUrl: string}}>(
+    //   `https://backend.qubic3d.co.za/api/v1/files?userName=${this.driver.username}&fileType=IMAGE&documentPurpose=PROFILE_PICTURE`,
+    //   formData
+    // ).subscribe({
+    //   next: (response) => {
+    //     // Update profile picture URL
+    //     // You might need to update this based on your actual API response structure
+    //     if (response.data?.downloadUrl) {
+    //       // Assuming you have a profilePictureUrl field
+    //       // If not, you might need to add it to your interface
+    //       (this.driver as any).profilePictureUrl = response.data.downloadUrl;
+    //     }
+    //     this.loadUserDocuments();
+    //   },
+    //   error: (error) => {
+    //     console.error('Error uploading profile picture:', error);
+    //   }
+    // });
+    // Local via proxy:
     this.http.post<{data: {downloadUrl: string}}>(
-      `https://backend.qubic3d.co.za/api/v1/files?userName=${this.driver.username}&fileType=IMAGE&documentPurpose=PROFILE_PICTURE`,
+      `${environmentApplication.api}v1/files?userName=${this.driver.username}&fileType=IMAGE&documentPurpose=PROFILE_PICTURE`,
       formData
     ).subscribe({
       next: (response) => {
@@ -254,19 +287,35 @@ transportTypes = [
         console.error('Error uploading profile picture:', error);
       }
     });
-  }
+   }
 
-  uploadDocument(): void {
-    if (!this.selectedFile || !this.selectedDocumentType || !this.selectedDocumentPurpose || !this.driver.username) {
-      alert('Please select a file, document type, and purpose');
-      return;
-    }
-    
-    const formData = new FormData();
-    formData.append('file', this.selectedFile);
-    
+   uploadDocument(): void {
+     if (!this.selectedFile || !this.selectedDocumentType || !this.selectedDocumentPurpose || !this.driver.username) {
+       alert('Please select a file, document type, and purpose');
+       return;
+     }
+     
+     const formData = new FormData();
+     formData.append('file', this.selectedFile);
+     
+    // Live:
+    // this.http.post<any>(
+    //   `https://backend.qubic3d.co.za/api/v1/files?userName=${this.driver.username}&fileType=${this.selectedDocumentType}&documentPurpose=${this.selectedDocumentPurpose}`,
+    //   formData
+    // ).subscribe({
+    //   next: () => {
+    //     this.loadUserDocuments();
+    //     this.selectedFile = null;
+    //     this.selectedDocumentType = '';
+    //     this.selectedDocumentPurpose = '';
+    //   },
+    //   error: (error) => {
+    //     console.error('Error uploading document:', error);
+    //   }
+    // });
+    // Local via proxy:
     this.http.post<any>(
-      `https://backend.qubic3d.co.za/api/v1/files?userName=${this.driver.username}&fileType=${this.selectedDocumentType}&documentPurpose=${this.selectedDocumentPurpose}`,
+      `${environmentApplication.api}v1/files?userName=${this.driver.username}&fileType=${this.selectedDocumentType}&documentPurpose=${this.selectedDocumentPurpose}`,
       formData
     ).subscribe({
       next: () => {
@@ -279,74 +328,83 @@ transportTypes = [
         console.error('Error uploading document:', error);
       }
     });
-  }
+   }
 
 
 
-  checkDocumentExists(purpose: string): boolean {
-    return this.userDocuments.some(doc => doc.documentPurpose === purpose);
-  }
-getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
-  const encodedUsername = encodeURIComponent(username);
-  const encodedPurpose = encodeURIComponent(purpose);
-  return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
-}
+   checkDocumentExists(purpose: string): boolean {
+     return this.userDocuments.some(doc => doc.documentPurpose === purpose);
+   }
+ getDocumentUrlByUsernameAndPurpose(username: string, purpose: string): string {
+   const encodedUsername = encodeURIComponent(username);
+   const encodedPurpose = encodeURIComponent(purpose);
+  // Live:
+  // return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+  // Local via proxy:
+  return `${environmentApplication.api}v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+ }
 
-  getDocumentUrl(purpose: string): string {
-    const doc = this.userDocuments.find(d => d.documentPurpose === purpose);
-    return doc ? `https://backend.qubic3d.co.za/api/v1/files/stream?id=${doc.id}` : '';
-  }
+   getDocumentUrl(purpose: string): string {
+     const doc = this.userDocuments.find(d => d.documentPurpose === purpose);
+    // Live:
+    // return doc ? `https://backend.qubic3d.co.za/api/v1/files/stream?id=${doc.id}` : '';
+    // Local via proxy:
+    return doc ? `${environmentApplication.api}v1/files/stream?id=${doc.id}` : '';
+   }
 
-addVehicle(): void {
-  const newVehicle: VehicleInformationrmation = {
-    capacity: '',
-    colour: '',
-    licenseRegistrationNo: '',
-    creationDate: null,
-    transportType: undefined,
-    vehicleType: undefined,
-    userInformationId: null,
-    isPublic: true
-  };
-  this.driver.VehicleInformationrmation.push(newVehicle);
-}
+ addVehicle(): void {
+   const newVehicle: VehicleInformationrmation = {
+     capacity: '',
+     colour: '',
+     licenseRegistrationNo: '',
+     creationDate: null,
+     transportType: undefined,
+     vehicleType: undefined,
+     userInformationId: null,
+     isPublic: true
+   };
+   this.driver.VehicleInformationrmation.push(newVehicle);
+ }
 
 
-  removeVehicle(index: number): void {
-    this.driver.VehicleInformationrmation.splice(index, 1);
-  }
+   removeVehicle(index: number): void {
+     this.driver.VehicleInformationrmation.splice(index, 1);
+   }
 
-  nextStep(): void {
-    if (this.currentStep < this.totalSteps) {
-      this.currentStep++;
-    }
-  }
+   nextStep(): void {
+     if (this.currentStep < this.totalSteps) {
+       this.currentStep++;
+     }
+   }
 
-  prevStep(): void {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
-  }
+   prevStep(): void {
+     if (this.currentStep > 1) {
+       this.currentStep--;
+     }
+   }
 
-updateDriver(): void {
-  // Process languages input
-  if (this.languagesInput) {
-    this.driver.languages = this.languagesInput
-      .split(',')
-      .map(lang => lang.trim())
-      .filter(lang => lang);
-  } else {
-    this.driver.languages = [];
-  }
+ updateDriver(): void {
+   // Process languages input
+   if (this.languagesInput) {
+     this.driver.languages = this.languagesInput
+       .split(',')
+       .map(lang => lang.trim())
+       .filter(lang => lang);
+   } else {
+     this.driver.languages = [];
+   }
 
-  // ✅ Convert dateOfBirth (string like '2000-06-04') to proper ISO string
-  if (this.driver.dateOfBirth) {
-    const parsedDate = new Date(this.driver.dateOfBirth);
-    this.driver.dateOfBirth = parsedDate.toISOString(); // Sends '2000-06-04T00:00:00.000Z'
-  }
+   // ✅ Convert dateOfBirth (string like '2000-06-04') to proper ISO string
+   if (this.driver.dateOfBirth) {
+     const parsedDate = new Date(this.driver.dateOfBirth);
+     this.driver.dateOfBirth = parsedDate.toISOString(); // Sends '2000-06-04T00:00:00.000Z'
+   }
 
-  this.isLoading = true;
-  this.http.post<ApiResponse<DriverProfile>>('https://backend.qubic3d.co.za/profile/edit', this.driver)
+   this.isLoading = true;
+  // Live:
+  // this.http.post<ApiResponse<DriverProfile>>('https://backend.qubic3d.co.za/profile/edit', this.driver)
+  // Local via proxy (non-API endpoint):
+  this.http.post<ApiResponse<DriverProfile>>(`${environment.api}profile/edit`, this.driver)
     .subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -362,10 +420,10 @@ updateDriver(): void {
         this.isLoading = false;
       }
     });
-}
+ }
 
 
-  cancelEdit(): void {
-    this.router.navigate(['/agencies']);
-  }
+   cancelEdit(): void {
+     this.router.navigate(['/agencies']);
+   }
 }

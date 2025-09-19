@@ -4,6 +4,7 @@
 import { Routes } from '@angular/router';
 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { CampaignEditComponent } from './pagess-advertiser/camapign-edit/camapign-edit.component';
 import { AdvertiserComponent } from './pages/advertiser/advertiser.component';
 import { HomeComponent } from './homes/home/home.component';
 import { AddAdvertiserComponent } from './pages/advertiser/add-advertiser/add-advertiser.component';
@@ -32,6 +33,7 @@ import { UserSelectDialogComponent } from './pages/tablet/user-select-dialog/use
 
 import { LoginComponent } from './components/auth/login/login.component';
 import { DashboardComponentAdvertiser } from './components/dashboard advertiser/dashboard.component';
+import { PageStubComponent } from './pages/page-stub/page-stub.component';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
@@ -43,6 +45,43 @@ export const routes: Routes = [
     component: HomeComponent,
     canActivate: [authGuard],
     children: [
+      {
+        path: 'financial',
+        loadComponent: () => import('./pages/financial/financial.component').then(m => m.FinancialComponent)
+      },
+      // Ad-Ops extras
+      // Ad-Ops concrete routes
+      { path: 'campaigns/active', loadComponent: () => import('./pages/campaign/campaign.component').then(m => m.CampaignComponent) },
+      { path: 'campaigns/reports', loadComponent: () => import('./pages/campaign-analytics/campaign-analytics.component').then(m => m.CampaignAnalyticsComponent) },
+      { path: 'exports', component: PageStubComponent, data: { title: 'Exports', description: 'CSV/PDF exports' } },
+      { path: 'tablets/assignments', loadComponent: () => import('./pages/tablet/tablet.component').then(m => m.TabletComponent) },
+      { path: 'tablets/inventory', loadComponent: () => import('./pages/tablet/tablet.component').then(m => m.TabletComponent) },
+      { path: 'tablets/:id', loadComponent: () => import('./pages/tablet/tablet-view.component/tablet-view.component.component').then(m => m.TabletViewComponent) },
+      { path: 'creatives/library', component: PageStubComponent, data: { title: 'Creative Library', description: 'Assets and media' } },
+      { path: 'creatives/qa', component: PageStubComponent, data: { title: 'QA Tools', description: 'Preview and validation' } },
+      // CRM
+      { path: 'contacts', component: PageStubComponent, data: { title: 'Contacts', description: 'People (POCs)'} },
+      { path: 'opportunities', component: PageStubComponent, data: { title: 'Opportunities', description: 'Pipeline and deals' } },
+      { path: 'forecast', component: PageStubComponent, data: { title: 'Forecast', description: 'Revenue forecast' } },
+      { path: 'activity', component: PageStubComponent, data: { title: 'Activity & Notes', description: 'Timeline, notes, tasks' } },
+      { path: 'segments', component: PageStubComponent, data: { title: 'Segments & Audiences', description: 'Saved audiences' } },
+      { path: 'documents', component: PageStubComponent, data: { title: 'Documents', description: 'Contracts, SOWs, IOs' } },
+      { path: 'support', component: PageStubComponent, data: { title: 'Support', description: 'Tickets and SLAs' } },
+      // Business & Financials
+      { path: 'billing/invoices', component: PageStubComponent, data: { title: 'Invoices', description: 'Issued, due, overdue' } },
+      { path: 'billing/credit-notes', component: PageStubComponent, data: { title: 'Credit Notes', description: 'Adjustments and credits' } },
+      { path: 'payouts', component: PageStubComponent, data: { title: 'Payouts & Compensation', description: 'Driver/Fleet payouts' } },
+      { path: 'pricing', component: PageStubComponent, data: { title: 'Pricing & Estimator', description: 'CPM/CPV calculator' } },
+      { path: 'contracts', component: PageStubComponent, data: { title: 'Contracts & Purchase Orders', description: 'IOs, POs, renewals' } },
+      { path: 'budgeting', component: PageStubComponent, data: { title: 'Budgeting & Forecasts', description: 'Revenue plans by period' } },
+      { path: 'reconciliation', component: PageStubComponent, data: { title: 'Reconciliation', description: 'Delivery vs invoice vs payout checks' } },
+      { path: 'analytics/revenue', component: PageStubComponent, data: { title: 'Business Analytics', description: 'Revenue and margin trends' } },
+      // Settings
+      { path: 'settings', component: PageStubComponent, data: { title: 'Settings', description: 'Users & Roles, Permissions, Integrations, Feature Flags' } },
+      { path: 'settings/users', component: PageStubComponent, data: { title: 'Users & Roles', description: 'Manage users and roles' } },
+      { path: 'settings/permissions', component: PageStubComponent, data: { title: 'Permissions', description: 'Access control' } },
+      { path: 'settings/integrations', component: PageStubComponent, data: { title: 'Integrations', description: 'Billing, CRM, storage' } },
+      { path: 'settings/flags', component: PageStubComponent, data: { title: 'Feature Flags', description: 'Toggle features' } },
       { path: 'dashboard', component: DashboardComponentAdvertiser },
       { path: 'campaigns/new', component: AddCampaignComponent },
  
@@ -54,11 +93,22 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'campaign/:id/analytics',
+        loadComponent: () =>
+          import('./pages/campaign-analytics/campaign-analytics.component').then(
+            (m) => m.CampaignAnalyticsComponent
+          ),
+      },
+      {
         path: 'campaigns',
         loadComponent: () =>
           import('./pages/campaign/campaign.component').then(
             (m) => m.CampaignComponent
           ),
+      },
+      {
+        path: 'campaigns/edit/:id',
+        component: CampaignEditComponent,
       },
 
       { path: 'drivers/edit/:email', component: EditProfileComponentComponent },

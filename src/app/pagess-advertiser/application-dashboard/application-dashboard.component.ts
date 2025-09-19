@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ApplicationDto, UploadedDocuments } from '../../model/application.dto';
-import { environment } from '../../environments/environment.development';
+import { environmentApplication } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -50,7 +50,7 @@ export class ApplicationDashboardComponent implements OnInit {
   selectedFile: File | null = null;
   selectedDocumentType: DocumentPurpose = DocumentPurpose.ID_DOCUMENT;
   documentPurposes = Object.values(DocumentPurpose);
-  apiUrl = environment.api;
+  apiUrl = environmentApplication.api;
   router: any;
   email!: string; // or `email: string | null = null;` if you want to handle null explicitly
 
@@ -86,9 +86,12 @@ fetchApplication(): void {
   this.errorMessage = '';
 
   const encodedEmail = encodeURIComponent(this.email.trim().toLowerCase());
-// const apiUrl = `https://backend.qubic3d.co.za/api/applications/by-email?email=${encodedEmail}`;
+  // Live:
+  // const apiUrl = `https://backend.qubic3d.co.za/api/applications/by-email?email=${encodedEmail}`;
+  // Local via proxy:
+  const apiUrl = `${this.apiUrl}applications/by-email?email=${encodedEmail}`;
 
-  this.http.get<ApplicationDto>("https://backend.qubic3d.co.za/api/applications/by-email/jane.doe%40example.com").subscribe({
+  this.http.get<ApplicationDto>(apiUrl).subscribe({
     next: (response: ApplicationDto) => {
       this.isLoading = false;
 

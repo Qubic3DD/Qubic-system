@@ -9,9 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200 mat-typography">
   <app-root></app-root>
+  <style>
+    @media print{
+      /* Ensure colors are preserved */
+      :root{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      html, body { height:auto; background:#fff; }
+      /* Hide everything except the analytics report content */
+      body * { visibility: hidden !important; }
+      .report, .report * { visibility: visible !important; }
+    }
+  </style>
 </body>
 </html>

@@ -19,6 +19,7 @@ import { catchError, Observable, of } from 'rxjs';
 import { ApiResponse } from '../../api/Response/interfaceAproval';
 import { DriverProfile } from '../../api/Response/interfaces';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-campaign',
   templateUrl: './campaign.component.html',
@@ -72,13 +73,18 @@ export class CampaignComponentAdvertiser implements OnInit {
       this.isLoading = false;
     }
   }
-fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
+ fetchpro(email: string): Observable<ApiResponse<DriverProfile>> {
     // Remove encodeURIComponent here - we'll do it in fetchDriver
+    // Live:
+    // return this.http.get<ApiResponse<DriverProfile>>(
+    //   `https://backend.qubic3d.co.za/profile/retrieve/${email}`
+    // );
+    // Local via proxy:
     return this.http.get<ApiResponse<DriverProfile>>(
-      `https://backend.qubic3d.co.za/profile/retrieve/${email}`
+      `${environment.api}profile/retrieve/${email}`
     );
-}
-fetchDriver(email: string): void {
+ }
+ fetchDriver(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email); // Encode only once here
     this.fetchpro(encodedEmail).pipe(
@@ -100,7 +106,7 @@ fetchDriver(email: string): void {
         this.isLoading = false;
       }
     });
-}
+ }
   loadCampaigns(): void {
     this.loading = true;
     this.campaignService.getCampaignsByAdvertiserId(this.asvertiserId!).subscribe({
@@ -129,16 +135,16 @@ fetchDriver(email: string): void {
     }
   }
 
-addCampaign(): void {
+ addCampaign(): void {
     console.log('Attempting to navigate to add campaign'); // Add this
     this.router.navigate(['/advertiser-dashboard/add']);
-}
+ }
   viewCampaignDetails(campaignId: number): void {
     this.router.navigate(['/advertiser-dashboard/view-campaign', campaignId]);
   }
 
   editCampaign(campaignId: number): void {
-this.router.navigate(['/advertiser-dashboard/edit', campaignId]);
+ this.router.navigate(['/advertiser-dashboard/edit', campaignId]);
   }
 
   deleteCampaign(campaignId: number,): void {

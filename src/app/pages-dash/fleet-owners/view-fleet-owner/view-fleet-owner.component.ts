@@ -148,7 +148,10 @@ hasValidImageUrl(email: string): boolean {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Live:
+    // return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Local:
+    return `http://localhost:8181/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
     getInitials(name: string): string {
   if (!name) return '';
@@ -162,7 +165,10 @@ onImageError(email: string) {
   fetchFleetOwner(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<ApiResponse<FleetOwner>>(`https://backend.qubic3d.co.za/profile/retrieve/${encodedEmail}`).pipe(
+    // Live:
+    // this.http.get<ApiResponse<FleetOwner>>(`https://backend.qubic3d.co.za/profile/retrieve/${encodedEmail}`).pipe(
+    // Local:
+    this.http.get<ApiResponse<FleetOwner>>(`http://localhost:8181/profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching fleet owner:', error);
         this.error = `Failed to load fleet owner profile ${email}`;

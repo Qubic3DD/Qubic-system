@@ -18,7 +18,10 @@ export class RequestSenderService {
   sendPostRequest<T>(url: string, body: any): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://backend.qubic3d.co.za/',
+      // Live:
+      // 'Access-Control-Allow-Origin': 'https://backend.qubic3d.co.za/',
+      // Local (when using Angular proxy, this header is not required):
+      // 'Access-Control-Allow-Origin': 'http://localhost:4200',
     });
 
     return this.http.post<T>(environment.api + url, JSON.stringify(body), {
@@ -34,7 +37,10 @@ export class RequestSenderService {
   ): Observable<T> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://backend.qubic3d.co.za/',
+      // Live:
+      // 'Access-Control-Allow-Origin': 'https://backend.qubic3d.co.za/',
+      // Local (when using Angular proxy, this header is not required):
+      // 'Access-Control-Allow-Origin': 'http://localhost:4200',
     });
 
     let finalUrl = environment.api + url;

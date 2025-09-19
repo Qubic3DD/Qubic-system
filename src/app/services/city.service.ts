@@ -16,7 +16,10 @@ interface ApiResponse<T> {
 })
 export class CityService {
   private apiUrl = `${environment.api}cities`;
-  private apCity = 'https://backend.qubic3d.co.za/api/campaigns/campaigs/getAllCities'
+  // Live:
+  // private apCity = 'https://backend.qubic3d.co.za/api/campaigns/campaigs/getAllCities'
+  // Local via env/proxy:
+  private apCity = `${environment.api}api/campaigns/campaigs/getAllCities`
   constructor(private http: HttpClient) { }
 
   // Get all cities (for initial load)

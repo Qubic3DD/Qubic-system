@@ -12,6 +12,7 @@ export interface Campaign {
   id: number;
   name: string;
   description: string;
+  ctaUrl?: string;
   startDate: string;
   endDate: string;
   requiredImpressions: number;
@@ -19,8 +20,11 @@ export interface Campaign {
   mediaFile: MediaFile;
   creationDate: string;
   streamUrl: string;
+  qrUrl?: string;
   price: number;
+  qrScanCount?: number;
   targetCities: { id: number, name: string }[];
   targetProvinces: { id: number, name: string }[];
   active: boolean;
+  advertiserName?: string;
 }

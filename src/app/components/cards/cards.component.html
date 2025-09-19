@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-gray-500 dark:text-gray-400 text-sm">Total Campaigns</p>
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">24</h3>
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ totalCampaigns ?? '—' }}</h3>
         </div>
         <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,7 +20,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-gray-500 dark:text-gray-400 text-sm">Total Revenue</p>
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">R24,780</h3>
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ totalRevenueApprox != null ? ('R' + totalRevenueApprox) : '—' }}</h3>
         </div>
         <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,7 +36,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-gray-500 dark:text-gray-400 text-sm">Active Tables</p>
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">42</h3>
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ activeTablets ?? '—' }}</h3>
         </div>
         <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,7 +53,7 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="text-gray-500 dark:text-gray-400 text-sm">Total Advertisers</p>
-          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">18</h3>
+          <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ totalAdvertisers ?? '—' }}</h3>
         </div>
         <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

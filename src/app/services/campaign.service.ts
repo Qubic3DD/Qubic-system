@@ -16,12 +16,21 @@ export class CampaignService {
     return this.http.get<{ data: Campaign[] }>(`${this.baseUrl}/get-all`);
   }
 
+  getActiveCampaigns(): Observable<{ data: Campaign[] }> {
+    return this.http.get<{ data: Campaign[] }>(`${this.baseUrl}/get-active`);
+  }
+
   getCampaignById(id: number): Observable<{ data: Campaign }> {
     return this.http.get<{ data: Campaign }>(`${this.baseUrl}/get-by-id/${id}`);
   }
 
   deactivateCampaign(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/deactivate/${id}`);
+    return this.http.post(`${this.baseUrl}/deactivate/${id}`, {});
+  }
+
+  // Activate campaign method
+  activateCampaign(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/activate/${id}`, {});
   }
 
   deleteCampaign(id: number): Observable<any> {
@@ -40,5 +49,9 @@ export class CampaignService {
 
   updateCampaign(id: number, campaignData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/update/${id}`, campaignData);
+  }
+
+  reorderCampaigns(order: { id: number; position: number }[]): Observable<any> {
+    return this.http.post(`${this.baseUrl}/reorder`, order || []);
   }
 }

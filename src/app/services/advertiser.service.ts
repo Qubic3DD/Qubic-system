@@ -13,4 +13,8 @@ export class AdvertiserService {
   getAllAdvertisers(): Observable<{ data: any[] }> {
     return this.http.get<{ data: any[] }>(this.baseUrl);
   }
+
+  deleteAdvertiser(username: string): Observable<any> {
+    return this.http.delete(`/api/advertisers/${encodeURIComponent(username)}`);
+  }
 }

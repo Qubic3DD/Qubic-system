@@ -1,8 +1,30 @@
 {
   "/api": {
-    "target": "https://backend.qubic3d.co.za/",
+    "target": "http://localhost:8181/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/profile": {
+    "target": "http://localhost:8181/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   }
 }
+
+// PRODUCTION CONFIGURATION (commented out):
+// {
+//   "/api": {
+//     "target": "https://backend.qubic3d.co.za/",
+//     "secure": false,
+//     "changeOrigin": true,
+//     "logLevel": "debug"
+//   },
+//   "/profile": {
+//     "target": "https://backend.qubic3d.co.za/",
+//     "secure": false,
+//     "changeOrigin": true,
+//     "logLevel": "debug"
+//   }
+// }

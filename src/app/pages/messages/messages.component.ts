@@ -38,6 +38,11 @@ export class MessagesComponent implements OnInit {
   searchQuery: string = '';
   activeFilter: string = 'all';
   isLoading = false;
+  // KPI stats
+  totalMessages = 0;
+  unreadMessages = 0;
+  readMessages = 0;
+  flaggedMessages = 0;
 
   filters: Filter[] = [
     { id: 'all', label: 'All', active: true, count: 0 },
@@ -73,6 +78,7 @@ export class MessagesComponent implements OnInit {
           this.filteredMessages = [...this.allMessages];
           this.totalPages = Math.ceil(response.totalCount / this.itemsPerPage);
           this.applyTagFilters();
+          this.updateKpis();
         },
         error: (err: any) => console.error('Failed to fetch messages', err)
       });
@@ -85,9 +91,22 @@ export class MessagesComponent implements OnInit {
         this.filters[1].count = counts.unread;
         this.filters[2].count = counts.read;
         this.filters[3].count = counts.flagged;
+        // Use server counts to set KPIs if available
+        this.totalMessages = counts.all ?? this.totalMessages;
+        this.unreadMessages = counts.unread ?? this.unreadMessages;
+        this.readMessages = counts.read ?? this.readMessages;
+        this.flaggedMessages = counts.flagged ?? this.flaggedMessages;
       },
       error: (err: any) => console.error('Failed to fetch message counts', err)
     });
+  }
+
+  private updateKpis(): void {
+    const all = this.allMessages || [];
+    this.totalMessages = all.length;
+    this.unreadMessages = all.filter(m => m.status === 'unread').length;
+    this.readMessages = all.filter(m => m.status === 'read').length;
+    this.flaggedMessages = all.filter(m => m.status === 'flagged' || m.isFlagged).length;
   }
 
   applyFilter(filterId: string): void {

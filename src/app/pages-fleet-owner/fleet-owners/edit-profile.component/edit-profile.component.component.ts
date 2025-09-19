@@ -85,7 +85,10 @@ showSuccessPopup() {
 }
   fetchDriverProfile(email: string): void {
     this.isLoading = true;
-    this.http.get<ApiResponse<DriverProfile>>(`https://backend.qubic3d.co.za/profile/retrieve/${email}`)
+    // Live:
+    // this.http.get<ApiResponse<DriverProfile>>(`https://backend.qubic3d.co.za/profile/retrieve/${email}`)
+    // Local:
+    this.http.get<ApiResponse<DriverProfile>>(`http://localhost:8181/profile/retrieve/${email}`)
       .subscribe({
         next: (response) => {
           if (response.data) {
@@ -121,12 +124,18 @@ getDocumentPurposeLabel(purpose: string): string {
 
 
 viewDocument(username: string, documentPurpose: string): void {
-  const url = `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  // Live:
+  // const url = `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  // Local:
+  const url = `http://localhost:8181/api/v1/files/stream?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
   window.open(url, '_blank');
 }
 
 downloadDocument(username: string, documentPurpose: string): void {
-  const url = `https://backend.qubic3d.co.za/api/v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  // Live:
+  // const url = `https://backend.qubic3d.co.za/api/v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
+  // Local:
+  const url = `http://localhost:8181/api/v1/files/download?username=${encodeURIComponent(username)}&documentPurpose=${documentPurpose}`;
   console.log('Downloading document from:', url);
   window.open(url, '_blank');
 }
@@ -134,7 +143,10 @@ downloadDocument(username: string, documentPurpose: string): void {
   loadUserDocuments(): void {
     if (!this.driver.username) return;
     
-    this.http.get<{data: UserDocument[]}>(`https://backend.qubic3d.co.za/api/v1/files/list?username=${this.driver.username}`)
+    // Live:
+    // this.http.get<{data: UserDocument[]}>(`https://backend.qubic3d.co.za/api/v1/files/list?username=${this.driver.username}`)
+    // Local:
+    this.http.get<{data: UserDocument[]}>(`http://localhost:8181/api/v1/files/list?username=${this.driver.username}`)
       .subscribe({
         next: (response) => {
           this.userDocuments = response.data || [];

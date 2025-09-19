@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TabletService } from '../../../services/tablet.service';
+import { TabletMonitorService } from '../../../services/tablet-monitor.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -18,30 +18,23 @@ export class AddTabletComponent {
 
   constructor(
     private fb: FormBuilder,
-    private tabletService: TabletService,
+    private tabletMonitorService: TabletMonitorService,
     private dialogRef: MatDialogRef<AddTabletComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.tabletForm = this.fb.group({
-      model: ['', Validators.required],
-      serialNumber: ['', [Validators.required, Validators.minLength(5)]],
-      storage: [''],
-      screen: [''],
-      os: ['']
+      deviceId: ['', [Validators.required, Validators.minLength(3)]],
+      alias: ['']
     });
   }
 
   onSubmit() {
-    if (this.tabletForm.valid) {
-      this.tabletService.createTablet(this.tabletForm.value).subscribe({
-        next: (newTablet) => {
-          this.dialogRef.close(newTablet);
-        },
-        error: (err) => {
-          console.error('Error creating tablet:', err);
-        }
-      });
-    }
+    if (this.tabletForm.invalid) return;
+    const { deviceId, alias } = this.tabletForm.value;
+    this.tabletMonitorService.register(deviceId, alias).subscribe({
+      next: (res) => this.dialogRef.close({ deviceId, alias, res }),
+      error: (err) => console.error('Error registering tablet:', err)
+    });
   }
 
   onCancel() {

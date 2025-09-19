@@ -29,6 +29,7 @@ export interface AdvertisersResponse {
     company: boolean;
     logo: string | null;
     status: string| null;
-    revenue: 2000
+    revenue?: number;
+    activeCampaigns?: number;
 
 }

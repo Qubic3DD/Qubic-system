@@ -36,10 +36,11 @@
               Campaign Video
             </h2>
           </div>
+          <!-- Live: [src]="'https://backend.qubic3d.co.za/' + campaign.streamUrl" -->
           <video 
             width="100%" 
             controls 
-            [src]="'https://backend.qubic3d.co.za/' + campaign.streamUrl" 
+            [src]="('/' + campaign.streamUrl)" 
             class="w-full"
             poster="https://via.placeholder.com/800x450?text=Loading+Video"
           ></video>
@@ -67,6 +68,13 @@
             <mat-icon class="mr-2 text-pink-500">analytics</mat-icon>
             Campaign Stats
           </h2>
+          <div class="mb-4 text-right">
+            <a *ngIf="campaign?.id" [routerLink]="['/campaign', campaign.id, 'analytics']"
+               class="inline-flex items-center px-3 py-2 rounded bg-pink-600 text-white hover:bg-pink-700">
+              <mat-icon class="mr-2">analytics</mat-icon>
+              View Analytics Report
+            </a>
+          </div>
           
           <div class="space-y-4">
             <!-- Impressions progress -->
@@ -175,7 +183,8 @@
             <mat-list-item>
               <mat-icon matListItemIcon>cloud_download</mat-icon>
               <div matListItemTitle>
-                <a [href]="'https://backend.qubic3d.co.za/' + campaign.mediaFile.downloadUrl" 
+                <!-- Live: [href]="'https://backend.qubic3d.co.za/' + campaign.mediaFile.downloadUrl" -->
+                <a [href]="'/' + campaign.mediaFile.downloadUrl" 
                    class="text-pink-600 hover:underline dark:text-pink-400">
                   Download Media File
                 </a>

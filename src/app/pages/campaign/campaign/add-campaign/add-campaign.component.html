@@ -70,6 +70,14 @@
       </p>
     </div>
 
+    <!-- CTA/QR Link (optional) -->
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CTA / QR Link (optional)</label>
+      <input formControlName="ctaUrl" placeholder="https://example.com/landing"
+        class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300" />
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">If provided, the tablet QR will encode this URL.</p>
+    </div>
+
     <!-- Date Range Fields -->
   <div class="space-y-2">
   <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
@@ -100,6 +108,7 @@
       <div *ngIf="showProvinceDropdown" class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 max-h-60 overflow-auto">
         <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <input type="text" [(ngModel)]="provinceSearch" (ngModelChange)="filterProvinces()" 
+            [ngModelOptions]="{standalone: true}"
             placeholder="Search provinces..."
             class="w-full px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300">
         </div>
@@ -131,6 +140,7 @@
       <div *ngIf="showCityDropdown" class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 border border-gray-200 dark:border-gray-700 max-h-60 overflow-auto">
         <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <input type="text" [(ngModel)]="citySearch" (ngModelChange)="filterCities()" 
+            [ngModelOptions]="{standalone: true}"
             placeholder="Search cities..."
             class="w-full px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-gray-300">
         </div>

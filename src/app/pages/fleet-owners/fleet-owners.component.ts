@@ -26,6 +26,11 @@ export class FleetOwnersComponent implements OnInit {
     filteredFleetOwners2: FleetOwnersResponse[] = [];
   activeFilter: string = 'all';
   isLoading: boolean = false;
+  // KPI stats
+  totalFleets = 0;
+  verifiedFleets = 0;
+  unverifiedFleets = 0;
+  totalRevenue = 0;
 
   filters: Filter[] = [
     { id: 'all', label: 'All', active: true },
@@ -55,21 +60,37 @@ openAddDriverDialog(): void {
 }
   getFleetOwners(): void {
     this.isLoading = true;
+    // Live:
+    // this.http
+    //   .get<any>(
+    //     'https://backend.qubic3d.co.za/profile/get-users-by-role/fleet_owner'
+    //   )
+    // Local:
     this.http
       .get<any>(
-        'https://backend.qubic3d.co.za/profile/get-users-by-role/fleet_owner'
+        'http://localhost:8181/profile/get-users-by-role/fleet_owner'
       )
       .subscribe({
         next: (response) => {
           this.fleetOwners2 = response.data || [];
           this.filteredFleetOwners2 = [...this.fleetOwners];
           this.isLoading = false;
+          this.updateStats();
         },
         error: (error) => {
           console.error('Error fetching fleet owners:', error);
           this.isLoading = false;
         },
       });
+  }
+
+  private updateStats(): void {
+    const all = this.fleetOwners2 || [];
+    this.totalFleets = all.length;
+    // Assuming owner.verified boolean may exist; if not, treat >0 vehicles as verified proxy
+    this.verifiedFleets = all.filter(o => (o as any).verified === true || (o.vehicleCount || 0) > 0).length;
+    this.unverifiedFleets = Math.max(0, this.totalFleets - this.verifiedFleets);
+    this.totalRevenue = all.reduce((sum: number, o: any) => sum + (Number(o.revenue) || 0), 0);
   }
 
   addFleetOwner(): void {
@@ -121,7 +142,10 @@ viewFleetOwnerDetails(userName: string): void {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Live:
+    // return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Local:
+    return `http://localhost:8181/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
     getInitials(name: string): string {
   if (!name) return '';

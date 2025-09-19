@@ -1,0 +1,22 @@
+{
+  "/api": {
+    "target": "http://localhost:8181/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws": true
+  },
+  "/files": {
+    "target": "http://localhost:8181/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/profile": {
+    "target": "http://localhost:8181/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
+

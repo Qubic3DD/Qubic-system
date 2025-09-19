@@ -36,7 +36,10 @@ export class TabletService {
       );
   }
   assignTabletToUser(tabletId: number, userId: number): Observable<any> {
-  const url = `https://backend.qubic3d.co.za/api/tablets/${tabletId}/assign/${userId}`;
+  // Live:
+  // const url = `https://backend.qubic3d.co.za/api/tablets/${tabletId}/assign/${userId}`;
+  // Local via env/proxy:
+  const url = `${this.apiUrl}/${tabletId}/assign/${userId}`;
   return this.http.post(url, null).pipe(
     catchError(this.handleError)
   );
@@ -173,7 +176,10 @@ getDrivers(search?: string): Observable<ApiResponse<DriverProfile[]>> {
       params = params.set('search', search);
     }
 
-    return this.http.get<ApiResponse<DriverProfile[]>>(`https://backend.qubic3d.co.za/profile/drivers`, { params })
+    // Live:
+    // return this.http.get<ApiResponse<DriverProfile[]>>(`https://backend.qubic3d.co.za/profile/drivers`, { params })
+    // Local via env/proxy:
+    return this.http.get<ApiResponse<DriverProfile[]>>(`${environment.api}profile/drivers`, { params })
       .pipe(
         catchError(this.handleError)
       );

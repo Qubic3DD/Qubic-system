@@ -92,7 +92,10 @@ private isValidEmail(email: string): boolean {
 
   this.isLoading = true;
   const encodedEmail = encodeURIComponent(email.trim().toLowerCase());
-  const apiUrl = `https://backend.qubic3d.co.za/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
+  // Live:
+  // const apiUrl = `https://backend.qubic3d.co.za/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
+  // Local:
+  const apiUrl = `http://localhost:8181/api/applications/application-by-email?email=${encodedEmail}`; // ✅ Updated to use query param
 
   console.log(`curl -X 'GET' '${apiUrl}' -H 'accept: */*'`);
 

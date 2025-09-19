@@ -1,0 +1,169 @@
+.report{font-family: 'Inter', system-ui, Arial; color:#f9fafb; background:#111827; max-width: 1140px; margin: 0 auto; min-height: 100vh; padding: 16px;}
+.hero-simple{background:transparent; color:#f9fafb; padding:0 0 20px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #374151}
+.hero-simple .title{font:700 24px 'Poppins',sans-serif; margin:0; color:#f9fafb}
+.hero-simple .subtitle{font:500 14px 'Inter',sans-serif; opacity:0.8; margin:4px 0 0; color:#d1d5db}
+.hero-simple .print{display:flex; align-items:center; padding:10px 16px; background:#db2777; color:#fff; border:none; border-radius:8px; font:600 14px 'Inter',sans-serif; cursor:pointer; transition:all 0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.1)}
+.hero-simple .print:hover{background:#be185d; transform:translateY(-1px); box-shadow:0 4px 6px rgba(0,0,0,0.1)}
+.kpis{display:grid; grid-template-columns: repeat(4,1fr); gap:16px; margin:16px 0}
+.kpis.five{grid-template-columns: repeat(5,1fr)}
+.kpis.secondary{margin-top:8px}
+.card{background:#1f2937; border-radius:12px; padding:16px; box-shadow:0 4px 6px rgba(0,0,0,.1); display:flex; justify-content:space-between; align-items:center}
+.card .content{flex:1}
+.card .label{font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px}
+.card .value{font:700 24px 'Poppins',sans-serif; color:#f9fafb; line-height:1}
+.card .icon{background:rgba(255,255,255,0.1); padding:12px; border-radius:8px; display:flex; align-items:center; justify-content:center}
+
+/* Color-coded KPI cards - tablet style */
+.kpis .card:nth-child(1){background:#3b82f6; color:#dbeafe}
+.kpis .card:nth-child(1) .label{color:#dbeafe}
+.kpis .card:nth-child(1) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis .card:nth-child(2){background:#8b5cf6; color:#ede9fe}
+.kpis .card:nth-child(2) .label{color:#ede9fe}
+.kpis .card:nth-child(2) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis .card:nth-child(3){background:#10b981; color:#d1fae5}
+.kpis .card:nth-child(3) .label{color:#d1fae5}
+.kpis .card:nth-child(3) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis .card:nth-child(4){background:#f59e0b; color:#fef3c7}
+.kpis .card:nth-child(4) .label{color:#fef3c7}
+.kpis .card:nth-child(4) .icon{background:rgba(255,255,255,0.2)}
+
+/* Secondary KPI cards - tablet style */
+.kpis.secondary .card:nth-child(1){background:#ec4899; color:#fce7f3}
+.kpis.secondary .card:nth-child(1) .label{color:#fce7f3}
+.kpis.secondary .card:nth-child(1) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.secondary .card:nth-child(2){background:#ef4444; color:#fee2e2}
+.kpis.secondary .card:nth-child(2) .label{color:#fee2e2}
+.kpis.secondary .card:nth-child(2) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.secondary .card:nth-child(3){background:#06b6d4; color:#cffafe}
+.kpis.secondary .card:nth-child(3) .label{color:#cffafe}
+.kpis.secondary .card:nth-child(3) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.secondary .card:nth-child(4){background:#8b5cf6; color:#ede9fe}
+.kpis.secondary .card:nth-child(4) .label{color:#ede9fe}
+.kpis.secondary .card:nth-child(4) .icon{background:rgba(255,255,255,0.2)}
+
+/* Row 1 specific colors: Budget, Required Impressions, Total Impressions, Expected Scans, Total Scans */
+.kpis.five .card:nth-child(1){background:#ec4899; color:#fce7f3}
+.kpis.five .card:nth-child(1) .label{color:#fce7f3}
+.kpis.five .card:nth-child(1) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five .card:nth-child(2){background:#8b5cf6; color:#ede9fe}
+.kpis.five .card:nth-child(2) .label{color:#ede9fe}
+.kpis.five .card:nth-child(2) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five .card:nth-child(3){background:#10b981; color:#d1fae5}
+.kpis.five .card:nth-child(3) .label{color:#d1fae5}
+.kpis.five .card:nth-child(3) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five .card:nth-child(4){background:#f59e0b; color:#fef3c7}
+.kpis.five .card:nth-child(4) .label{color:#fef3c7}
+.kpis.five .card:nth-child(4) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five .card:nth-child(5){background:#005AED; color:#DBEAFE}
+.kpis.five .card:nth-child(5) .label{color:#DBEAFE}
+.kpis.five .card:nth-child(5) .icon{background:rgba(255,255,255,0.2)}
+
+/* Row 2: Base CPM, Effective CPM, Base CPS, Effective CPS, Effective STR */
+.kpis.five.secondary .card:nth-child(1){background:#3b82f6; color:#dbeafe}
+.kpis.five.secondary .card:nth-child(1) .label{color:#dbeafe}
+.kpis.five.secondary .card:nth-child(1) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five.secondary .card:nth-child(2){background:#ef4444; color:#fee2e2}
+.kpis.five.secondary .card:nth-child(2) .label{color:#fee2e2}
+.kpis.five.secondary .card:nth-child(2) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five.secondary .card:nth-child(3){background:#06b6d4; color:#cffafe}
+.kpis.five.secondary .card:nth-child(3) .label{color:#cffafe}
+.kpis.five.secondary .card:nth-child(3) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five.secondary .card:nth-child(4){background:#8b5cf6; color:#ede9fe}
+.kpis.five.secondary .card:nth-child(4) .label{color:#ede9fe}
+.kpis.five.secondary .card:nth-child(4) .icon{background:rgba(255,255,255,0.2)}
+
+.kpis.five.secondary .card:nth-child(5){background:#10b981; color:#d1fae5}
+.kpis.five.secondary .card:nth-child(5) .label{color:#d1fae5}
+.kpis.five.secondary .card:nth-child(5) .icon{background:rgba(255,255,255,0.2)}
+.grid{display:grid; grid-template-columns: 2fr 1fr; gap:12px}
+.two-cols{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+.panel{background:#1f2937; border-radius:16px; padding:14px 16px; box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.panel h3{font:600 14px 'Poppins',sans-serif; margin:0 0 8px; color:#60a5fa; display:flex; align-items:center; gap:8px}
+.panel h3:before{content:''; width:4px; height:16px; background:linear-gradient(135deg,#005AED,#8D29FF); border-radius:2px}
+.panel.span-2{grid-column: span 2}
+.span-2{grid-column: span 2}
+.chart-fixed-h{height:250px; width:100%; position:relative; overflow:hidden}
+.chart-fixed-h canvas{height:100% !important; width:100% !important; display:block}
+.flex-row-between{display:flex; align-items:center; justify-content:space-between}
+.days-inline{display:flex; align-items:center; gap:6px}
+.days-input{width:80px; padding:4px 6px; border-radius:8px; border:1px solid #374151; background:#111827; color:#e5e7eb; font:500 12px 'Inter',sans-serif}
+.days-input:focus{outline:none; border-color:#db2777; box-shadow:0 0 0 2px rgba(219,39,119,0.3)}
+.days-apply{padding:4px 8px; border-radius:8px; border:1px solid #374151; background:#db2777; color:#fff; font:600 12px 'Inter',sans-serif; cursor:pointer}
+.days-apply:hover{background:#be185d}
+.panel table{width:100%; border-collapse: collapse}
+.panel table th{background:linear-gradient(135deg,#005AED,#8D29FF); color:#fff; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px}
+.panel table th, .panel table td{padding:8px 6px; border-bottom:1px solid #374151}
+.panel table td{color:#f9fafb}
+.panel table td.num{text-align:right; font-weight:600; color:#60a5fa}
+.heatmap-container{width:100%; overflow-x:auto; margin-top:8px}
+#heatmap{display:block; margin:0 auto}
+.spacer{height:12px}
+.state{padding:24px}
+.state.error{color:#B91C1C}
+
+@media print{
+  :root{print-color-adjust:exact; -webkit-print-color-adjust:exact}
+  @page{size: A4 portrait; margin:8mm}
+  
+  /* Hide everything except the report */
+  body *{visibility:hidden !important}
+  .report, .report *{visibility:visible !important}
+  
+  /* Position and size the report for page */
+  .report{position:absolute; left:0; top:0; width:100%; max-width:190mm; margin:0; padding:0;}
+  body{background:#fff; margin:0; padding:0}
+  
+  /* Hero section adjustments - restore blue bar for PDF */
+  .hero-simple{background:linear-gradient(90deg,#005AED,#8D29FF); color:#fff; padding:16px 24px; border-radius:16px; position:relative; margin-bottom:12px; border-bottom:none}
+  .hero-simple .title{font:700 22px 'Poppins',sans-serif; color:#fff}
+  .hero-simple .subtitle{opacity:.9; margin-top:4px; color:#fff}
+  .hero-simple .print{position:absolute; right:16px; top:16px; background:linear-gradient(135deg,#10B981,#059669); color:#fff; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 4px 12px rgba(16,185,129,0.3); transition:all 0.2s ease; display:none}
+  
+  /* KPI cards - keep grid but reduce gaps */
+  .kpis{gap:4px; margin:4px 0}
+  .kpis.secondary{margin-top:2px}
+  .card{padding:6px 8px; margin-bottom:2px}
+  .card .value{font-size:18px; margin-top:3px}
+  .card .label{font-size:10px}
+  
+  /* Grid layout - convert to more print-friendly */
+  .grid{display:block; gap:8px}
+  .two-cols{display:grid; grid-template-columns: 1fr 1fr; gap:8px}
+  
+  /* Panel adjustments - increase vertical spacing between all cards except KPI */
+  .panel{page-break-inside: avoid; break-inside: avoid; margin-bottom:16px; padding:12px 16px}
+  .panel h3{margin:0 0 8px; font-size:13px}
+  
+  /* Grid spacing - increase gaps between panels */
+  .grid{gap:16px; margin:16px 0}
+  .two-cols{gap:16px}
+  
+  /* Canvas sizing for print */
+  canvas{max-width:100% !important; height:auto !important}
+  /* Override for trend chart: use wrapper height and fill it */
+  .chart-fixed-h{height:250px !important}
+  #trendChart{height:100% !important}
+  #impSlotBarsV, #scanSlotBarsV{height:120px !important}
+  #osDonut, #scanLocationBars{height:180px !important; width:100% !important}
+  
+  /* Table adjustments */
+  .panel table{font-size:11px}
+  .panel table th, .panel table td{padding:4px 6px}
+  
+  /* Spacing adjustments */
+  .spacer{height:6px}
+  .page-break{page-break-before: always; break-before: page}
+}

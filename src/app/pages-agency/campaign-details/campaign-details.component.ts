@@ -57,6 +57,9 @@ export class CampaignDetailsComponent implements OnInit {
     );
   }
   getCampaignVideoUrl(id: number): string {
-    return `https://backend.qubic3d.co.za/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
+    // Live:
+    // return `https://backend.qubic3d.co.za/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
+    // Local:
+    return `http://localhost:8181/api/v1/files/stream?campaignId=${id}&documentPurpose=CAMPAIGN_VIDEO`;
   }
 }

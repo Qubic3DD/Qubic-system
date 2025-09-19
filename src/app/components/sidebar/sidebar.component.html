@@ -4,156 +4,95 @@
         <h1 class="text-2xl font-bold mb-8" [class.hidden]="isCollapsed">Menu</h1>
         <nav>
             <ul class="space-y-2">
-                <!-- Dashboard -->
+                <!-- Ad-Ops group -->
                 <li>
-                    <div (click)="navigate('/dashboard')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Dashboard</span>
+                    <button (click)="toggle('adOps')" class="w-full flex items-center justify-between p-2 rounded cursor-pointer transition-colors duration-200"
+                        [class.bg-blue-700]="adOpsOpen && !isCollapsed" [class.dark:bg-gray-700]="adOpsOpen && !isCollapsed">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+                            <span class="ml-2" [class.hidden]="isCollapsed">Ad-Ops</span>
                     </div>
+                        <svg *ngIf="!isCollapsed" class="h-5 w-5 transform transition-transform duration-200" [class.rotate-180]="adOpsOpen" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <ul *ngIf="adOpsOpen" class="ml-2 space-y-1" [class.hidden]="isCollapsed">
+                        <li><div (click)="navigate('/dashboard')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 17h14v2H3v-2zM5 15h2V9H5v6zm4 0h2V5H9v10zm4 0h2V11h-2v4z"/></svg><span class="ml-2">Dashboard</span></span></div></li>
+                        <li><div (click)="navigate('/campaigns')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M4 5h8a2 2 0 012 2v1l3-2v8l-3-2v1a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg><span class="ml-2">All Campaigns</span></span></div></li>
+                        <li><div (click)="navigate('/advertisers')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10l9-7 9 7v10H3V10z"/></svg><span class="ml-2">Advertisers</span></span></div></li>
+                        <li><div (click)="navigate('/agencies')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v4H4V5zm2 6h12v8H6v-8z"/></svg><span class="ml-2">Agencies</span></span></div></li>
+                        <li><div (click)="navigate('/fleet-owners')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><g><rect x="2" y="9" width="6" height="3" rx="1"/><path d="M3 9l1.5-2h3L9 9"/><circle cx="3.5" cy="13" r="1"/><circle cx="7.5" cy="13" r="1"/></g><g transform="translate(7,0)"><rect x="2" y="9" width="6" height="3" rx="1"/><path d="M3 9l1.5-2h3L9 9"/><circle cx="3.5" cy="13" r="1"/><circle cx="7.5" cy="13" r="1"/></g></svg><span class="ml-2">Fleet Owners</span></span></div></li>
+                        <li><div (click)="navigate('/drivers')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><rect x="4" y="9" width="12" height="4" rx="1"/><path d="M6 9l2-3h4l2 3"/><circle cx="7" cy="14" r="1"/><circle cx="13" cy="14" r="1"/></svg><span class="ml-2">Drivers</span></span></div></li>
+                        <li><div (click)="navigate('/passenger')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><circle cx="10" cy="6.5" r="2.5"/><circle cx="5.5" cy="8" r="2"/><circle cx="14.5" cy="8" r="2"/><path d="M3 15a5 5 0 0114 0v1H3v-1z"/></svg><span class="ml-2">Passengers</span></span></div></li>
+                        <li><div (click)="navigate('/admins')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 6a3 3 0 11-6 0 3 3 0 016 0zM4 12a4 4 0 018 0v2H4v-2z"/></svg><span class="ml-2">Admins</span></span></div></li>
+                        <li><div (click)="navigate('/approvals')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a1 1 0 011 1v6.586l2.293-2.293a1 1 0 111.414 1.414l-4 4-4-4a1 1 0 111.414-1.414L9 10.586V4a1 1 0 011-1z"/><path d="M4 15a2 2 0 012-2h8a2 2 0 012 2v2H4v-2z"/></svg><span class="ml-2">Requests</span></span></div></li>
+                        <li><div (click)="navigate('/messages')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4h14a2 2 0 012 2v7a2 2 0 01-2 2H9l-4 3v-3H3a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg><span class="ml-2">Messages</span></span></div></li>
+                        <li><div (click)="navigate('/tablets')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2zm5 15a1 1 0 100-2 1 1 0 000 2z"/></svg><span class="ml-2">Tablets (Live Monitor)</span></span></div></li>
+                    </ul>
                 </li>
 
-                <!-- Campaigns -->
+                <!-- CRM group -->
                 <li>
-                    <div (click)="navigate('/campaigns')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M3 17v-2l12-5V7a2 2 0 1 1 4 0v10a2 2 0 1 1-4 0v-3l-12-5v2l10 4.167V17a4 4 0 1 0 8 0V7a4 4 0 1 0-8 0v3.167L3 15z"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Campaigns</span>
+                    <button (click)="toggle('crm')" class="w-full flex items-center justify-between p-2 rounded cursor-pointer transition-colors duration-200"
+                        [class.bg-blue-700]="crmOpen && !isCollapsed" [class.dark:bg-gray-700]="crmOpen && !isCollapsed">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                            <span class="ml-2" [class.hidden]="isCollapsed">CRM</span>
                     </div>
+                        <svg *ngIf="!isCollapsed" class="h-5 w-5 transform transition-transform duration-200" [class.rotate-180]="crmOpen" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <ul *ngIf="crmOpen" class="ml-2 space-y-1" [class.hidden]="isCollapsed">
+                        <li><div (click)="navigate('/advertisers')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10l9-7 9 7v10H3V10z"/></svg><span class="ml-2">Accounts (Advertisers)</span></span></div></li>
+                        <li><div (click)="navigate('/agencies')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v4H4V5zm2 6h12v8H6v-8z"/></svg><span class="ml-2">Accounts (Agencies)</span></span></div></li>
+                        <li><div (click)="navigate('/contacts')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M8 9a3 3 0 100-6 3 3 0 000 6z"/><path d="M2 15a6 6 0 1112 0v1H2v-1z"/></svg><span class="ml-2">Contacts</span></span></div></li>
+                        <li><div (click)="navigate('/opportunities')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 17h14v-2H3v2zm2-4h10V7H5v6zm2-8h6V3H7v2z"/></svg><span class="ml-2">Opportunities</span></span></div></li>
+                        <li><div (click)="navigate('/forecast')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 2a1 1 0 000 2h8a1 1 0 100-2H6zM4 6h12v10H4V6z"/></svg><span class="ml-2">Forecast</span></span></div></li>
+                        <li><div (click)="navigate('/activity')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M5 12h4l3-8 4 16 3-8h4" stroke="currentColor" stroke-width="2" fill="none"/></svg><span class="ml-2">Activity & Notes</span></span></div></li>
+                        <li><div (click)="navigate('/segments')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 10h14v2H3v-2zm0-5h14v2H3V5zm0 10h14v2H3v-2z"/></svg><span class="ml-2">Segments & Audiences</span></span></div></li>
+                        <li><div (click)="navigate('/documents')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M4 2h8l4 4v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg><span class="ml-2">Documents</span></span></div></li>
+                        <li><div (click)="navigate('/support')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2v2zm0-4h-2a1 1 0 01-1-1V8h2v3h1v2z"/></svg><span class="ml-2">Support</span></span></div></li>
+                        <li><div (click)="navigate('/messages')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0z"/><path d="M7 8h6v2H7V8zm0 3h4v2H7v-2z"/></svg><span class="ml-2">Messaging</span></span></div></li>
+                    </ul>
                 </li>
 
-                <!-- Advertisers -->
+                <!-- Business & Financials group -->
                 <li>
-                    <div (click)="navigate('/advertisers')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Advertisers</span>
+                    <button (click)="toggle('biz')" class="w-full flex items-center justify-between p-2 rounded cursor-pointer transition-colors duration-200"
+                        [class.bg-blue-700]="bizOpen && !isCollapsed" [class.dark:bg-gray-700]="bizOpen && !isCollapsed">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+                            <span class="ml-2" [class.hidden]="isCollapsed">Business & Financials</span>
                     </div>
-                </li>
-
-                <!-- Agencies -->
-                <li>
-                    <div (click)="navigate('/agencies')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z"/>
+                        <svg *ngIf="!isCollapsed" class="h-5 w-5 transform transition-transform duration-200" [class.rotate-180]="bizOpen" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                         </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Agencies</span>
-                    </div>
-                </li>
-
-                <!-- Fleet Owners -->
-                <li>
-                    <div (click)="navigate('/fleet-owners')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Fleet Owners</span>
-                    </div>
-                </li>
-
-                <!-- Drivers -->
-                <li>
-                    <div (click)="navigate('/drivers')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M3 13V9.382a2 2 0 01.263-.99l1.724-3.447A2 2 0 016.763 4h6.474a2 2 0 011.776.945l1.724 3.447A2 2 0 0117 9.382V13a2 2 0 01-2 2h-1a2 2 0 01-4 0H7a2 2 0 01-4 0H3a2 2 0 01-2-2zm2-3.618V13h1a2 2 0 014 0h2a2 2 0 014 0h1V9.382a1 1 0 00-.132-.495l-1.724-3.447A1 1 0 0013.237 5H6.763a1 1 0 00-.882.44L4.157 8.887A1 1 0 004 9.382z"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Drivers</span>
-                    </div>
-                </li>
-
-                <!-- Passengers -->
-                <li>
-                    <div (click)="navigate('/passenger')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Passengers</span>
-                    </div>
-                </li>
-
-                <!-- Admins -->
-                <li>
-                    <div (click)="navigate('/admins')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Admins</span>
-                    </div>
-                </li>
-
-                <!-- Approvals -->
-                <li>
-                    <div (click)="navigate('/approvals')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Requests</span>
-                    </div>
-                </li>
-
-                <!-- Messages -->
-                <li>
-                    <div (click)="navigate('/messages')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Messages</span>
-                    </div>
+                    </button>
+                    <ul *ngIf="bizOpen" class="ml-2 space-y-1" [class.hidden]="isCollapsed">
+                        <li><div (click)="navigate('/financial')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c1.657 0 3 1.343 3 3h2a5 5 0 00-5-5V3H10v2a5 5 0 000 10v2h2v-2a3 3 0 100-6 3 3 0 110-6z"/></svg><span class="ml-2">Financial Dashboard</span></span></div></li>
+                        <li><div (click)="navigate('/billing/invoices')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M4 2h8l4 4v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg><span class="ml-2">Invoices</span></span></div></li>
+                        <li><div (click)="navigate('/billing/credit-notes')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4h8v2H6V4zm0 4h8v2H6V8zm0 4h5v2H6v-2z"/></svg><span class="ml-2">Credit Notes</span></span></div></li>
+                        <li><div (click)="navigate('/payouts')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10h18v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8zm2-4h14v2H5V6z"/></svg><span class="ml-2">Payouts & Compensation</span></span></div></li>
+                        <li><div (click)="navigate('/pricing')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14v2H5V3zm2 4h10v2H7V7zm-2 4h14v2H5v-2zm2 4h10v2H7v-2z"/></svg><span class="ml-2">Pricing & Estimator</span></span></div></li>
+                        <li><div (click)="navigate('/contracts')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h8l4 4v16H7V2zm8 7H9v2h6V9z"/></svg><span class="ml-2">Contracts & POs</span></span></div></li>
+                        <li><div (click)="navigate('/budgeting')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h2v14H3V3zm4 6h2v8H7V9zm4-4h2v12h-2V5zm4 8h2v4h-2v-4z"/></svg><span class="ml-2">Budgeting & Forecasts</span></span></div></li>
+                        <li><div (click)="navigate('/reconciliation')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 11h10v2H7v-2zm-4 0h2v2H3v-2zm16 0h2v2h-2v-2z"/></svg><span class="ml-2">Reconciliation</span></span></div></li>
+                        <li><div (click)="navigate('/analytics/revenue')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer"><span class="flex items-center"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h3l3-6 4 8 3-4 3 6H3z"/></svg><span class="ml-2">Analytics (Biz)</span></span></div></li>
+                    </ul>
                 </li>
 
                 <hr class="my-4 border-t-2 border-pink-400 dark:border-gray-700 opacity-50">
 
-                <!-- Tablets -->
+                <!-- Settings (global) -->
                 <li>
-                    <div (click)="navigate('/tablets')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm0 2h6v12H7V4zm3 11a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Tablets</span>
-                    </div>
-                </li>
-
-                <!-- Financial -->
-                <li>
-                    <div (click)="navigate('/financial')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path
-                                d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                            <path fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Financial</span>
-                    </div>
-                </li>
-
-                <!-- Reports & Analytics -->
-                <li>
-                    <div (click)="navigate('/reports')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Reports & Analytics</span>
-                    </div>
-                </li>
-
-                <!-- Support -->
-                <li>
-                    <div (click)="navigate('/support')" class="flex items-center p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span class="ml-2" [class.hidden]="isCollapsed">Support</span>
-                    </div>
+                    <div class="px-2 text-xs uppercase tracking-wide text-pink-100/80 dark:text-gray-300" [class.hidden]="isCollapsed">Settings</div>
+                    <ul class="ml-2 space-y-1" [class.hidden]="isCollapsed">
+                        <li><div (click)="navigate('/settings/users')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer">Users & Roles</div></li>
+                        <li><div (click)="navigate('/settings/permissions')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer">Permissions</div></li>
+                        <li><div (click)="navigate('/settings/integrations')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer">Integrations</div></li>
+                        <li><div (click)="navigate('/settings/flags')" class="p-2 rounded hover:bg-blue-700 dark:hover:bg-gray-700 cursor-pointer">Feature Flags</div></li>
+                    </ul>
                 </li>
             </ul>
         </nav>

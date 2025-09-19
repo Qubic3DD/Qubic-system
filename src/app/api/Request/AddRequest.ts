@@ -9,5 +9,6 @@ export class AddRequest extends BaseRequest {
   phoneNo!: string;
   userHandle!: string;
   roles!: string[];
+  companyName?: string;
 
 }

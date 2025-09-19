@@ -4,13 +4,25 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## Development server
 
-To start a local development server, run:
+Recommended Node: 20 LTS. Install deps with legacy peer handling:
 
-```bash
-ng serve
+```
+npm install --legacy-peer-deps
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Start the dev server against a local backend via proxy:
+
+```
+ng serve --open --proxy-config proxy.local.conf.json
+```
+
+If npx fails, use the local Angular CLI binary:
+
+```
+./node_modules/.bin/ng.cmd serve --open --proxy-config proxy.local.conf.json
+```
+
+Open `http://localhost:4200/`. Edits trigger automatic reloads.
 
 ## Code scaffolding
 

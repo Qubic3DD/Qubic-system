@@ -1,1 +1,25 @@
-<p>campaign-status works!</p>
+<!-- Campaign Status Chart -->
+<div class="flex flex-col items-center">
+  <!-- Doughnut Chart -->
+  <div class="relative w-32 h-32 mb-4">
+    <canvas #campaignChart></canvas>
+  </div>
+  
+  <!-- Status Legend -->
+  <div class="flex flex-col space-y-2 w-full">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <div class="w-3 h-3 rounded-full bg-pink-600 mr-2"></div>
+        <span class="text-sm text-gray-600 dark:text-gray-300">Active</span>
+      </div>
+      <span class="text-sm font-medium text-gray-900 dark:text-white">{{ activeCampaigns }}</span>
+    </div>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        <div class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+        <span class="text-sm text-gray-600 dark:text-gray-300">Inactive</span>
+      </div>
+      <span class="text-sm font-medium text-gray-900 dark:text-white">{{ inactiveCampaigns }}</span>
+    </div>
+  </div>
+</div>

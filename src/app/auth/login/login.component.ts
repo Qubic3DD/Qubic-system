@@ -131,7 +131,10 @@ private async checkExistingApplication2(email: string): Promise<boolean> {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.http.post('https://backend.qubic3d.co.za/api/login/simple', {
+    // Live:
+    // this.http.post('https://backend.qubic3d.co.za/api/login/simple', {
+    // Local:
+    this.http.post('http://localhost:8181/api/login/simple', {
       email: this.loginEmail,
       password: this.password
     }).subscribe({
@@ -205,7 +208,10 @@ private async checkExistingApplication(email: string): Promise<boolean> {
 
 
   private fetchProfile(email: string) {
-    this.http.get(`https://backend.qubic3d.co.za/profile/retrieve/${encodeURIComponent(email)}`)
+    // Live:
+    // this.http.get(`https://backend.qubic3d.co.za/profile/retrieve/${encodeURIComponent(email)}`)
+    // Local:
+    this.http.get(`http://localhost:8181/profile/retrieve/${encodeURIComponent(email)}`)
       .subscribe({
         next: (profileResponse: any) => {
           this.isLoading = false;

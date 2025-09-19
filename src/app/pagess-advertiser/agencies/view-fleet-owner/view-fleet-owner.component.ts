@@ -19,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AgenciesResponse } from '../../../api/Response/AgenciesResponse';
 import { MatChip, MatChipListbox } from '@angular/material/chips';
+import { environment, environmentApplication } from '../../../environments/environment';
 
 @Component({
   selector: 'app-agency-profile',
@@ -94,7 +95,10 @@ export class ViewAgencyComponent implements OnInit {
   fetchAgency(email: string): void {
     this.isLoading = true;
     const encodedEmail = encodeURIComponent(email);
-    this.http.get<any>(`https://backend.qubic3d.co.za/profile/retrieve/${encodedEmail}`).pipe(
+    // Live:
+    // this.http.get<any>(`https://backend.qubic3d.co.za/profile/retrieve/${encodedEmail}`).pipe(
+    // Local via proxy:
+    this.http.get<any>(`${environment.api}profile/retrieve/${encodedEmail}`).pipe(
       catchError(error => {
         console.error('Error fetching agency:', error);
         this.error = `Failed to load agency profile ${email}`;
@@ -117,7 +121,10 @@ export class ViewAgencyComponent implements OnInit {
     if (!this.agency) return;
     // ?agencyId=${this.agency.id}
     this.advertisersLoading = true;
-    this.http.get<any[]>(`https://backend.qubic3d.co.za/profile/advertisers`).pipe(
+    // Live:
+    // this.http.get<any[]>(`https://backend.qubic3d.co.za/profile/advertisers`).pipe(
+    // Local via proxy:
+    this.http.get<any[]>(`${environment.api}profile/advertisers`).pipe(
       catchError(error => {
         console.error('Error fetching advertisers:', error);
         this.snackBar.open('Failed to load advertisers', 'Close', { duration: 3000 });
@@ -163,7 +170,10 @@ export class ViewAgencyComponent implements OnInit {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Live:
+    // return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Local via proxy:
+    return `${environmentApplication.api}v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   getInitials(name: string): string {

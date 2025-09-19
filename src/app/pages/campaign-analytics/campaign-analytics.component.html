@@ -1,0 +1,122 @@
+<div class="report" *ngIf="!loading && !error; else state">
+  <div class="hero-simple">
+    <div class="title">{{ name }}</div>
+    <div class="subtitle">{{ startDate }} – {{ endDate }}</div>
+    <button class="print" (click)="print()">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      Export Report
+    </button>
+  </div>
+
+  <!-- KPIs: 5 columns x 2 rows -->
+  <div class="kpis five">
+    <!-- Row 1: Budget, Required Impressions, Effective Impressions, Expected Scans, Effective Scans -->
+    <div class="card">
+      <div class="content"><div class="label">Budget</div><div class="value">{{ price || 0 | number:'1.0-0' }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Required Impressions</div><div class="value">{{ requiredImpressions || 0 }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Total Impressions</div><div class="value">{{ impressions }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Expected Scans</div><div class="value">{{ expectedScans || 0 }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Total Scans</div><div class="value">{{ scans }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z" /></svg></div>
+    </div>
+  </div>
+
+  <div class="kpis five secondary">
+    <!-- Row 2: Base CPM, Effective CPM, Base CPS, Effective CPS, Effective STR -->
+    <div class="card">
+      <div class="content"><div class="label">Base CPM</div><div class="value">{{ baseCpm || 0 | number:'1.0-0' }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Effective CPM</div><div class="value">{{ cpm || 0 | number:'1.0-0' }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Base CPS</div><div class="value">{{ baseCps || 0 | number:'1.0-0' }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Effective CPS</div><div class="value">{{ cps || 0 | number:'1.0-0' }}</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg></div>
+    </div>
+    <div class="card">
+      <div class="content"><div class="label">Effective STR</div><div class="value">{{ effectiveStr | number:'1.0-2' }}%</div></div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m-9 4h8" /></svg></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel span-2">
+      <div class="flex-row-between">
+        <h3>Impressions vs Scans (Daily)</h3>
+        <div class="days-inline">
+          <input type="number" min="1" max="365" [value]="pendingDays" (input)="onPendingDaysInput($event)" class="days-input" title="Days" />
+          <button class="days-apply" (click)="applyDays()">Apply</button>
+        </div>
+      </div>
+      <div class="chart-fixed-h">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+    <div class="two-cols span-2">
+      <div class="panel">
+        <h3>Impressions by Slot</h3>
+        <canvas id="impSlotBarsV" height="150"></canvas>
+      </div>
+      <div class="panel">
+        <h3>Scans by Slot</h3>
+        <canvas id="scanSlotBarsV" height="150"></canvas>
+      </div>
+    </div>
+    <div class="panel span-2">
+      <h3>Impressions Heatmap (Hour × Day)</h3>
+      <div class="heatmap-container">
+        <canvas id="heatmap" style="width: 100%; max-width: 100%;"></canvas>
+      </div>
+    </div>
+    <div class="two-cols span-2">
+      <div class="panel">
+        <h3>QR Scans by OS</h3>
+        <canvas id="osDonut" height="250" width="400"></canvas>
+      </div>
+      <div class="panel">
+        <h3>Scans by Location</h3>
+        <canvas id="scanLocationBars" height="250" width="400"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+  <div class="spacer"></div>
+  <div class="panel span-2">
+    <h3>Top Tablets</h3>
+    <table>
+      <tr><th>Tablet</th><th>Impressions</th><th>%</th></tr>
+      <tr *ngFor="let d of topTablets">
+        <td>{{ d.deviceId }}</td>
+        <td class="num">{{ d.count }}</td>
+        <td class="num">{{ d.percent | number:'1.0-0' }}%</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<ng-template #state>
+  <div class="state" *ngIf="loading">Loading…</div>
+  <div class="state error" *ngIf="error">{{ error }}</div>
+</ng-template>

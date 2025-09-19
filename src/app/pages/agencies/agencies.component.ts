@@ -31,6 +31,11 @@ export class AgenciesComponent implements OnInit {
   activeFilter: string = 'all';
   isLoading: boolean = false;
   expandedAgencies: { [key: number]: boolean } = {};
+  // KPI stats
+  totalAgencies = 0;
+  activeAgencies = 0;
+  inactiveAgencies = 0;
+  totalRevenue = 0;
   
   // Advertiser assignment
   showAssignAdvertiserModal: boolean = false;
@@ -76,7 +81,10 @@ getAdvertisers() {
     if (!username || !purpose) return '';
     const encodedUsername = encodeURIComponent(username);
     const encodedPurpose = encodeURIComponent(purpose);
-    return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Live:
+    // return `https://backend.qubic3d.co.za/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
+    // Local:
+    return `http://localhost:8181/api/v1/files/stream?username=${encodedUsername}&documentPurpose=${encodedPurpose}`;
   }
 
   getInitials(name: string): string {
@@ -92,18 +100,30 @@ getAdvertisers() {
 
   getAgencies(): void {
     this.isLoading = true;
-    this.http.get<any>('https://backend.qubic3d.co.za/profile/get-users-by-role/agency')
+    // Live:
+    // this.http.get<any>('https://backend.qubic3d.co.za/profile/get-users-by-role/agency')
+    // Local:
+    this.http.get<any>('http://localhost:8181/profile/get-users-by-role/agency')
       .subscribe({
         next: (response) => {
           this.agencies = response.data || [];
           this.filteredAgencies = [...this.agencies];
           this.isLoading = false;
+          this.updateStats();
         },
         error: (error) => {
           console.error('Error fetching agencies:', error);
           this.isLoading = false;
         }
       });
+  }
+
+  private updateStats(): void {
+    const all = this.agencies || [];
+    this.totalAgencies = all.length;
+    this.activeAgencies = all.filter(a => (a.status || '').toLowerCase() === 'active').length;
+    this.inactiveAgencies = Math.max(0, this.totalAgencies - this.activeAgencies);
+    this.totalRevenue = all.reduce((sum: number, a: any) => sum + (Number(a.revenue) || 0), 0);
   }
 
   loadAvailableAdvertisers(): void {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +26,8 @@ import { CurrencyPipe } from '@angular/common';
     MatDividerModule,
     MatListModule,
     MatTooltipModule,
-    CurrencyPipe
+    CurrencyPipe,
+    RouterModule
   ],
 })
 export class CampaignDetailsComponent implements OnInit {

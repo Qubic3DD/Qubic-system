@@ -40,13 +40,13 @@
   </div>
 
   <!-- Stats Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     <!-- Total Tablets -->
     <div class="bg-pink-600 dark:bg-pink-700 rounded-xl p-4 shadow">
       <div class="flex justify-between items-center">
         <div>
           <p class="text-xs font-medium uppercase tracking-wider text-pink-100 dark:text-pink-200">Total Tablets</p>
-          <h3 class="text-2xl font-bold text-white">{{ tablets.length }}</h3>
+          <h3 class="text-2xl font-bold text-white">{{ monitorRows.length }}</h3>
         </div>
         <div class="bg-pink-500 dark:bg-pink-600/50 p-3 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-100" fill="none" viewBox="0 0 24 24"
@@ -58,15 +58,15 @@
       </div>
     </div>
 
-    <!-- Available -->
-    <div class="bg-green-600 dark:bg-green-700 rounded-xl p-4 shadow">
+    <!-- Available (blue) -->
+    <div class="bg-blue-600 dark:bg-blue-700 rounded-xl p-4 shadow">
       <div class="flex justify-between items-center">
         <div>
-          <p class="text-xs font-medium uppercase tracking-wider text-green-100 dark:text-green-200">Available</p>
+          <p class="text-xs font-medium uppercase tracking-wider text-blue-100 dark:text-blue-200">Available</p>
           <h3 class="text-2xl font-bold text-white">{{ availableCount }}</h3>
         </div>
-        <div class="bg-green-500 dark:bg-green-600/50 p-3 rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-100" fill="none" viewBox="0 0 24 24"
+        <div class="bg-blue-500 dark:bg-blue-600/50 p-3 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-100" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
@@ -91,138 +91,112 @@
       </div>
     </div>
 
-    <!-- Maintenance -->
+    <!-- Online (green) -->
+    <div class="bg-green-600 dark:bg-green-700 rounded-xl p-4 shadow">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-xs font-medium uppercase tracking-wider text-green-100 dark:text-green-200">Online</p>
+          <h3 class="text-2xl font-bold text-white">{{ onlineCount }}</h3>
+        </div>
+        <div class="bg-green-500 dark:bg-green-600/50 p-3 rounded-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Offline (was Maintenance) -->
     <div class="bg-red-600 dark:bg-red-700 rounded-xl p-4 shadow">
       <div class="flex justify-between items-center">
         <div>
-          <p class="text-xs font-medium uppercase tracking-wider text-red-100 dark:text-red-200">Maintenance</p>
+          <p class="text-xs font-medium uppercase tracking-wider text-red-100 dark:text-red-200">Offline</p>
           <h3 class="text-2xl font-bold text-white">{{ maintenanceCount }}</h3>
         </div>
         <div class="bg-red-500 dark:bg-red-600/50 p-3 rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-100" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37a1.724 1.724 0 002.572-1.065c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37.996.608 2.296.07 2.572-1.065z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Tablet Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <div *ngFor="let tablet of filteredTablets"
-      class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg">
-      <!-- Card Header -->
-      <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [class]="{
-                'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200': tablet.status === 'AVAILABLE',
-                'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200': tablet.status === 'ASSIGNED',
-                'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200': tablet.status === 'MAINTENANCE',
-                'bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200': tablet.status === 'LOST' || tablet.status === 'DECOMMISSIONED'
-              }">
-          {{ tablet.status }}
-        </span>
-
-        <div class="relative">
-          <button type="button" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
-            (click)="toggleDropdown(tablet.id!)">
-            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-            </svg>
+  <!-- Live Monitor -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow mb-6">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Live Monitor</h2>
+      <div class="flex items-center gap-2">
+        <button (click)="loadMonitor()"
+          class="flex items-center cursor-pointer px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+          Refresh
           </button>
-
-    <!-- In the dropdown menu section of your tablet card -->
-<div *ngIf="activeDropdown === tablet.id"
-  class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
-  <div class="py-1">
-    <a href="#"
-      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-      (click)="viewTabletInfo(tablet)">
-      Details
-    </a>
-    <a *ngIf="tablet.user" href="#"
-      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-      (click)="viewUserInfo(tablet.user)">
-      User Info
-    </a>
-    <!-- Add these new options -->
-    <a *ngIf="tablet.status === 'AVAILABLE'" href="#"
-      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-      (click)="openAssignDialog(tablet)">
-      Assign
-    </a>
-    <a *ngIf="tablet.status === 'ASSIGNED'" href="#"
-      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-      (click)="openReassignDialog(tablet)">
-      Reassign
-    </a>
-    <a *ngIf="tablet.status === 'ASSIGNED'" href="#"
-      class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-      (click)="unassignTablet(tablet.id!)">
-      Unassign
-    </a>
-    <div class="border-t border-gray-200 dark:border-gray-700"></div>
-    <a href="#"
-      class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-      (click)="removeTablet(tablet.id!)">
-      Remove
-    </a>
-  </div>
-</div>
+        <span class="text-xs text-gray-500 dark:text-gray-400">Auto-refresh 30s</span>
         </div>
       </div>
 
-      <!-- Card Body -->
-      <div class="px-4 py-5">
-        <div class="flex items-center mb-4">
-          <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600 dark:text-gray-400" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
+    <div *ngIf="monitorLoading" class="flex justify-center items-center py-6">
+      <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-500"></div>
           </div>
-          <div>
-            <h4 class="w-60 not-odd:text-lg font-medium text-gray-900 dark:text-white truncate">{{ tablet.model }}</h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Serial: {{ tablet.serialNumber || 'N/A' }}</p>
-          </div>
+    <div *ngIf="!monitorLoading && monitorError" class="p-4 text-sm text-red-600 dark:text-red-400">
+      {{ monitorError }}
         </div>
 
-        <div class="space-y-3">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-500 dark:text-gray-400">Owner:</span>
-            <span class="text-sm font-medium text-gray-900 dark:text-white">
-              {{ tablet.user ? tablet.user.firstName + ' ' + tablet.user.lastName : 'Unassigned' }}
+    <div *ngIf="!monitorLoading && !monitorError && monitorRows.length > 0" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-900">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tablet ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Alias</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Driver</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Online</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Last Seen</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">App</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Battery</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Impressions</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <tr *ngFor="let row of monitorRows; let i = index" class="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer" (click)="openDetails(row, i)">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ ('TAB-' + (i + 1).toString().padStart(3,'0')) }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ row.alias || '-' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ row.driverId || '-' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span [class]="row.online ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'">
+                {{ row.online ? 'Online' : 'Offline' }}
             </span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-500 dark:text-gray-400">Assigned:</span>
-            <span class="text-sm text-gray-900 dark:text-white">{{ tablet.assignedDate ? (tablet.assignedDate |
-              date:'mediumDate') : 'Not assigned' }}</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-500 dark:text-gray-400">OS Version:</span>
-            <span class="text-sm text-gray-900 dark:text-white">{{ tablet.os || 'Unknown' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card Footer -->
-      <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700">
-        <button
-          class="cursor-pointer w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/30 hover:bg-pink-100 dark:hover:bg-pink-900/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200"
-          (click)="viewTabletInfo(tablet)">
-          Quick View
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ row.lastSeenAt ? (row.lastSeenAt | date:'medium') : '-' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ row.appVersion || '-' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ row.batteryPercent ?? '-' }}%</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ row.impressions ?? 0 }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex justify-end space-x-3">
+                <button (click)="$event.stopPropagation(); renameMonitor(row)" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 cursor-pointer" title="Set alias">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 010 2.828l-8.5 8.5a2 2 0 01-.878.502l-3.5 1a1 1 0 01-1.213-1.213l1-3.5a2 2 0 01.502-.878l8.5-8.5a2 2 0 012.828 0z" /></svg>
+                </button>
+                <button (click)="$event.stopPropagation(); assignMonitor(row)" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 cursor-pointer" title="Assign driver">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                </button>
+                <button (click)="$event.stopPropagation(); unassignMonitor(row)" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 cursor-pointer" title="Unassign driver">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"/></svg>
+                </button>
+                <button (click)="$event.stopPropagation(); deleteMonitor(row)" class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 cursor-pointer" title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
         </button>
       </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
+  <!-- Tablet Grid removed: inventory table hidden to show only Live Monitor -->
+
   <!-- Empty State -->
-  <div *ngIf="filteredTablets.length === 0" class="text-center py-12">
+  <div *ngIf="!monitorLoading && !monitorError && monitorRows.length === 0" class="text-center py-12">
     <div class="mx-auto max-w-md">
       <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">

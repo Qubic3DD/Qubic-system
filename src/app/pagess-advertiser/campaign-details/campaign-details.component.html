@@ -36,10 +36,12 @@
               Campaign Video
             </h2>
           </div>
+          <!-- Live: [src]="'https://backend.qubic3d.co.za/' + campaign.streamUrl" -->
           <video 
             width="100%" 
             controls 
-            [src]="'https://backend.qubic3d.co.za/' + campaign.streamUrl" 
+            
+            [src]="('/' + campaign.streamUrl)" 
             class="w-full"
             poster="https://via.placeholder.com/800x450?text=Loading+Video"
           ></video>
@@ -175,7 +177,9 @@
             <mat-list-item>
               <mat-icon matListItemIcon>cloud_download</mat-icon>
               <div matListItemTitle>
-                <a [href]="'https://backend.qubic3d.co.za/' + campaign.mediaFile.downloadUrl" 
+                <!-- Live: 
+                 [href]="'https://backend.qubic3d.co.za/' + campaign.mediaFile.downloadUrl" -->
+                <a [href]="'/' + campaign.mediaFile.downloadUrl" 
                    class="text-pink-600 hover:underline dark:text-pink-400">
                   Download Media File
                 </a>

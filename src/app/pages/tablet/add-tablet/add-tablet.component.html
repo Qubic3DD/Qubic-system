@@ -1,37 +1,24 @@
-<div class="p-6 bg-white rounded-lg shadow-xl">
-  <h2 class="text-2xl font-bold mb-4 text-gray-800">Add New Tablet</h2>
+<div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+  <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Register Tablet</h2>
   <form [formGroup]="tabletForm" (ngSubmit)="onSubmit()">
     <div class="grid grid-cols-1 gap-6">
       <div>
-        <label class="block text-gray-700">Model</label>
-        <input formControlName="model" class="w-full p-2 border rounded">
+        <label class="block text-gray-700 dark:text-gray-300">Device ID</label>
+        <input formControlName="deviceId" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. TAB-001">
       </div>
       <div>
-        <label class="block text-gray-700">Serial Number</label>
-        <input formControlName="serialNumber" class="w-full p-2 border rounded">
-      </div>
-      <div class="grid grid-cols-3 gap-4">
-        <div>
-          <label class="block text-gray-700">Storage</label>
-          <input formControlName="storage" class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label class="block text-gray-700">Screen Size</label>
-          <input formControlName="screen" class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label class="block text-gray-700">OS Version</label>
-          <input formControlName="os" class="w-full p-2 border rounded">
-        </div>
+        <label class="block text-gray-700 dark:text-gray-300">Alias (optional)</label>
+        <input formControlName="alias" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="e.g. Front Seat Tablet">
       </div>
     </div>
     <div class="mt-6 flex justify-end space-x-3">
-      <button type="button" (click)="onCancel()" 
-              class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+      <button type="button" (click)="onCancel()"
+              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600">Cancel</button>
       <button type="submit" [disabled]="!tabletForm.valid"
-              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300">
-        Save Tablet
+              class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 disabled:bg-pink-300">
+        Register
       </button>
     </div>
   </form>
+  <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">Tip: If the tablet app is running, it will start heartbeating automatically once registered by Device ID.</p>
 </div>

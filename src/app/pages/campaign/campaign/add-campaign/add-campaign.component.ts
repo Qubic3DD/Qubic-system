@@ -62,6 +62,7 @@ videoDimensions: {width: number, height: number} | null = null;
   advertiserId: ['', Validators.required],
   name: ['', Validators.required],
   description: ['', Validators.required],
+  ctaUrl: [''],
   startDate: ['', Validators.required],
   endDate: ['', Validators.required],
   requiredImpressions: [1000, [Validators.required, Validators.min(1000)]],
@@ -390,6 +391,9 @@ onSubmit(): void {
   formData.append('file', this.selectedFile);
   formData.append('name', this.campaignForm.value.name);
   formData.append('description', this.campaignForm.value.description);
+  if (this.campaignForm.value.ctaUrl) {
+    formData.append('ctaUrl', this.campaignForm.value.ctaUrl);
+  }
   formData.append('startDate', formattedStartDate);
   formData.append('endDate', formattedEndDate);
   formData.append('requiredImpressions', this.campaignForm.value.requiredImpressions.toString());

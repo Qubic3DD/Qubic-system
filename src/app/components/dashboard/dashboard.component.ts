@@ -62,7 +62,10 @@ export class DashboardComponent {
     this.isLoading = true;
     this.errorMessage = '';
     
-    const apiUrl = 'https://backend.qubic3d.co.za/api/applications/by-email/';
+    // Live:
+    // const apiUrl = 'https://backend.qubic3d.co.za/api/applications/by-email/';
+    // Local:
+    const apiUrl = 'http://localhost:8181/api/applications/by-email/';
     
     this.http.get(`${apiUrl}?email=${encodeURIComponent(this.email)}`).subscribe({
       next: (response: any) => {

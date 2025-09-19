@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DriverProfile } from '../api/Response/interfaces';
@@ -10,7 +11,10 @@ import { DriverProfile } from '../api/Response/interfaces';
 })
 export class DriverService {
 
-  private apiUrl = 'https://backend.qubic3d.co.za/profile/drivers';
+  // Live:
+  // private apiUrl = 'https://backend.qubic3d.co.za/profile/drivers';
+  // Local via env/proxy:
+  private apiUrl = `${environment.api}profile/drivers`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,36 +1,30 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-
-<mat-dialog-content class="min-w-[300px]">
+<div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl min-w-[360px]">
+  <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">{{ data.title }}</h2>
 
   <!-- Loading Spinner -->
-  <div *ngIf="loading" class="spinner-container">
+  <div *ngIf="loading" class="flex items-center justify-center py-8">
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
   <!-- User Select Dropdown -->
-  <div *ngIf="!loading && users.length > 0" class="select-container">
-    <mat-form-field appearance="fill" class="w-full">
-      <mat-label>Select User</mat-label>
-      <mat-select [(ngModel)]="selectedUserId">
-        <mat-option *ngFor="let user of users" [value]="user.id">
-          {{ user.firstName }} {{ user.lastName }} ({{ user.email }})
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <div *ngIf="!loading && users.length > 0" class="mb-4">
+    <label class="block text-gray-700 dark:text-gray-300 mb-2">Select Driver</label>
+    <select [(ngModel)]="selectedUserId" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+      <option *ngFor="let user of users" [value]="user.id">
+        {{ user.firstName }} {{ user.lastName }} ({{ user.email }})
+      </option>
+    </select>
   </div>
 
   <!-- No users available -->
-  <div *ngIf="!loading && users.length === 0" class="no-users">
-    No available users to assign.
+  <div *ngIf="!loading && users.length === 0" class="text-gray-600 dark:text-gray-300 py-4">
+    No available drivers to assign.
   </div>
 
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button mat-stroked-button (click)="onCancel()">Cancel</button>
-  <button mat-flat-button color="primary"
-          (click)="onConfirm()"
-          [disabled]="selectedUserId == null">
-    Confirm
-  </button>
-</mat-dialog-actions>
+  <div class="mt-6 flex justify-end space-x-3">
+    <button type="button" (click)="onCancel()"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600">Cancel</button>
+    <button type="button" (click)="onConfirm()" [disabled]="selectedUserId == null"
+            class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 disabled:bg-pink-300">Confirm</button>
+  </div>
+</div>

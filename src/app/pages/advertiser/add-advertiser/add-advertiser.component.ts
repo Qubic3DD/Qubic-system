@@ -37,7 +37,8 @@ export class AddAdvertiserComponent implements OnInit {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       phoneNo: ['', [Validators.required]],
-      fullName: [{ value: '', disabled: true }]
+      fullName: [{ value: '', disabled: true }],
+      companyName: ['']
     });
   }
 

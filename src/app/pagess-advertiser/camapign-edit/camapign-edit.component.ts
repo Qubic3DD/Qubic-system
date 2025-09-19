@@ -54,6 +54,7 @@ export class CampaignEditComponent implements OnInit {
     this.campaignForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.maxLength(500)]],
+      ctaUrl: [''],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       requiredImpressions: ['', [Validators.required, Validators.min(1000)]],
@@ -117,6 +118,7 @@ loadCampaign(): void {
       this.campaignForm.patchValue({
         name: campaign.name,
         description: campaign.description,
+        ctaUrl: (campaign as any).ctaUrl,
         startDate: this.formatDateForInput(campaign.startDate),
         endDate: this.formatDateForInput(campaign.endDate),
         requiredImpressions: campaign.requiredImpressions,
